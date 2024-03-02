@@ -2,3 +2,18 @@
 
 /* Importing Bootstrap SCSS file. */
 @import 'bootstrap/scss/bootstrap';
+
+$primary-color: #187EF5;
+$lightPrimary-color: #80BAFC;
+
+*{
+    margin: 0;
+    padding: 0;
+}
+
+.body{
+    height: 100vh;
+    width: 100vw;   
+    background: rgb(128,186,252);
+    background: radial-gradient(circle, rgba(128,186,252,1) 0%, rgba(24,126,245,1) 100%);
+}
