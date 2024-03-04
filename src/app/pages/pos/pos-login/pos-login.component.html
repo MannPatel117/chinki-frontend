@@ -8,15 +8,15 @@
                 </div>
                 <div>
                     <div class="mt-6">
-                        <form  class="space-y-6">
+                        <form [formGroup]="loginForm" class="space-y-6">
                             <div>
-                                <label for="username" class="block text-sm font-medium text-neutral-600">UserName
+                                <label for="userName" class="block text-sm font-medium text-neutral-600">UserName
                                 </label>
                                 <div class="mt-1">
-                                    <input id="username" formControlName="username" type="username" autocomplete="username"  placeholder="Your Username" class="block w-full px-4 py-3 text-base placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg text-neutral-600 bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300 ">
+                                    <input id="userName" formControlName="userName" type="userName" autocomplete="userName"  placeholder="Your Username" class="block w-full px-4 py-3 text-base placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg text-neutral-600 bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300 ">
                                 </div>
-                                <div class="mt-1" *ngIf="credentials.controls['email'].errors && (credentials.controls['email'].dirty || credentials.controls['email'].touched)">
-                                    <small style="color: red;">Invalid Email</small>
+                                <div class="mt-1" *ngIf="loginForm.controls['userName'].errors && (loginForm.controls['userName'].dirty || loginForm.controls['userName'].touched)">
+                                    <small style="color: red;">User name is required</small>
                                 </div>
                             </div>
                             <div class="space-y-1">
@@ -24,12 +24,12 @@
                                 <div class="mt-1">
                                     <input formControlName="password" type="password" autocomplete="current-password" placeholder="Your Password" class="block w-full px-4 py-3 text-base placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg text-neutral-600 bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300 ">
                                 </div>
-                                <div class="mt-1" *ngIf="credentials.controls['password'].errors && (credentials.controls['password'].dirty || credentials.controls['password'].touched)">
-                                    <small style="color: red;">Invalid Password</small>
+                                <div class="mt-1" *ngIf="loginForm.controls['password'].errors && (loginForm.controls['password'].dirty || loginForm.controls['password'].touched)">
+                                    <small style="color: red;">Password should be 8 characters</small>
                                 </div>
                             </div>
                             <div>
-                                <button type="submit" class="flex items-center justify-center w-full px-10 py-3 text-base font-medium text-center text-white transition duration-500 ease-in-out transform bg-blue-500 rounded-xl hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">Sign in</button>
+                                <button type="submit" (click)="submit()" class="flex items-center justify-center w-full px-10 py-3 text-base font-medium text-center text-white transition duration-500 ease-in-out transform bg-blue-500 rounded-xl hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">Sign in</button>
                             </div>
                         </form>
                     </div>
