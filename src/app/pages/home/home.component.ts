@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ElementRef, ViewChild } from '@angular/core';
 
 @Component({
   selector: 'app-home',
@@ -8,5 +8,23 @@ import { Component } from '@angular/core';
   styleUrl: './home.component.scss'
 })
 export class HomeComponent {
-
+  datavisible:boolean = false;
+  expanded: boolean= false;
+  count= 1;
+  constructor() {}
+  onNavClick(){
+    if(this.count == 0){
+      if (this.datavisible === false) {
+        this.datavisible=true
+        this.expanded = true
+      } else {
+        this.datavisible=false
+        this.expanded = false
+      }
+      this.count++;
+    }
+    else{
+      this.count=0
+    }
+  }
 }
