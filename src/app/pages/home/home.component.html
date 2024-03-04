@@ -1,0 +1,29 @@
+<div class="body">
+    <header class="primary-header flex">
+        <a style="text-decoration: none;" class="logo-a flex" href="#main">
+          Chinki
+        </a>
+        <nav>
+          <ul [class.primary-navigation-active]="expanded" id="primary-navigation" class="primary-navigation flex">
+              <li>
+                <a href="#about-me">Our Products</a>
+              </li>
+              <li>
+                <a href="#projects">Chinki Saathi</a>
+              </li>
+              <li>
+                <a href="#contact">About Us</a>
+              </li>
+              <li>
+                <a href="#contact">Contact Us</a>
+              </li>
+          </ul>
+        </nav>
+        <label class="mobile-nav-toggle" (click)="onNavClick()"  [class.mobile-nav-toggle-active]="datavisible"  for="check">
+          <input class="mobile-toggle-nav" type="checkbox"id="check"/> 
+          <span></span>
+          <span></span>
+          <span></span>
+        </label>
+    </header>
+</div>
