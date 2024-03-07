@@ -86,8 +86,32 @@
     </div>
     <div class="main-body flex-start">
         <div class="body-content">
-            <div class="body-head">
-
+            <div class="body-head flex-center flex-space-between">
+                <div class="invoice-switcher flex-start gap3">
+                    <div class="invoice-btn flex-center" (click)="invoiceSwitcher('A')" [class.invoiceActive]="currentActiveInvoice == 'A'">
+                        <p>Invoice 1</p>
+                    </div>
+                    <div class="invoice-btn flex-center" (click)="invoiceSwitcher('B')" [class.invoiceActive]="currentActiveInvoice == 'B'">
+                        <p>Invoice 2</p>
+                    </div>
+                    <div class="invoice-btn flex-center" (click)="invoiceSwitcher('C')" [class.invoiceActive]="currentActiveInvoice == 'C'">
+                        <p>Invoice 3</p>
+                    </div>
+                </div>
+                <div class="invoice-total flex-end">
+                    <div class="save-btn flex-center">
+                        <p>Save</p>
+                    </div>
+                    <div class="total-amount flex-center flex-space-between">
+                        <h1>₹</h1>
+                        <h1>{{currentActiveInvoiceData?.totalAmount}}</h1>
+                    </div>
+                </div>
+            </div>
+            <div class="body-menu">
+                <div class="body-menu-container">
+                    
+                </div>
             </div>
         </div>
     </div>

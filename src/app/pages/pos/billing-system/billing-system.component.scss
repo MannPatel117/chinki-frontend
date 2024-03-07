@@ -1,19 +1,50 @@
-.text-wrap {
-    height: 40px;
-    width: 150px;
-    padding-inline: 20px;
-    gap: 10px;
-    border-radius: 5px;
-  }
+.invoice-switcher{
+    height: 100%;
+    width: 70%;
+    padding: 20px 10px 20px 40px;
+}
 
-  .text-wrap:hover {
+.invoice-btn{
+    height: 30px;
+    width: 140px;
+    background-color: #fdff7d;
     cursor: pointer;
-    background-color: #ece7e7;
-    a {
-      color: black;
-    }
-    .custom-svg {
-      --rect-fill: black;
-    }
-  }
-  
+}
+
+.invoice-btn p{
+    font-weight: 600;
+    font-size: 15px;
+}
+
+.invoiceActive{
+    background-color: #FAFF00;
+}
+
+.invoice-total{
+    height: 100%;
+    width: 30%;
+    padding: 20px 40px 20px 10px;
+}
+
+.save-btn{
+    height: 100%;
+    width: 50px;
+    background-color: #6BFF67;
+}
+
+.save-btn p{
+    font-weight: 600;
+    font-size: 15px;
+}
+
+.total-amount{
+    height: 100%;
+    width: 175px;
+    background-color: #FAFF00;
+    padding: 10px;
+}
+
+.total-amount h1{
+    font-size: 40px;
+    font-weight: 600;
+}

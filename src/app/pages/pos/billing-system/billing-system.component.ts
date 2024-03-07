@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { ApiService } from '../../../services/api.service';
 import { Router, RouterModule } from '@angular/router';
+import { StoreBillDataService } from '../../../services/store-bill-data.service';
 
 @Component({
   selector: 'app-billing-system',
@@ -12,12 +13,19 @@ import { Router, RouterModule } from '@angular/router';
 })
 export class BillingSystemComponent {
 
-  constructor(private fb: FormBuilder, private route: Router,private api: ApiService) {
+  currentActiveInvoice : string = 'A'
+  currentActiveInvoiceData : any;
+
+  constructor(private fb: FormBuilder,
+     private route: Router,
+     private api: ApiService,
+     private billData: StoreBillDataService) {
   
   }
   
   ngOnInit(){
     this.checkUserLoggedIn();
+    this.invoiceSwitcher('A');
   }
 
   checkUserLoggedIn(){
@@ -33,6 +41,24 @@ export class BillingSystemComponent {
     else{
         this.route.navigateByUrl('/login')
     }
+  }
+
+  invoiceSwitcher(invoiceNumer:string){
+    switch(invoiceNumer){
+      case 'A': 
+        this.currentActiveInvoice='A';
+        this.currentActiveInvoiceData = this.billData.getData('A');
+      break;
+      case 'B':
+        this.currentActiveInvoice='B';
+        this.currentActiveInvoiceData = this.billData.getData('B');
+      break;
+      case 'C':
+        this.currentActiveInvoice='C';
+        this.currentActiveInvoiceData = this.billData.getData('C');
+      break;
+    }
+    console.log(this.currentActiveInvoiceData)
   }
 
   logout(){
