@@ -22,15 +22,173 @@ $lightPrimary-color: #80BAFC;
     background: radial-gradient(circle, rgba(128,186,252,1) 0%, rgba(24,126,245,1) 50%, rgba(16,126,255,1) 100%);
 }
 
-.flex{
+.flex-center{
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
+.flex-col{
+    flex-direction: column;
+}
+
+.flex-start{
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.flex-space-between{
+    justify-content: space-between;
+}
+
+.gap1{
+    gap: 10px;
+}
+
+.gap1-5{
+    gap: 15px;
+}
+
+.gap2{
+    gap: 20px;
+}
+
+.gap2-5{
+    gap: 25px;
+}
+
+.gap3{
+    gap: 30px;
+}
+
 .sidebar{
     height: 100%;
     width: 20vw;
+    padding: 2.5vh 1.75vw 2.5vh 1.75vw;
+}
+
+.sidebar-head{
+    height: 15%;
+    width: 100%;
+}
+
+.sidebar-head img{
+    width: 85%;
+}
+
+.sidebar-body{
+    height: 85%;
+    width: 100%;
+}
+
+.sidebar-navigation{
+    height: fit-content;
+    width: 100%;
+}
+
+.sidebar-nav-option-wrap{
+    width: 100%;
+    height: 45px;
+    padding: 5px 5px 5px 30px;
+    border-radius: 5px;
+}
+
+.sidebar-nav-option-wrap svg{
+    height: 25px;
+    width: 15px;
+    --primary: white;
+    --secondary: #187EF5;
+}
+
+.sidebar-nav-option-wrap p{
+    font-weight: 500;
+    color: white;
+    font-size: 15px;
+}
+
+.sidebar-nav-option-wrap:hover{
+    background-color: white;
+    font-weight: 600;
+    cursor: pointer;
+    p{
+        color: #187EF5;
+    }
+    svg{
+        --primary: #187EF5;
+        --secondary: white;
+    }
+}
+
+.sidebar-active{
+    background-color: white;
+    font-weight: 600;
+    cursor: pointer;
+    p{
+        color: #187EF5;
+    }
+    svg{
+        --primary: #187EF5;
+        --secondary: white;
+    }
+}
+
+.sidebar-active:hover{
+    cursor: default;
+}
+
+.sidebar-options{
+    height: fit-content;
+    width: 100%;
+    padding-bottom: 15px;
+}
+
+.setting-btn-wrap{
+    width: 75%;
+}
+
+.setting-btn{
+    width: 100%;
+    height: 40px;
+    border: 1px white solid;
+    border-radius: 5%;
+}
+
+.setting-btn svg{
+    height: 22px;
+    width: 12px;
+}
+
+.setting-btn p{
+    color: white;
+    font-weight: 500;
+    font-size: 14px;
+}
+
+.logout-btn-wrap{
+    width: 75%;
+}
+
+.logout-btn{
+    width: 100%;
+    height: 40px;
+    background-color: white;
+    border-radius: 5%;
+}
+
+.logout-btn svg{
+    height: 22px;
+    width: 12px;
+}
+
+.logout-btn p{
+    color: #FF4D4D;
+    font-weight: 500;
+    font-size: 14px;
+}
+
+.setting-btn-wrap:hover, .logout-btn-wrap:hover{
+    cursor: pointer;
 }
 
 .main-body{
@@ -40,7 +198,12 @@ $lightPrimary-color: #80BAFC;
 
 .body-content{
     background-color: white;
-    height: 95%;
-    width: 96.5%;
+    height: 95vh;
+    width: 98.25%;
     border-radius: 20px;
+}
+
+.body-head{
+    height: 15%;
+    width: 100%;
 }

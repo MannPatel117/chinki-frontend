@@ -24,12 +24,15 @@ export class LoginComponent {
   }
 
   checkUserLoggedIn(){
-    this.api.getAdminUser().subscribe((res:any) =>{
-      if(res){
-        this.route.navigateByUrl('/pos/billing-system')
-      }
-    }, (error) =>{
-    })
+    const token= localStorage.getItem('token');
+    if(token){
+      this.api.getAdminUser().subscribe((res:any) =>{
+        if(res){
+          this.route.navigateByUrl('/pos/billing-system')
+        }
+      }, (error) =>{
+      })
+    }
   }
 
   // set formBuilder

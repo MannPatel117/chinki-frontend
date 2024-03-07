@@ -30,7 +30,12 @@ export class ApiService {
   }
 
   getAdminUser(){
+    console.log(this.header)
     return this.http.get(`${environment.apiUrl}/adminUser/getUser`, this.header)
   }
 
+  logout(){ 
+    console.log(this.header)
+    return this.http.post(`${environment.apiUrl}/adminUser/logout`, null, this.header)
+  }
 }
