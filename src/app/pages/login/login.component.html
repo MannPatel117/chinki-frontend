@@ -20,9 +20,9 @@
                                 </div>
                             </div>
                             <div class="space-y-1">
-                                <label for="password" class="block text-sm font-medium text-neutral-600"> Password</label>
+                                <label for="password" class="block text-sm font-medium text-neutral-600">Password</label>
                                 <div class="mt-1">
-                                    <input formControlName="password" type="password" autocomplete="current-password" placeholder="Your Password" class="block w-full px-4 py-3 text-base placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg text-neutral-600 bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300 ">
+                                    <input id="password" formControlName="password" type="password" autocomplete="current-password" placeholder="Your Password" class="block w-full px-4 py-3 text-base placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg text-neutral-600 bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300 ">
                                 </div>
                                 <div class="mt-1" *ngIf="loginForm.controls['password'].errors && (loginForm.controls['password'].dirty || loginForm.controls['password'].touched)">
                                     <small style="color: red;">Password should be 8 characters</small>

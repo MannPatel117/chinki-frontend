@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { environment } from '../../environments/environment';
 @Injectable({
   providedIn: 'root'
 })
+
 export class ApiService {
   httpHeaderOptions:any;
   userData:any;
@@ -16,8 +17,7 @@ export class ApiService {
 
   setToken(){
     let token: any;
-    token = localStorage.getItem('userLogin');
-    token = JSON.parse(token)
+    token = localStorage.getItem('token');
     if(token){
       this.header = {
         headers: new HttpHeaders().set('Authorization', `Bearer ${token}`)
@@ -28,4 +28,9 @@ export class ApiService {
   loginAdmin(data:any){
     return this.http.post(`${environment.apiUrl}/adminUser/login`, data)
   }
+
+  getAdminUser(){
+    return this.http.get(`${environment.apiUrl}/adminUser/getUser`, this.header)
+  }
+
 }
