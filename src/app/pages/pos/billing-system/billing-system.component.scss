@@ -1,0 +1,19 @@
+.text-wrap {
+    height: 40px;
+    width: 150px;
+    padding-inline: 20px;
+    gap: 10px;
+    border-radius: 5px;
+  }
+
+  .text-wrap:hover {
+    cursor: pointer;
+    background-color: #ece7e7;
+    a {
+      color: black;
+    }
+    .custom-svg {
+      --rect-fill: black;
+    }
+  }
+  

@@ -4,6 +4,7 @@ import { FormBuilder, FormGroup, Validators , ReactiveFormsModule} from '@angula
 import { Router } from '@angular/router';
 import { HttpClientModule } from '@angular/common/http';
 import { ApiService } from '../../services/api.service';
+import { ToastrService } from 'ngx-toastr';
 @Component({
   selector: 'app-login',
   standalone: true,
@@ -14,7 +15,7 @@ import { ApiService } from '../../services/api.service';
 export class LoginComponent {
   loginForm!: FormGroup;
 
-  constructor(private fb: FormBuilder, private route: Router,private api: ApiService) {
+  constructor(private fb: FormBuilder, private route: Router,private api: ApiService, private toastr: ToastrService) {
   
   }
 
@@ -24,12 +25,15 @@ export class LoginComponent {
   }
 
   checkUserLoggedIn(){
-    this.api.getAdminUser().subscribe((res:any) =>{
-      if(res){
-        this.route.navigateByUrl('/pos/billing-system')
-      }
-    }, (error) =>{
-    })
+    const token= localStorage.getItem('token');
+    if(token){
+      this.api.getAdminUser().subscribe((res:any) =>{
+        if(res){
+          this.route.navigateByUrl('/pos/billing-system')
+        }
+      }, (error) =>{
+      })
+    }
   }
 
   // set formBuilder
@@ -43,10 +47,14 @@ export class LoginComponent {
 
   submit(){
     this.api.loginAdmin(this.loginForm.value).subscribe((res:any)=>{
-      localStorage.setItem('location', res.data.location)
-      localStorage.setItem('token', res.data.accessToken);
-      this.api.setToken();
-      this.route.navigateByUrl('/pos/billing-system')
+      if(res){
+        localStorage.setItem('location', res.data.location)
+        localStorage.setItem('token', res.data.accessToken);
+        this.api.setToken();
+        this.route.navigateByUrl('/pos/billing-system')
+      }
+    }, (error)=>{
+        this.toastr.error('Invalid Credentials')
     })
   }
 }
