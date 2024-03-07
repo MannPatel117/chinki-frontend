@@ -1,6 +1,6 @@
 import { Routes } from '@angular/router';
 import { HomeComponent } from './pages/home/home.component';
-import { PosLoginComponent } from './pages/pos/pos-login/pos-login.component';
+import { LoginComponent } from './pages/login/login.component';
 
 
 export const routes: Routes = [
@@ -8,6 +8,10 @@ export const routes: Routes = [
         path: '', component: HomeComponent
     },
     {
-        path: 'pos/login', component: PosLoginComponent
+        path: 'login', component: LoginComponent
+    },
+    {
+        path: 'pos',
+        loadChildren:()=> import('./pages/pos/pos.module').then((m) => m.PosModule)
     }
 ];

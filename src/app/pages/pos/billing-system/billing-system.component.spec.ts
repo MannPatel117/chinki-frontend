@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { PosLoginComponent } from './pos-login.component';
+import { BillingSystemComponent } from './billing-system.component';
 
-describe('PosLoginComponent', () => {
-  let component: PosLoginComponent;
-  let fixture: ComponentFixture<PosLoginComponent>;
+describe('BillingSystemComponent', () => {
+  let component: BillingSystemComponent;
+  let fixture: ComponentFixture<BillingSystemComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [PosLoginComponent]
+      imports: [BillingSystemComponent]
     })
     .compileComponents();
     
-    fixture = TestBed.createComponent(PosLoginComponent);
+    fixture = TestBed.createComponent(BillingSystemComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
