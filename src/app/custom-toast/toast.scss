@@ -1,0 +1,33 @@
+:host {
+    background-color: #FFFFFF;
+    position: relative;
+    overflow: hidden;
+    padding: 10px 30px 10px 30px !important;
+    width: 350px !important;
+    height: 60px !important;
+    border-radius: 3px 3px 3px 3px;
+    color: #111111 !important;
+    pointer-events: all;
+    cursor: pointer;
+    white-space: nowrap;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+  }
+
+  .titleClass{
+    width: fit-content !important;
+  }
+  
+  img{
+    width: 25px;
+    height: 25px;
+  }
+
+  .height{
+    height: 100%;
+  }
+
+  .ngx-toastr{
+    
+  }

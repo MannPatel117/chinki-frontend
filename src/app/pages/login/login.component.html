@@ -1,3 +1,12 @@
+<div class="loader flex-col gap1-5" *ngIf="loading">
+    <div class="cube-loader">
+        <div class="cube cube1"></div>
+        <div class="cube cube2"></div>
+        <div class="cube cube3"></div>
+        <div class="cube cube4"></div>
+    </div>
+    <h3>Loading</h3>
+</div>
 <section>
     <h1 class="logo-main">Chinki POS</h1>
     <div class="flex min-h-screen overflow-hidden">
@@ -29,7 +38,7 @@
                                 </div>
                             </div>
                             <div>
-                                <button type="submit" (click)="submit()" class="flex items-center justify-center w-full px-10 py-3 text-base font-medium text-center text-white transition duration-500 ease-in-out transform bg-blue-500 rounded-xl hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">Sign in</button>
+                                <button type="submit" (click)="submit()" (keydown.enter)="submit()" [class.disabled]="loginForm.invalid" class="flex items-center justify-center w-full px-10 py-3 text-base font-medium text-center text-white transition duration-500 ease-in-out transform bg-blue-500 rounded-xl hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">Sign in</button>
                             </div>
                         </form>
                     </div>

@@ -9,6 +9,7 @@
     width: 140px;
     background-color: #fdff7d;
     cursor: pointer;
+    user-select: none;
 }
 
 .invoice-btn p{
@@ -18,6 +19,7 @@
 
 .invoiceActive{
     background-color: #FAFF00;
+    border: 1px solid black;
 }
 
 .invoice-total{
@@ -27,9 +29,16 @@
 }
 
 .save-btn{
+    user-select: none;
     height: 100%;
     width: 50px;
     background-color: #6BFF67;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+}
+
+.save-btn:hover{
+    cursor: pointer;
+    box-shadow: rgb(204, 219, 232) 3px 3px 6px 0px inset, rgba(255, 255, 255, 0.5) -3px -3px 6px 1px inset;
 }
 
 .save-btn p{
@@ -42,9 +51,85 @@
     width: 175px;
     background-color: #FAFF00;
     padding: 10px;
+    overflow: hidden;
 }
 
 .total-amount h1{
     font-size: 40px;
     font-weight: 600;
+}
+
+.check-users, .add-users, .check-offers, .delete-bill{
+    background-color: #E28EFF;
+    cursor: pointer;
+    color: white;
+    width: 40%;
+    height: 90%;
+    font-weight: 600;
+    font-size: 15px;
+    padding: 0px 5px 0px 5px;
+    box-shadow: rgba(0, 0, 0, 0.4) 0px 2px 4px, rgba(0, 0, 0, 0.3) 0px 7px 13px -3px, rgba(0, 0, 0, 0.2) 0px -3px 0px inset;
+}
+
+.delete-bill{
+    background-color: #FF4D4D;
+}
+
+.check-users{
+    background-color: #ffc107;
+}
+
+.add-users{
+    background-color: #077fff;
+    width: 60%;
+}
+
+.check-users:hover, .add-users:hover, .check-offers:hover , .delete-bill:hover{
+    box-shadow: rgba(50, 50, 93, 0.25) 0px 30px 60px -12px inset, rgba(0, 0, 0, 0.3) 0px 18px 36px -18px inset;
+}
+
+.form-check{
+    height: 100% !important;
+    display: flex;
+    min-height: inherit;
+}
+
+.form-check-label{
+    font-size: 15px !important;
+}
+
+.form-check-input{
+    height: 15px;
+    width: 15px;
+    margin-top: 0px;
+    margin-left: -20px;
+}
+
+@media only screen and (max-width: 1250px) {
+    .invoice-btn{
+        height: 20px;
+        width: 100px;
+    }    
+    .invoice-btn p{
+        font-weight: 600;
+        font-size: 12px;
+    }   
+    .invoice-total{
+        height: 100%;
+        width: 30%;
+        padding: 20px 40px 20px 10px;
+    }  
+    .save-btn p{
+        font-size: 12px;
+    }
+    .check-users, .add-users, .check-offers, .delete-bill{
+        font-size: 10px;
+    }
+    .form-check-label{
+        font-size: 10px !important;
+    }
+    .form-check-input{
+        height: 10px !important;
+        width: 10px !important;
+    }
 }

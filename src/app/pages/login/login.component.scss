@@ -11,3 +11,16 @@ section{
     height: 100vh;
     width: 100vw;
 }
+
+.disabled{
+    cursor: not-allowed;
+    opacity: 0.75;
+}
+
+.cube{
+    background-color: white !important;
+}
+
+.loader h3{
+    color: white !important;
+}

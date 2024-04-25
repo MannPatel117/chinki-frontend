@@ -1,3 +1,13 @@
+<div class="loader flex-col gap1-5" *ngIf="loading">
+    <div class="cube-loader">
+        <div class="cube cube1"></div>
+        <div class="cube cube2"></div>
+        <div class="cube cube3"></div>
+        <div class="cube cube4"></div>
+    </div>
+    <h3>Loading</h3>
+</div>
+
 <div class="body flex-center">
     <div class="sidebar">
         <div class="sidebar-head flex-center">
@@ -109,9 +119,182 @@
                 </div>
             </div>
             <div class="body-menu">
-                <div class="body-menu-container">
-                    
+                <form style="height: 100%; width: 100%;" [formGroup]="userForm">
+                    <div class="body-menu-container flex-center gap1">
+                        <div class="col-wrap flex-center flex-col gap1">
+                            <div class="row-wrap flex-center gap1">
+                                <label class="flex-center flex-start" for="invoiceNumber">Invoice No.</label>
+                                <input formControlName="invoiceNumber" id="invoiceNumber" readonly>
+                            </div>
+                            <div class="row-wrap flex-center gap1">
+                                <div class="flex-center check-users" (click)="openModal('getUserModal')">Search User</div>
+                                <div class="flex-center add-users" (click)="openModal('addUserModal')">Add User</div>
+                            </div>
+                            <div class="row-wrap flex-center gap1">
+                                <label class="flex-center flex-start" for="barcode">Barcode</label>
+                                <input id="barcode">
+                            </div>
+                        </div>
+                        <div class="col-wrap flex-center flex-col gap1">
+                            <div class="row-wrap flex-center gap1">
+                                <label class="flex-center flex-start" for="userName">Name</label>
+                                <input id="userName" formControlName="name" readonly>
+                            </div>
+                            <div class="row-wrap flex-center gap1">
+                                <label class="flex-center flex-start" for="phnNumber">Mobile No.</label>
+                                <input id="phnNumber" formControlName="phnNumber" readonly>
+                            </div>
+                            <div class="row-wrap flex-center gap1">
+                                <label class="flex-center flex-start" for="address">Address</label>
+                                <input id="address" formControlName="address" readonly>
+                            </div>
+                        </div>
+                        <div class="col-wrap flex-center flex-col gap1">
+                            <div class="row-wrap flex-center gap1">
+                                <label class="flex-center flex-start" for="rewardPoints">Reward Points</label>
+                                <input id="rewardPoints" formControlName="rewardPoints" readonly>
+                            </div>
+                            <div class="row-wrap flex-center gap1">
+                                <div class="flex-center check-offers" (click)="openModal('dataModal')">Check offers</div>
+                                <div style="height: 100%; width: 60%;" class="flex-center">
+                                    <select
+                                    name="customer-type"
+                                    id="customer-type"
+                                    class="select-input"
+                                    formControlName="customerType" 
+                                >
+                                    <option value="">Customer Type</option>
+                                    <option value="New Customer">New Customer</option>
+                                    <option value="Existing Customer">Existing Customer</option>
+                                </select>
+                                </div>
+                            </div>
+                            <div class="row-wrapp flex-center gap1">
+                                <div class="flex-center delete-bill">Delete bill</div>
+                                <div style="height: 100%; width: 60%;" class="flex-center gap2">
+                                    <div style="margin-bottom: 0;" class="form-check flex-center gap1-5">
+                                        <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1">
+                                        <label class="form-check-label" for="flexRadioDefault1">
+                                        Cash
+                                        </label>
+                                    </div>
+                                    <div style="margin-bottom: 0;" class="form-check flex-center gap1-5">
+                                        <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2" checked>
+                                        <label class="form-check-label" for="flexRadioDefault2">
+                                        UPI
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="body-table"> 
+                <table class="table table-striped table-bordered table-primary chinki-table">
+                    <thead>
+                        <tr>
+                            <th scope="col">   </th>
+                            <th scope="col">Item Name</th>
+                            <th scope="col">Quantity</th>
+                            <th scope="col">MRP</th>
+                            <th scope="col">Discount %</th>
+                            <th scope="col">Rate</th>
+                            <th scope="col">Amount</th>
+                            <th scope="col">GST %</th>
+                            <th scope="col">GST Amount</th>
+                            <th scope="col">Final Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (billDataRow of currentBillTableData; track billDataRow; let i = $index) {
+                            @if(i % 2 == 0 ){
+                                <tr class="chinki-table-even">
+                                    @for (billData of billDataRow; track billData;){
+                                        <td>{{billData}}</td>
+                                    }
+                                </tr>
+                            }
+                            @else{
+                                <tr class="chinki-table-odd">
+                                    @for (billData of billDataRow; track billData;){
+                                        <td>{{billData}}</td>
+                                    }
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="getUserModal" tabindex="-1" aria-labelledby="getUserModal" aria-hidden="true">
+    <div class="modal-dialog dialog700 modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header d-flex align-items-center flex-space-between">
+                <h1>Get User Details</h1>
+                <img src="../../../../assets/img/icons/cross.svg" (click)="closeModal('getUserModal')" class="cross-btn" height="15px" width="15px" alt="">
+            </div>
+            <div class="modal-body">
+                <label for="userName" class="block text-sm font-medium text-neutral-600">Enter phone number
+                </label>
+                <div class="mt-1">
+                    <input id="phnNumber" [formControl]="phnNumber" placeholder="Phone Number" class="block w-full px-4 py-3 text-base placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg text-neutral-600 bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300 ">
                 </div>
+                <div class="mt-1" *ngIf="phnNumber.errors && (phnNumber.dirty || phnNumber.touched)">
+                    <small style="color: red;">Phonenumber is invalid</small>
+                </div>
+            </div>
+            <div class="modal-footer d-flex flex-end">
+                <div class="btn btn-primary primary-button" [class.disabled]="phnNumber.invalid" (click)="searchUser()">
+                    Search
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="addUserModal" tabindex="-1" aria-labelledby="addUserModal" aria-hidden="true">
+    <div class="modal-dialog dialog700 modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header d-flex align-items-center flex-space-between">
+                <h1>Add User</h1>
+                <img src="../../../../assets/img/icons/cross.svg" (click)="closeModal('addUserModal')" class="cross-btn" height="15px" width="15px" alt="">
+            </div>
+            <div class="modal-body">
+                <label for="userName" class="block text-sm font-medium text-neutral-600">Enter phone number
+                </label>
+                <div class="mt-1">
+                    <input id="phnNumber" [formControl]="phnNumber" placeholder="Phone Number" class="block w-full px-4 py-3 text-base placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg text-neutral-600 bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300 ">
+                </div>
+                <div class="mt-1" *ngIf="phnNumber.errors && (phnNumber.dirty || phnNumber.touched)">
+                    <small style="color: red;">Phonenumber is invalid</small>
+                </div>
+            </div>
+            <div class="modal-footer d-flex flex-end">
+                <div class="btn btn-primary primary-button" [class.disabled]="phnNumber.invalid" (click)="searchUser()">
+                    Search
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="dataModal" tabindex="-1" aria-labelledby="dataModal" aria-hidden="true">
+    <div class="modal-dialog dialog700 modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <h1>Mukul</h1>
+            <div class="modal-header d-flex align-items-center">
+                <h1>Preet</h1>
+            </div>
+            <div class="modal-body table-responsive-custom">
+                <h1>Mann</h1>
+            </div>
+            <div class="modal-footer d-flex justify-content-center align-items-center">
+                <h1>Ronit</h1>
             </div>
         </div>
     </div>

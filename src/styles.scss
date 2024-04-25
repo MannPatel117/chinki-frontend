@@ -7,6 +7,8 @@
 
 $primary-color: #187EF5;
 $lightPrimary-color: #80BAFC;
+$label-color:#B6D7FF;
+$input-color:#fdff7d;
 
 *{
     margin: 0;
@@ -108,6 +110,7 @@ $lightPrimary-color: #80BAFC;
 }
 
 .sidebar-nav-option-wrap p{
+    user-select: none;
     font-weight: 500;
     color: white;
     font-size: 15px;
@@ -197,6 +200,96 @@ $lightPrimary-color: #80BAFC;
     cursor: pointer;
 }
 
+.loader{
+    height: 100vh;
+    width: 100vw;
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+    background: linear-gradient(rgba(255, 255, 255, 0.25), rgba(255, 255, 255, 0.25));
+    background-size: cover;
+    backdrop-filter: blur(1px);
+}
+
+.loader h3{
+    color: $lightPrimary-color;
+    font-weight: 500;
+    font-size: 20px;
+}
+
+.cube-loader {
+    position: relative;
+    width: 60px;
+    height: 60px;
+  }
+  
+  .cube {
+    position: absolute;
+    width: 50%;
+    height: 50%;
+    background-color: $lightPrimary-color;
+    animation: foldCube 2.4s infinite linear;
+  }
+  
+  /* Individual cube positioning */
+  .cube1 {
+    top: 0;
+    left: 0;
+    transform-origin: 100% 100%;
+  }
+  .cube2 {
+    top: 0;
+    right: 0;
+    transform-origin: 0 100%;
+  }
+  .cube3 {
+    bottom: 0;
+    right: 0;
+    transform-origin: 0 0;
+  }
+  .cube4 {
+    bottom: 0;
+    left: 0;
+    transform-origin: 100% 0;
+  }
+  
+  /* Keyframes for the folding animation */
+  @keyframes foldCube {
+    0%,
+    10% {
+      transform: perspective(140px) rotateX(-180deg);
+      opacity: 0;
+    }
+    25%,
+    75% {
+      transform: perspective(140px) rotateX(0deg);
+      opacity: 1;
+    }
+    90%,
+    100% {
+      transform: perspective(140px) rotateY(180deg);
+      opacity: 0;
+    }
+  }
+  
+  /* Animation delay for each cube */
+  .cube1 {
+    animation-delay: 0.3s;
+  }
+  .cube2 {
+    animation-delay: 0.6s;
+  }
+  .cube3 {
+    animation-delay: 0.9s;
+  }
+  .cube4 {
+    animation-delay: 1.2s;
+  }
+  
 .main-body{
     height: 100vh;
     width: 80vw;
@@ -220,8 +313,163 @@ $lightPrimary-color: #80BAFC;
     padding: 5px 40px 5px 40px;
 }
 
+.body-table{
+    height: 65%;
+    width: 100%;
+    padding: 5px 40px 10px 40px;
+}
+
 .body-menu-container{
     height: 100%;
     width: 100%;
     box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+    padding: 10px;
 }
+
+.col-wrap{
+    height: 100%;
+    width: 100%;
+}
+
+.row-wrap{
+    height: 100%;
+    width: 100%;
+}
+
+.row-wrapp{
+    height: 100%;
+    width: 100%;
+}
+
+.row-wrap label{
+    background-color: $label-color;
+    width: 40%;
+    height: 90%;
+    font-weight: 600;
+    font-size: 15px;
+    padding: 0px 5px 0px 5px
+}
+
+.row-wrap input, .input-field{
+    height: 90%;
+    width: 60% !important;
+    background-color: $input-color;
+    font-weight: 500;
+    font-size: 13px;
+    padding: 1px 5px 1px 5px
+}
+
+.select-input{
+    height: 100%;
+    width: 100%;
+    background-color: $input-color;
+    font-weight: 800;
+    font-size: 13px;
+    padding: 0px 5px 0px 5px
+}
+
+.select-input option{
+    background-color: white;
+    height: 40px;
+}
+
+.chinki-table{
+    border-bottom-color: white;
+    border-left-color: white;
+    border-top-color: white;
+    border-right-color: white;
+}
+
+.chinki-table th{
+    font-size: 12px;
+    color: white;
+    background-color: #187EF5;
+    font-weight: 500;
+    height: 30px;
+    padding: 0px 8px 0px 8px;
+    vertical-align: middle;
+}
+
+.chinki-table tr{
+    height: 30px;
+    font-size: 10px;
+}
+
+.chinki-table-even td{
+    background-color: #1b242d !important;
+}
+
+.chinki-table-odd td{
+    background-color: #CDE7FF !important;
+}
+
+.cross-btn{
+    cursor: pointer;
+}
+
+.modal-content{
+    padding: 20px;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px !important;
+    border-radius: 0px !important;
+}
+
+.modal-header, .modal-footer{
+    border: none !important;
+}
+
+.modal-header > h1{
+    font-size: 18px;
+    font-weight: 500;
+}
+
+.modal-body > label{
+    font-weight: 400;
+}
+
+.primary-button{
+    padding: 5px 25px 5px 25px !important;
+}
+
+@media only screen and (max-width: 1250px) {
+    .sidebar-nav-option-wrap{
+        height: 30px;
+        border-radius: 4px;
+    }
+    .sidebar-nav-option-wrap svg{
+        height: 16px;
+        width: 10px;
+    }
+    .sidebar-nav-option-wrap p{
+        font-size: 12px;
+    }
+    .setting-btn{
+        height: 30px;
+    }
+    .setting-btn svg{
+        height: 18px;
+    }
+    .setting-btn p{
+        font-size: 11px;
+    }
+    .logout-btn{
+        height: 30px;
+    }
+    .logout-btn svg{
+        height: 18px;
+    }
+    .logout-btn p{
+        font-size: 11px;
+    }
+    .row-wrap label{
+        font-size: 10px;
+    }
+    
+    .row-wrap input{
+        font-size: 12px;
+    }
+    .select-input{
+        font-size: 8px;
+    }
+}
+
+
