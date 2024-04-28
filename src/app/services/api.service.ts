@@ -48,4 +48,8 @@ export class ApiService {
     .set('phone_Number', data)
     return this.http.get(`${environment.apiUrl}/users/getUserbyNumber`, {params:params, headers: this.header.headers})
   }
+
+  addUser(data:any){
+    return this.http.post(`${environment.apiUrl}/users/addUser`, data, this.header)
+  }
 }

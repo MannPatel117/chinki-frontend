@@ -1,3 +1,7 @@
+.margin-top{
+    margin-top: 5px;
+}
+
 .invoice-switcher{
     height: 100%;
     width: 70%;
@@ -103,6 +107,10 @@
     width: 15px;
     margin-top: 0px;
     margin-left: -20px;
+}
+
+.form-row{
+    width: 100%;
 }
 
 @media only screen and (max-width: 1250px) {

@@ -264,18 +264,76 @@
                 <img src="../../../../assets/img/icons/cross.svg" (click)="closeModal('addUserModal')" class="cross-btn" height="15px" width="15px" alt="">
             </div>
             <div class="modal-body">
-                <label for="userName" class="block text-sm font-medium text-neutral-600">Enter phone number
-                </label>
-                <div class="mt-1">
-                    <input id="phnNumber" [formControl]="phnNumber" placeholder="Phone Number" class="block w-full px-4 py-3 text-base placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg text-neutral-600 bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300 ">
-                </div>
-                <div class="mt-1" *ngIf="phnNumber.errors && (phnNumber.dirty || phnNumber.touched)">
-                    <small style="color: red;">Phonenumber is invalid</small>
-                </div>
+                <form [formGroup]="addUserForm">
+                    <label for="phnNumber" class="block text-sm font-medium text-neutral-600">Enter phone number
+                    </label>
+                    <div class="mt-1">
+                        <input id="phnNumber" formControlName="phnNumber" placeholder="Phone Number" class="block w-full px-4 py-3 text-base placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg text-neutral-600 bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300 ">
+                    </div>
+                    <div class="mt-1" *ngIf="addUserForm.controls['phnNumber'].errors && (addUserForm.controls['phnNumber'].dirty || addUserForm.controls['phnNumber'].touched)">
+                        <small style="color: red;">Phonenumber is invalid</small>
+                    </div>
+                    <label for="Name" class="block text-sm font-medium text-neutral-600 margin-top">Enter Name
+                    </label>
+                    <div class="mt-1">
+                        <input id="Name" formControlName="name" placeholder="Name" class="block w-full px-4 py-3 text-base placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg text-neutral-600 bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300 ">
+                    </div>
+                    <div class="form-row flex-center gap1-5 margin-top">
+                        <div class="form-wrap">
+                            <label for="AddressLine1" class="block text-sm font-medium text-neutral-600">Enter Address Line 1
+                            </label>
+                            <div class="mt-1">
+                                <input id="AddressLine1" formControlName="addressL1" placeholder="Address Line 1" class="block w-full px-4 py-3 text-base placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg text-neutral-600 bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300 ">
+                            </div>
+                        </div>
+                        <div class="form-wrap">
+                            <label for="AddressLine2" class="block text-sm font-medium text-neutral-600">Enter Address Line 2
+                            </label>
+                            <div class="mt-1">
+                                <input id="AddressLine2" formControlName="addressL2" placeholder="Address Line 2" class="block w-full px-4 py-3 text-base placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg text-neutral-600 bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300 ">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-row flex-center gap1-5 margin-top">
+                        <div class="form-wrap">
+                            <label for="AddressLine3" class="block text-sm font-medium text-neutral-600">Enter Address Line 3
+                            </label>
+                            <div class="mt-1">
+                                <input id="AddressLine3" formControlName="addressL3" placeholder="Address Line 3" class="block w-full px-4 py-3 text-base placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg text-neutral-600 bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300 ">
+                            </div>
+                        </div>
+                        <div class="form-wrap">
+                            <label for="city" class="block text-sm font-medium text-neutral-600">Enter City
+                            </label>
+                            <div class="mt-1">
+                                <input id="city" formControlName="city" placeholder="City" class="block w-full px-4 py-3 text-base placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg text-neutral-600 bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300 ">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-row flex-center gap1-5 margin-top">
+                        <div class="form-wrap">
+                            <label for="state" class="block text-sm font-medium text-neutral-600">Enter State
+                            </label>
+                            <div class="mt-1">
+                                <input id="state" formControlName="state" placeholder="State" class="block w-full px-4 py-3 text-base placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg text-neutral-600 bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300 ">
+                            </div>
+                        </div>
+                        <div class="form-wrap">
+                            <label for="pincode" class="block text-sm font-medium text-neutral-600">Enter Pincode
+                            </label>
+                            <div class="mt-1">
+                                <input id="pincode" formControlName="pincode" placeholder="pincode" class="block w-full px-4 py-3 text-base placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg text-neutral-600 bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300 ">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    
+                </form>
+                
             </div>
             <div class="modal-footer d-flex flex-end">
-                <div class="btn btn-primary primary-button" [class.disabled]="phnNumber.invalid" (click)="searchUser()">
-                    Search
+                <div class="btn btn-success primary-button" [class.disabled]="addUserForm.invalid" (click)="addUser()">
+                    Add User
                 </div>
             </div>
         </div>

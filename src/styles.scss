@@ -210,13 +210,13 @@ $input-color:#fdff7d;
     justify-content: center;
     align-items: center;
     z-index: 999;
-    background: linear-gradient(rgba(255, 255, 255, 0.25), rgba(255, 255, 255, 0.25));
+    background: linear-gradient(rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.45));
     background-size: cover;
     backdrop-filter: blur(1px);
 }
 
 .loader h3{
-    color: $lightPrimary-color;
+    color: white;
     font-weight: 500;
     font-size: 20px;
 }
@@ -231,7 +231,7 @@ $input-color:#fdff7d;
     position: absolute;
     width: 50%;
     height: 50%;
-    background-color: $lightPrimary-color;
+    background-color: white;
     animation: foldCube 2.4s infinite linear;
   }
   
