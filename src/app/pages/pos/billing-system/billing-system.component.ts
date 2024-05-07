@@ -18,7 +18,28 @@ declare const $:any;
 export class BillingSystemComponent {
   loading = false;
   currentActiveInvoice : string = 'A'
-  currentActiveInvoiceData : any;
+  currentActiveInvoiceData = {
+    "totalAmount": 4,
+    "UserName": "",
+    "UserPhnNumber": "",
+    "UserAddress": "",
+    "RewardPoints": "",
+    "CustomerType": "",
+    "PaymentType": "",
+    "BillDetails": [
+      {
+        "itemName": "",
+        "quantity": 0,
+        "mrp": 0,
+        "discount": 0,
+        "rate": 0,
+        "amount": 0,
+        "gst": 0,
+        "gstAmount": 0,
+        "finalAmount":0
+      }
+    ]
+  }
   currentBillTableData: any[][] = [];
   current_invoiceNumber: any;
   current_billNumber: any;
@@ -37,9 +58,9 @@ export class BillingSystemComponent {
   ngOnInit(){
     this.loading = true;
     this.checkUserLoggedIn();
+    this.setFormBuilder();
     this.invoiceSwitcher('A');
     this.initializeEmptyTable();
-    this.setFormBuilder();
   }
 
   checkUserLoggedIn(){
@@ -69,6 +90,14 @@ export class BillingSystemComponent {
     })
   }
 
+  setData(data:any){
+    this.userForm.get('phnNumber')?.setValue(this.currentActiveInvoiceData.UserPhnNumber)
+    this.userForm.get('name')?.setValue(this.currentActiveInvoiceData.UserName)
+    this.userForm.get('address')?.setValue(this.currentActiveInvoiceData.UserAddress)
+    this.userForm.get('rewardPoints')?.setValue(this.currentActiveInvoiceData.RewardPoints)
+    this.userForm.get('customerType')?.setValue(this.currentActiveInvoiceData.CustomerType);
+  }
+
   searchUser(){
     if(this.phnNumber.valid){
       let data = this.phnNumber.value;
@@ -77,10 +106,15 @@ export class BillingSystemComponent {
       if(res.data.length !=0){
         const data = res.data[0]
         this.userForm.get('phnNumber')?.setValue(data.phone_Number)
+        this.currentActiveInvoiceData.UserPhnNumber = data.phone_Number;
         this.userForm.get('name')?.setValue(data.name)
+        this.currentActiveInvoiceData.UserName = data.name;
         this.userForm.get('address')?.setValue(data.address.addressLine2)
+        this.currentActiveInvoiceData.UserAddress = data.address.addressLine2;
         this.userForm.get('rewardPoints')?.setValue(data.rewardPoint)
-        this.userForm.get('customerType')?.setValue("Existing Customer")
+        this.currentActiveInvoiceData.RewardPoints = data.rewardPoint;
+        this.userForm.get('customerType')?.setValue("Existing Customer");
+        this.currentActiveInvoiceData.CustomerType = "Existing Customer";
         this.closeModal('getUserModal');
         this.toastr.show('success','User found',{ 
         toastComponent: CustomToast,
@@ -125,15 +159,21 @@ export class BillingSystemComponent {
         if(res){
           const data = res.data;
           this.userForm.get('phnNumber')?.setValue(data.phone_Number)
+          this.currentActiveInvoiceData.UserPhnNumber = data.phone_Number;
           this.userForm.get('name')?.setValue(data.name)
+          this.currentActiveInvoiceData.UserName = data.name;
           if(data.address){
             this.userForm.get('address')?.setValue(data.address.addressLine2)
+            this.currentActiveInvoiceData.UserAddress = data.address.addressLine2;
           }
           else{
             this.userForm.get('address')?.setValue('')
-          }
+            this.currentActiveInvoiceData.UserAddress = '';
+          }  
           this.userForm.get('rewardPoints')?.setValue(data.rewardPoint)
+          this.currentActiveInvoiceData.RewardPoints = data.rewardPoint;
           this.userForm.get('customerType')?.setValue("New Customer")
+          this.currentActiveInvoiceData.CustomerType = "New Customer";
           this.closeModal('addUserModal');
           this.toastr.show('success','User created',{ 
           toastComponent: CustomToast,
@@ -153,6 +193,7 @@ export class BillingSystemComponent {
   }
 
   invoiceSwitcher(invoiceNumer:string){
+    this.billData.storeData(this.currentActiveInvoice, this.currentActiveInvoiceData)
     switch(invoiceNumer){
       case 'A': 
         this.currentActiveInvoice='A';
@@ -167,7 +208,7 @@ export class BillingSystemComponent {
         this.currentActiveInvoiceData = this.billData.getData('C');
       break;
     }
-    console.log(this.currentActiveInvoiceData)
+    this.setData(this.currentActiveInvoiceData)
   }
 
   setFormBuilder(){

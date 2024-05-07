@@ -6,8 +6,6 @@ import { Injectable } from '@angular/core';
 export class StoreBillDataService {
   invoiceData1 = {
     "totalAmount": 4,
-    "invoiceNo": "",
-    "AccountName": "",
     "UserName": "",
     "UserPhnNumber": "",
     "UserAddress": "",
@@ -31,8 +29,6 @@ export class StoreBillDataService {
 
   invoiceData2 = {
     "totalAmount": 5,
-    "invoiceNo": "",
-    "AccountName": "",
     "UserName": "",
     "UserPhnNumber": "",
     "UserAddress": "",
@@ -56,8 +52,6 @@ export class StoreBillDataService {
 
   invoiceData3 = {
     "totalAmount": 6,
-    "invoiceNo": "",
-    "AccountName": "",
     "UserName": "",
     "UserPhnNumber": "",
     "UserAddress": "",
@@ -83,16 +77,16 @@ export class StoreBillDataService {
 
   }
 
-  setAmount(currentActive:string, data:number){
+  storeData(currentActive:string, data:any){
     switch(currentActive){
       case 'A': 
-        this.invoiceData1.totalAmount=data;
+        this.invoiceData1=data;
       break;
       case 'B':
-        this.invoiceData2.totalAmount=data;
+        this.invoiceData2=data;
       break;
       case 'C':
-        this.invoiceData3.totalAmount=data;
+        this.invoiceData3=data;
       break;
     }
   }
