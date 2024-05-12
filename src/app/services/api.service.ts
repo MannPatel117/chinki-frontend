@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpHeaders, HttpParams } from '@angular/common/http';
 import { environment } from '../../environments/environment';
 @Injectable({
   providedIn: 'root'
@@ -30,12 +30,35 @@ export class ApiService {
   }
 
   getAdminUser(){
-    console.log(this.header)
     return this.http.get(`${environment.apiUrl}/adminUser/getUser`, this.header)
   }
 
   logout(){ 
-    console.log(this.header)
     return this.http.post(`${environment.apiUrl}/adminUser/logout`, null, this.header)
   }
+
+  getInventory(data:any){
+    let params = new HttpParams()
+    .set('location', data)
+    return this.http.get(`${environment.apiUrl}/inventory/getInventorybyLocation`, {params:params, headers: this.header.headers})
+  }
+
+  getAllProducts(){
+    return this.http.get(`${environment.apiUrl}/products/getAllActiveProducts`, this.header)
+  }
+  
+  getUserDetail(data:any){
+    let params = new HttpParams()
+    .set('phone_Number', data)
+    return this.http.get(`${environment.apiUrl}/users/getUserbyNumber`, {params:params, headers: this.header.headers})
+  }
+
+  addUser(data:any){
+    return this.http.post(`${environment.apiUrl}/users/addUser`, data, this.header)
+  }
+
+  getAllOffers(){
+    return this.http.get(`${environment.apiUrl}/offers/getAllActiveOffers`, this.header)
+  }
+
 }

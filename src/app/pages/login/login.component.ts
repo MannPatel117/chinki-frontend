@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { HttpClientModule } from '@angular/common/http';
 import { ApiService } from '../../services/api.service';
 import { ToastrService } from 'ngx-toastr';
+import { CustomToast } from '../../custom-toast/toast';
 @Component({
   selector: 'app-login',
   standalone: true,
@@ -14,7 +15,7 @@ import { ToastrService } from 'ngx-toastr';
 })
 export class LoginComponent {
   loginForm!: FormGroup;
-
+  loading = false;
   constructor(private fb: FormBuilder, private route: Router,private api: ApiService, private toastr: ToastrService) {
   
   }
@@ -46,15 +47,33 @@ export class LoginComponent {
   }
 
   submit(){
-    this.api.loginAdmin(this.loginForm.value).subscribe((res:any)=>{
-      if(res){
-        localStorage.setItem('location', res.data.location)
-        localStorage.setItem('token', res.data.accessToken);
-        this.api.setToken();
-        this.route.navigateByUrl('/pos/billing-system')
-      }
-    }, (error)=>{
-        this.toastr.error('Invalid Credentials')
-    })
+    if(this.loginForm.invalid){
+      this.toastr.show('error','Enter valid credentials',{ 
+        toastComponent: CustomToast,
+        toastClass: "ngx-toastr",
+      })
+    }
+    else{
+      this.loading = true;
+      this.api.loginAdmin(this.loginForm.value).subscribe((res:any)=>{
+        if(res){
+          localStorage.setItem('location', res.data.location)
+          localStorage.setItem('token', res.data.accessToken);
+          this.api.setToken();
+          this.loading = false;
+          this.route.navigateByUrl('/pos/billing-system')
+          this.toastr.show('success','Successfully Logged In',{ 
+            toastComponent: CustomToast,
+            toastClass: "ngx-toastr",
+          })
+        }
+      }, (error)=>{
+        this.loading = false;
+        this.toastr.show('error','Invalid credentials',{ 
+          toastComponent: CustomToast,
+          toastClass: "ngx-toastr"
+        })
+      })
+    }
   }
 }
