@@ -4,14 +4,24 @@ import { Injectable } from '@angular/core';
   providedIn: 'root'
 })
 export class StoreBillDataService {
-  invoiceData1 = {
-    "totalAmount": 4,
+  invoiceData = {
+    "totalAmount": 0,
     "UserName": "",
     "UserPhnNumber": "",
     "UserAddress": "",
-    "RewardPoints": "",
+    "RewardPoints": 0,
+    "RedeemPoints": 0,
+    "RewardsHistory": [],
     "CustomerType": "",
-    "PaymentType": "",
+    "PaymentType": "cash",
+    "currentOffer":{ 
+      "_id": "",
+      "offerName": "",
+      "minimumPrice": 0,
+      "product": "",
+      "location": [],
+      "__v": 0
+    },
     "BillDetails": [
       {
         "itemName": "",
@@ -27,37 +37,24 @@ export class StoreBillDataService {
     ]
   }
 
-  invoiceData2 = {
-    "totalAmount": 5,
+  invoiceDataEmpty = {
+    "totalAmount": 0,
     "UserName": "",
     "UserPhnNumber": "",
     "UserAddress": "",
-    "RewardPoints": "",
+    "RewardPoints": 0,
+    "RedeemPoints": 0,
+    "RewardsHistory": [],
     "CustomerType": "",
-    "PaymentType": "",
-    "BillDetails": [
-      {
-        "itemName": "",
-        "quantity": 0,
-        "mrp": 0,
-        "discount": 0,
-        "rate": 0,
-        "amount": 0,
-        "gst": 0,
-        "gstAmount": 0,
-        "finalAmount":0
-      }
-    ]
-  }
-
-  invoiceData3 = {
-    "totalAmount": 6,
-    "UserName": "",
-    "UserPhnNumber": "",
-    "UserAddress": "",
-    "RewardPoints": "",
-    "CustomerType": "",
-    "PaymentType": "",
+    "PaymentType": "cash",
+    "currentOffer": { 
+      "_id": "",
+      "offerName": "",
+      "minimumPrice": 0,
+      "product": "",
+      "location": [],
+      "__v": 0
+    },
     "BillDetails": [
       {
         "itemName": "",
@@ -74,33 +71,60 @@ export class StoreBillDataService {
   }
 
   constructor() { 
-
+    let dataString = JSON.stringify(this.invoiceDataEmpty)
+    localStorage.setItem('emptyInvoice', dataString)
   }
 
   storeData(currentActive:string, data:any){
+    let dataString = JSON.stringify(data);
     switch(currentActive){
-      case 'A': 
-        this.invoiceData1=data;
+      case 'A':   
+        localStorage.setItem('invoiceData1', dataString )
       break;
       case 'B':
-        this.invoiceData2=data;
+        localStorage.setItem('invoiceData2', dataString )
       break;
       case 'C':
-        this.invoiceData3=data;
+        localStorage.setItem('invoiceData3', dataString )
       break;
     }
   }
 
   getData(currentActive:string):any{
+    let parseObj:any;
     if(currentActive == 'A'){
-      return this.invoiceData1;
+      parseObj = localStorage.getItem('invoiceData1');
     }
-    if(currentActive == 'B'){
-      return this.invoiceData2;
+    else if(currentActive == 'B'){
+      parseObj = localStorage.getItem('invoiceData2');
     }
-    if(currentActive == 'C'){
-      return this.invoiceData3;
+    else if(currentActive == 'C'){
+      parseObj = localStorage.getItem('invoiceData3');
+    }
+    if(parseObj){
+      this.invoiceData = JSON.parse(parseObj);
+      return this.invoiceData;
+    }
+    else{
+      let parseObj:any = localStorage.getItem('emptyInvoice');
+      this.invoiceDataEmpty = JSON.parse(parseObj)
+      return this.invoiceDataEmpty;
     }
   }
 
+  deleteData(currentActive:string):any{
+    if(currentActive == 'A'){
+      localStorage.removeItem('invoiceData1');
+    }
+    if(currentActive == 'B'){
+      localStorage.removeItem('invoiceData2');
+    }
+    if(currentActive == 'C'){
+      localStorage.removeItem('invoiceData3');
+    }
+    let parseObj:any = localStorage.getItem('emptyInvoice');
+    this.invoiceDataEmpty = JSON.parse(parseObj)
+    return this.invoiceDataEmpty;
+  }
+  
 }

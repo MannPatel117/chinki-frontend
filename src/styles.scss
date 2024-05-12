@@ -50,6 +50,10 @@ $input-color:#fdff7d;
     justify-content: space-between;
 }
 
+.hover:hover{
+    transform: scale(1.1);
+}
+
 .gap1{
     gap: 10px;
 }
@@ -395,11 +399,11 @@ $input-color:#fdff7d;
     font-size: 10px;
 }
 
-.chinki-table-even td{
+.chinki-table-even > td{
     background-color: #1b242d !important;
 }
 
-.chinki-table-odd td{
+.chinki-table-odd > td{
     background-color: #CDE7FF !important;
 }
 

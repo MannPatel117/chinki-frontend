@@ -42,6 +42,10 @@ export class ApiService {
     .set('location', data)
     return this.http.get(`${environment.apiUrl}/inventory/getInventorybyLocation`, {params:params, headers: this.header.headers})
   }
+
+  getAllProducts(){
+    return this.http.get(`${environment.apiUrl}/products/getAllActiveProducts`, this.header)
+  }
   
   getUserDetail(data:any){
     let params = new HttpParams()
@@ -52,4 +56,9 @@ export class ApiService {
   addUser(data:any){
     return this.http.post(`${environment.apiUrl}/users/addUser`, data, this.header)
   }
+
+  getAllOffers(){
+    return this.http.get(`${environment.apiUrl}/offers/getAllActiveOffers`, this.header)
+  }
+
 }
