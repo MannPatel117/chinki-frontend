@@ -209,10 +209,10 @@
                         </thead>
                         <tbody formArrayName="rows">
                             <tr *ngFor="let row of rows.controls; let i = index" [formGroupName]="i" [ngClass]="(i % 2 === 0) ? 'chinki-table-even' : 'chinki-table-odd'">
-                                <td *ngIf="row.value.itemName == ''"></td>
-                                <td class="flex flex-center deleteRow" (click)="removeItem(i)" *ngIf="row.value.itemName != ''"><img src="../../../../assets/img/icons/delete.svg" class="hover" style="cursor: pointer;" height="18px" width="18px" alt=""></td>
+                                <td *ngIf="row.value.itemName == '' || row.value.itemName == null"></td>
+                                <td class="flex flex-center deleteRow" (click)="openItemModal('deleteItemModal', i)" *ngIf="row.value.itemName != '' && row.value.itemName != null"><img src="../../../../assets/img/icons/delete.svg" class="hover" style="cursor: pointer;" height="18px" width="18px" alt=""></td>
                                 <td><input type="text" formControlName="itemName"></td>
-                                <td><input type="number" (change)="itemChanged('quantity', i)" *ngIf="row.value.itemName != ''" formControlName="quantity"></td>
+                                <td><input type="number" min="1" (change)="itemChanged('quantity', i)" *ngIf="row.value.itemName != ''" formControlName="quantity"></td>
                                 <td><input type="number" (change)="itemChanged('mrp', i)" *ngIf="row.value.itemName != ''" formControlName="mrp"></td>
                                 <td><input type="number" *ngIf="row.value.itemName != ''" formControlName="discount" readonly></td>
                                 <td><input type="number" (change)="itemChanged('rate', i)" *ngIf="row.value.itemName != ''" formControlName="rate"></td>
@@ -478,6 +478,25 @@
             </div>
             <div class="modal-footer d-flex flex-end">
                 <button class="btn btn-primary primary-button" (click)="deleteBill()">
+                    Confirm
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="deleteItemModal" tabindex="-1" aria-labelledby="deleteItemModal" aria-hidden="true">
+    <div class="modal-dialog dialog700 modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header d-flex align-items-center flex-space-between">
+                <h1>Delete Item</h1>
+                <img src="../../../../assets/img/icons/cross.svg" (click)="closeModal('deleteItemModal')" class="cross-btn" height="15px" width="15px" alt="">
+            </div>
+            <div class="modal-body">
+                <h5>Are you sure you want to delete item?</h5>
+            </div>
+            <div class="modal-footer d-flex flex-end">
+                <button class="btn btn-primary primary-button" (click)="removeItem(deleteIndex)">
                     Confirm
                 </button>
             </div>

@@ -53,7 +53,8 @@ export class BillingSystemComponent {
         "gstAmount": 0,
         "finalAmount":0
       }
-    ]
+    ],
+    "currentRow": 0
   }
 
   allProductsList:any
@@ -73,6 +74,8 @@ export class BillingSystemComponent {
 
   offers: any;
   selectedOffer:any;
+
+  deleteIndex = -1;
 
   userForm!: FormGroup;
   addUserForm!: FormGroup;
@@ -149,6 +152,7 @@ export class BillingSystemComponent {
     this.selectedOffer = this.currentActiveInvoiceData.currentOffer;
     this.currentRewardsHistory = this.currentActiveInvoiceData.RewardsHistory;
     this.confirmRedeemFlag = this.currentActiveInvoiceData.confirmRedeem;
+
     if(this.confirmRedeemFlag){
       this.redeemPoints.disable();
     }
@@ -173,8 +177,16 @@ export class BillingSystemComponent {
         const quantityControl = this.rows.get(existingRowIndex)?.get('quantity');
         if (quantityControl) {
             const currentQuantity = quantityControl.value || 0;
+            console.log(existingRowIndex)
+            let rowCount = +existingRowIndex;
             quantityControl.setValue(currentQuantity + 1);
             this.rows.get(existingRowIndex)?.get('finalAmount')?.setValue(this.calcFinalAmount(this.allProductsList[index].sellingPrice, this.rows.get(existingRowIndex)?.get('quantity')?.value));
+            console.log(this.currentActiveInvoiceData.BillDetails[rowCount])
+            console.log(this.currentActiveInvoiceData)
+            console.log(rowCount)
+            console.log(this.rows.get(existingRowIndex)?.value)
+            this.currentActiveInvoiceData.BillDetails[rowCount] = this.rows.get(existingRowIndex)?.value;
+            this.billData.storeData(this.currentActiveInvoice, this.currentActiveInvoiceData)
         }
     } else {
         this.rows.get(currentRowString)?.get('itemName')?.setValue(this.allProductsList[index].itemName);
@@ -186,7 +198,11 @@ export class BillingSystemComponent {
         this.rows.get(currentRowString)?.get('gst')?.setValue(this.allProductsList[index].gst);
         this.rows.get(currentRowString)?.get('gstAmount')?.setValue(this.calcGSTAmount(this.allProductsList[index].sellingPrice,this.allProductsList[index].gst));
         this.rows.get(currentRowString)?.get('finalAmount')?.setValue(this.calcFinalAmount(this.allProductsList[index].sellingPrice, this.rows.get(currentRowString)?.get('quantity')?.value));
+        this.currentActiveInvoiceData.BillDetails[this.currentRow] = this.rows.get(currentRowString)?.value;
         this.currentRow = this.currentRow + 1;
+        this.currentActiveInvoiceData.currentRow = this.currentRow;
+        console.log(this.currentActiveInvoiceData)
+        this.billData.storeData(this.currentActiveInvoice, this.currentActiveInvoiceData)
     }
     this.barcodeScan.reset();
     this.calcTotalAmount();
@@ -215,6 +231,8 @@ itemChanged(changed:string, currentRow: number){
     this.rows.get(row)?.get('gstAmount')?.setValue(this.calcGSTAmount(this.rows.get(row)?.get('rate')?.value,this.rows.get(row)?.get('gst')?.value));
     this.rows.get(row)?.get('finalAmount')?.setValue(this.calcFinalAmount(this.rows.get(row)?.get('rate')?.value, this.rows.get(row)?.get('quantity')?.value))
   }
+  this.currentActiveInvoiceData.BillDetails[currentRow] = this.rows.get(row)?.value;
+  this.billData.storeData(this.currentActiveInvoice, this.currentActiveInvoiceData)
   this.calcTotalAmount();
 }
 
@@ -225,6 +243,8 @@ itemChanged(changed:string, currentRow: number){
       this.rows.push(this.newRow())
     }
     this.calcTotalAmount();
+    this.deleteIndex = -1;
+    this.closeModal('deleteItemModal')
   }
 
   calcRate(mrp:number, discount:number){
@@ -238,12 +258,12 @@ itemChanged(changed:string, currentRow: number){
   }
 
   calcAmount(rate:number, gst:number){
-    let amount = (rate - (rate*(gst/100)))
+    let amount = (rate - (rate*gst/(gst+100)))
     return amount;
   }
 
   calcGSTAmount(rate:number, gst:number){
-    let gstAmt = (rate*(gst/100))
+    let gstAmt = (rate*gst/(gst+100))
     return gstAmt;
   }
 
@@ -258,6 +278,7 @@ itemChanged(changed:string, currentRow: number){
       let row = String(i)
       this.currentActiveInvoiceData.totalAmount = this.currentActiveInvoiceData.totalAmount + this.rows.get(row)?.get('finalAmount')?.value;
     }
+    this.billData.storeData(this.currentActiveInvoice, this.currentActiveInvoiceData)
   }
 
   searchUser(){
@@ -445,6 +466,7 @@ itemChanged(changed:string, currentRow: number){
     this.redeemPoints.reset();
     this.phnNumber.reset();
     this.confirmRedeemFlag = false;
+    this.billDataForm.reset();
     this.currentActiveInvoiceData = this.billData.deleteData(this.currentActiveInvoice);
     setTimeout(() => {
       this.billData.storeData(this.currentActiveInvoice, this.currentActiveInvoiceData);
@@ -472,6 +494,7 @@ itemChanged(changed:string, currentRow: number){
     }
     // this.fetchData(this.current_location);
     this.barcodeScan.reset();
+    this.calculateRows();
     this.setData();
   }
 
@@ -500,7 +523,6 @@ itemChanged(changed:string, currentRow: number){
     this.billDataForm = this.fb.group({
       rows: this.fb.array([])
     })
-    this.calculateRows();
   }
 
   get rows(): FormArray {
@@ -522,12 +544,28 @@ itemChanged(changed:string, currentRow: number){
   }
 
   calculateRows(){
+    this.rows.clear();
     setTimeout(() => {
       const divElement = this.tableBody.nativeElement as HTMLElement;
       const height = divElement.clientHeight;
       let rows = Math.floor(height/35)
       this.initializeEmptyTable(rows)
-      this.totalRows = rows
+      this.totalRows = rows;
+      if(this.currentActiveInvoiceData.BillDetails.length > 0){
+        for(let index=0; index < this.currentActiveInvoiceData.currentRow; index++){
+          let currentRowString = String(index)
+          this.rows.get(currentRowString)?.get('itemName')?.setValue(this.currentActiveInvoiceData.BillDetails[index].itemName);
+          this.rows.get(currentRowString)?.get('quantity')?.setValue(this.currentActiveInvoiceData.BillDetails[index].quantity);
+          this.rows.get(currentRowString)?.get('mrp')?.setValue(this.currentActiveInvoiceData.BillDetails[index].mrp);
+          this.rows.get(currentRowString)?.get('discount')?.setValue(this.currentActiveInvoiceData.BillDetails[index].discount);
+          this.rows.get(currentRowString)?.get('rate')?.setValue(this.currentActiveInvoiceData.BillDetails[index].rate);
+          this.rows.get(currentRowString)?.get('amount')?.setValue(this.currentActiveInvoiceData.BillDetails[index].amount);
+          this.rows.get(currentRowString)?.get('gst')?.setValue(this.currentActiveInvoiceData.BillDetails[index].gst);
+          this.rows.get(currentRowString)?.get('gstAmount')?.setValue(this.currentActiveInvoiceData.BillDetails[index].gstAmount);
+          this.rows.get(currentRowString)?.get('finalAmount')?.setValue(this.currentActiveInvoiceData.BillDetails[index].finalAmount);
+        }
+      }
+      this.currentRow = this.currentActiveInvoiceData.currentRow;
     }, 50);
   }
 
@@ -546,6 +584,11 @@ itemChanged(changed:string, currentRow: number){
     if(id == 'rewardsModal'){
       this.calculatePoints(this.currentRewardsHistory)
     }
+    $("#"+id).modal('show');
+  }
+
+  openItemModal(id:any, index:number){
+    this.deleteIndex = index;
     $("#"+id).modal('show');
   }
 
