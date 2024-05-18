@@ -34,7 +34,8 @@ export class StoreBillDataService {
         "gstAmount": 0,
         "finalAmount":0
       }
-    ]
+    ],
+    "currentRow": 0
   }
 
   invoiceDataEmpty = {
@@ -67,7 +68,8 @@ export class StoreBillDataService {
         "gstAmount": 0,
         "finalAmount":0
       }
-    ]
+    ],
+    "currentRow": 0
   }
 
   constructor() { 
