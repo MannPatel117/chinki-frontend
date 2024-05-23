@@ -207,7 +207,7 @@
                                 <th class="midWidth" scope="col">Final Amount</th>
                             </tr>
                         </thead>
-                        <tbody formArrayName="rows">
+                        <tbody formArrayName="rows" [style.max-height]="maxHeight" style="overflow-y: scroll;">
                             <tr *ngFor="let row of rows.controls; let i = index" [formGroupName]="i" [ngClass]="(i % 2 === 0) ? 'chinki-table-even' : 'chinki-table-odd'">
                                 <td *ngIf="row.value.itemName == '' || row.value.itemName == null"></td>
                                 <td class="flex flex-center deleteRow" (click)="openItemModal('deleteItemModal', i)" *ngIf="row.value.itemName != '' && row.value.itemName != null"><img src="../../../../assets/img/icons/delete.svg" class="hover" style="cursor: pointer;" height="18px" width="18px" alt=""></td>
@@ -221,30 +221,22 @@
                                 <td><input type="number" *ngIf="row.value.itemName != ''" formControlName="gstAmount" readonly></td>
                                 <td><input type="number" *ngIf="row.value.itemName != ''" formControlName="finalAmount" readonly></td>
                             </tr>
-                              <!-- @for(row of billDataForm){
-
-                              } -->
-                            <!-- @for (row of billDataForm.get('rows'); track row; let i = $index; [formGroupName]="i") {
-                                @if(i % 2 == 0 ){
-                                    <tr class="chinki-table-even">
-                                        @for (billData of billDataRow; track billData;){
-                                            <td>{{billData}}</td>
-                                        }
-                                    </tr>
-                                }
-                                @else{
-                                    <tr class="chinki-table-odd">
-                                        @for (billData of billDataRow; track billData;){
-                                            <td>{{billData}}</td>
-                                        }
-                                    </tr>
-                                }
-                            } -->
                         </tbody>
                         <div style="height: 20px; width: 100%;"></div>
                         <tbody>
-                            <tr>
-
+                            <tr *ngIf="currentActiveInvoiceData.currentOffer.offerName != ''">
+                                <td></td>
+                                <td class="bottom-cell">{{currentActiveInvoiceData.currentOffer.offerName}}</td>
+                                <td class="bottom-cell">1</td>
+                                <td class="bottom-cell">{{currentActiveInvoiceData.currentOffer.mrp}}</td>
+                                <td class="bottom-cell">100%</td>
+                                <td class="bottom-cell">0</td>
+                                <td class="bottom-cell">0</td>
+                                <td class="bottom-cell">18%</td>
+                                <td class="bottom-cell">0</td>
+                                <td class="bottom-cell">0</td>
+                            </tr>
+                            <tr *ngIf="currentActiveInvoiceData.currentOffer.offerName == ''">
                                 <td></td>
                                 <td></td>
                                 <td></td>
@@ -257,7 +249,9 @@
                                 <td></td>
                             </tr>
                             <tr>
-
+                                <td></td>
+                                <td *ngIf="currentActiveInvoiceData.RedeemPoints == 0"></td>
+                                <td class="bottom-cell" style="color: #ef1010; padding-left: 10px;" *ngIf="currentActiveInvoiceData.RedeemPoints > 0">Reward Points Redeemed</td>
                                 <td></td>
                                 <td></td>
                                 <td></td>
@@ -265,9 +259,8 @@
                                 <td></td>
                                 <td></td>
                                 <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
+                                <td *ngIf="currentActiveInvoiceData.RedeemPoints == 0"></td>
+                                <td class="bottom-cell" style="color: #ef1010; padding-left: 10px;" *ngIf="currentActiveInvoiceData.RedeemPoints > 0">- {{currentActiveInvoiceData.RedeemPoints}}</td>
                             </tr>
                         </tbody>
                     </table>
@@ -520,3 +513,26 @@
         </div>
     </div>
 </div>
+
+<div style="display: none;" id="bill-content">
+    <h2>Bill</h2>
+    <p>Date: Mann</p>
+    <p>Customer: Mann</p>
+    <table>
+      <thead>
+        <tr>
+          <th>Item</th>
+          <th>Qty</th>
+          <th>Price</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr >
+          <td>Mann</td>
+          <td>Mann</td>
+          <td>Maann</td>
+        </tr>
+      </tbody>
+    </table>
+    <p>Total: Mann</p>
+  </div>

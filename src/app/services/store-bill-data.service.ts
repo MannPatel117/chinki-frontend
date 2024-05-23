@@ -20,7 +20,8 @@ export class StoreBillDataService {
       "minimumPrice": 0,
       "product": "",
       "location": [],
-      "__v": 0
+      "__v": 0,
+      "mrp": 0 
     },
     "BillDetails": [
       {
@@ -54,7 +55,8 @@ export class StoreBillDataService {
       "minimumPrice": 0,
       "product": "",
       "location": [],
-      "__v": 0
+      "__v": 0,
+      "mrp": 0 
     },
     "BillDetails": [
       {
