@@ -178,10 +178,16 @@
     font-size: 12px;
 }
 
+.bottom-cell{
+    height: 30px ;
+    padding-left: 10px !important;
+    font-size: 12px;
+    padding-top: 7.5px !important;
+}
+
 .chinki-table td{
-    padding: 0px !important;
+    padding: 0px;
     height: 30px;
-    padding: 10px;
 }
 
 .chinki-table td input{
@@ -190,6 +196,7 @@
     padding: 10px;
     background-color: transparent;
 }
+
 
 .deleteRow{
     width: 40px !important;
