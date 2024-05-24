@@ -502,7 +502,7 @@ export class BillingSystemComponent {
                 /* Add any styles you want for printing here */
                 body {
                   font-family: Arial, sans-serif;
-                  width:400px;
+                  width:300px;
                   display: flex;
                   gap: 5px;
                   flex-direction:column;
