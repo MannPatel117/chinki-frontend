@@ -52,7 +52,9 @@ export class BillingSystemComponent {
         "amount": 0,
         "gst": 0,
         "gstAmount": 0,
-        "finalAmount":0
+        "finalAmount":0,
+        "_id":"",
+        "productType": ""
       }
     ],
     "currentRow": 0
@@ -195,6 +197,8 @@ export class BillingSystemComponent {
         this.rows.get(currentRowString)?.get('gst')?.setValue(this.allProductsList[index].gst);
         this.rows.get(currentRowString)?.get('gstAmount')?.setValue(this.calcGSTAmount(this.allProductsList[index].sellingPrice,this.allProductsList[index].gst));
         this.rows.get(currentRowString)?.get('finalAmount')?.setValue(this.calcFinalAmount(this.allProductsList[index].sellingPrice, this.rows.get(currentRowString)?.get('quantity')?.value));
+        this.rows.get(currentRowString)?.get('_id')?.setValue(this.allProductsList[index]._id)
+        this.rows.get(currentRowString)?.get('productType')?.setValue(this.allProductsList[index].productType)
         this.currentActiveInvoiceData.BillDetails[this.currentRow] = this.rows.get(currentRowString)?.value;
         this.currentRow = this.currentRow + 1;
         this.currentActiveInvoiceData.currentRow = this.currentRow;
@@ -300,8 +304,8 @@ export class BillingSystemComponent {
         this.currentActiveInvoiceData.RewardPoints = data.rewardPoint;
         this.currentRewardsHistory = data.rewardPointsHistory;
         this.currentActiveInvoiceData.RewardsHistory = data.rewardPointsHistory;
-        this.userForm.get('customerType')?.setValue("Existing Customer");
-        this.currentActiveInvoiceData.CustomerType = "Existing Customer";
+        this.userForm.get('customerType')?.setValue("Existing");
+        this.currentActiveInvoiceData.CustomerType = "Existing";
         this.closeModal('getUserModal');
         this.phnNumber.reset();
         this.toastr.show('success','User found',{ 
@@ -363,8 +367,8 @@ export class BillingSystemComponent {
           this.currentActiveInvoiceData.RewardPoints = data.rewardPoint;
           this.currentRewardsHistory = data.rewardPointsHistory;
           this.currentActiveInvoiceData.RewardsHistory = data.rewardPointsHistory;
-          this.userForm.get('customerType')?.setValue("New Customer")
-          this.currentActiveInvoiceData.CustomerType = "New Customer";
+          this.userForm.get('customerType')?.setValue("New")
+          this.currentActiveInvoiceData.CustomerType = "New";
           this.closeModal('addUserModal');
           this.addUserForm.reset();
           this.toastr.show('success','User created',{ 
@@ -382,6 +386,11 @@ export class BillingSystemComponent {
         })
       })
     }
+  }
+
+  customerTypeChanged(){
+    this.currentActiveInvoiceData.CustomerType = this.userForm.get('customerType')?.value;
+    this.billData.storeData(this.currentActiveInvoice, this.currentActiveInvoiceData)
   }
 
   rewardsTabSwticher(currentTab:string){
@@ -462,7 +471,14 @@ export class BillingSystemComponent {
   }
 
   saveBill(){
-    console.log(this.userForm.value)
+    const body = this.currentActiveInvoiceData;
+    delete (body as any).RewardPoints;
+    delete (body as any).RewardsHistory;
+    delete (body as any).UserAddress;
+    delete (body as any).UserName;
+    delete (body as any).currentRow;
+    (body as any).location = this.current_location
+    console.log(body)
     const printContents = document.getElementById('bill-content');
     if (printContents) {
       // Create a new iframe
@@ -487,6 +503,11 @@ export class BillingSystemComponent {
                 body {
                   font-family: Arial, sans-serif;
                   width:400px;
+                  display: flex;
+                  gap: 5px;
+                  flex-direction:column;
+                  justify-content:center;
+                  align-items:center;
                 }
                 table {
                   width: 100%;
@@ -494,6 +515,10 @@ export class BillingSystemComponent {
                 }
                 table, th, td {
                   border: 1px solid black;
+                }
+                h2, p{
+                  text-align: center;
+                  margin: 0px
                 }
               </style>
             </head>
@@ -605,6 +630,8 @@ export class BillingSystemComponent {
         gst: [0],
         gstAmount: [0],
         finalAmount: [0],
+        _id: [''],
+        productType: ['']
     });
   }
 

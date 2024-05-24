@@ -33,7 +33,9 @@ export class StoreBillDataService {
         "amount": 0,
         "gst": 0,
         "gstAmount": 0,
-        "finalAmount":0
+        "finalAmount":0,
+        "_id": "",
+        "productType": ""
       }
     ],
     "currentRow": 0
@@ -68,7 +70,9 @@ export class StoreBillDataService {
         "amount": 0,
         "gst": 0,
         "gstAmount": 0,
-        "finalAmount":0
+        "finalAmount":0,
+        "_id": "",
+        "productType": ""
       }
     ],
     "currentRow": 0

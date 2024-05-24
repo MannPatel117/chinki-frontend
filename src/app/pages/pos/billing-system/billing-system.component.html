@@ -157,15 +157,15 @@
                             <div class="row-wrap flex-center gap1">
                                 <div class="flex-center check-offers" (click)="openModal('offersModal')">Check offers</div>
                                 <div style="height: 100%; width: 60%;" class="flex-center">
-                                    <select
+                                    <select (change)="customerTypeChanged() "
                                     name="customer-type"
                                     id="customer-type"
                                     class="select-input"
                                     formControlName="customerType" 
                                 >
                                     <option value="">Customer Type</option>
-                                    <option value="New Customer">New Customer</option>
-                                    <option value="Existing Customer">Existing Customer</option>
+                                    <option value="New">New Customer</option>
+                                    <option value="Existing">Existing Customer</option>
                                 </select>
                                 </div>
                             </div>
@@ -515,24 +515,32 @@
 </div>
 
 <div style="display: none;" id="bill-content">
-    <h2>Bill</h2>
-    <p>Date: Mann</p>
-    <p>Customer: Mann</p>
+    <h3>Retail Invoice</h3>
+    <h3>|| Shree Ganeshay Namah ||</h3>
+    <h2 style="text-align: center;">Shree Charbhuja Sales and Marketing</h2>
+    <p>SHOP NO.10, LANE BESIDE MAHALAXMI SEETS,<br> MAIN SABJI MARKET, VAPI TOWN, VAPI <br> Mob: 9316432399 / 8758195335</p>
+    <p><strong>GST NO. 24ATWPP3297M1ZN</strong></p>
+    <p><strong>Shop timings: 8.00am to 8.00pm</strong></p>
+    <p><strong>Last Sunday Closed</strong></p>
     <table>
       <thead>
         <tr>
-          <th>Item</th>
+          <th>Description</th>
+          <th>MRP</th>
           <th>Qty</th>
-          <th>Price</th>
+          <th>Rate</th>
+          <th>Amount</th>
         </tr>
       </thead>
       <tbody>
-        <tr >
-          <td>Mann</td>
-          <td>Mann</td>
-          <td>Maann</td>
+        <tr *ngFor="let item of currentActiveInvoiceData.BillDetails">
+          <td>{{item.itemName}}</td>
+          <td>{{item.mrp}}</td>
+          <td>{{item.quantity}}</td>
+          <td>{{item.rate}}</td>
+          <td>{{item.finalAmount}}</td>
         </tr>
       </tbody>
     </table>
-    <p>Total: Mann</p>
+    <p>Total: {{currentActiveInvoiceData.totalAmount}}</p>
   </div>
