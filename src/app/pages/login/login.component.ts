@@ -28,12 +28,19 @@ export class LoginComponent {
   checkUserLoggedIn(){
     const token= localStorage.getItem('token');
     if(token){
-      this.api.getAdminUser().subscribe((res:any) =>{
-        if(res){
+      this.api.getAPI('/adminUser/user', []).subscribe((res:any) =>{
+        if(res.statusCode == 200){
           this.route.navigateByUrl('/pos/billing-system')
         }
+        else{
+          this.route.navigateByUrl('/login')
+        }
       }, (error) =>{
+        this.route.navigateByUrl('/login')
       })
+    }
+    else{
+      this.route.navigateByUrl('/login')
     }
   }
 

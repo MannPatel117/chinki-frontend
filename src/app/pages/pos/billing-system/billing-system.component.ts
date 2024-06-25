@@ -117,11 +117,13 @@ export class BillingSystemComponent {
       }, (error) =>{
         this.route.navigateByUrl('/login');
         this.loading = false;
+        localStorage.clear();
       })
     }
     else{
         this.route.navigateByUrl('/login');
         this.loading = false;
+        localStorage.clear();
     }
   }
 
