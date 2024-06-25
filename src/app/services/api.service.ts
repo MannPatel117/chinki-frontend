@@ -61,4 +61,16 @@ export class ApiService {
     return this.http.get(`${environment.apiUrl}/offers/getAllActiveOffers`, this.header)
   }
 
+  getAPI(route:any, params:any){
+    const param = this.setParamms(params);
+    return this.http.get(`${environment.apiUrl}`+`${route}`, {params:param, headers:this.header.headers})
+  }
+
+  setParamms(params:any){
+    let header = new HttpParams();
+    for(let param of params){
+      header = header.set(param[0], param[1])
+    }
+    return header;
+  }
 }
