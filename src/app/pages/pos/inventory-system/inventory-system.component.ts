@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, FormControl, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { ApiService } from '../../../services/api.service';
 import { NgbPaginationModule } from '@ng-bootstrap/ng-bootstrap';
@@ -9,7 +9,7 @@ import { NgFor, NgIf } from '@angular/common';
 @Component({
   selector: 'app-inventory-system',
   standalone: true,
-  imports: [RouterModule, NgbPaginationModule, RoundProgressComponent, NgIf, NgFor],
+  imports: [ReactiveFormsModule, RouterModule, NgbPaginationModule, RoundProgressComponent, NgIf, NgFor],
   templateUrl: './inventory-system.component.html',
   styleUrl: './inventory-system.component.scss'
 })
@@ -23,7 +23,7 @@ export class InventorySystemComponent {
     
   }
 
-  currentData = 'products';
+  currentData = 'lowStocks';
   
   lowStockCount = 0;
   totalAccountCount = 0;
@@ -38,6 +38,8 @@ export class InventorySystemComponent {
   page= 1;
   pageSize = 10;
   items= [5,5,5,5,5,5,55,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5]
+
+  searchBar: FormControl = new FormControl ('');
   
   ngOnInit(){
     this.checkUserLoggedIn();
@@ -81,15 +83,16 @@ export class InventorySystemComponent {
 
   getData(current:any){
     this.currentData = current;
+    let searchValue = this.searchBar.value;
     switch(current){
       case 'products': console.log(current)
         
       break;
 
       case 'lowStocks': 
-      this.api.getAPI('/inventory/lowInventory', [['location','soap-center']]).subscribe((res:any) => {
+      this.api.getAPI('/inventory/lowInventory', [['location','soap-center'], ['search', searchValue]]).subscribe((res:any) => {
         this.displayData = res.data[0].inventoryProducts;
-        this.displayData = [...this.displayData, ...this.displayData, ...this.displayData, ...this.displayData]
+        this.displayData = [...this.displayData, ...this.displayData]
       });
         
       break;
