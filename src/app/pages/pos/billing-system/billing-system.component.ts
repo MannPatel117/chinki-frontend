@@ -12,7 +12,7 @@ declare const $:any;
 @Component({
   selector: 'app-billing-system',
   standalone: true,
-  imports: [NgIf, ReactiveFormsModule, RouterModule, ReactiveFormsModule, NgFor, NgClass],  
+  imports: [NgIf, ReactiveFormsModule, RouterModule, NgFor, NgClass],  
   providers: [DatePipe],
   templateUrl: './billing-system.component.html',
   styleUrl: './billing-system.component.scss'
