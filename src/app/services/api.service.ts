@@ -63,7 +63,12 @@ export class ApiService {
 
   getAPI(route:any, params:any){
     const param = this.setParamms(params);
-    return this.http.get(`${environment.apiUrl}`+`${route}`, {params:param, headers:this.header.headers})
+    return this.http.get(`${environment.apiUrl}`+`${route}`, { params:param, headers:this.header.headers })
+  }
+
+  patchAPI(route:any, params:any, body:any){
+    const param = this.setParamms(params)
+    return this.http.patch(`${environment.apiUrl}`+`${route}`, body, { params:param, headers:this.header.headers })
   }
 
   setParamms(params:any){

@@ -30,7 +30,7 @@
 }
 
 .active-card{
-    outline: 2px solid #DCFCE7;
+    outline: 3px solid #fee2e2;
 }
 
 .card-header{
@@ -103,51 +103,6 @@ h5{
     color: #166534;
 }
 
-.tailwind-table tbody{
-    box-sizing: border-box;
-    display: table-row-group;
-    
-    line-height: 24px;
-    tab-size: 4;
-    text-indent: 0px;
-    text-size-adjust: 100%;
-    vertical-align: middle;
-
-    border-top: 1px solid rgb(209, 213, 219);
-    border-collapse: collapse;
-}
-
-.tailwind-table tr{
-    box-sizing: border-box;
-    display: table-row;
-    line-height: 24px;
-    tab-size: 4;
-    text-indent: 0px;
-    text-size-adjust: 100%;
-    vertical-align: middle;
-
-    border: 1px solid rgb(229, 231, 235);
-}
-
-.tailwind-table tr:nth-child(even) td{
-    background-color: rgb(249, 250, 251);
-}
-
-.tailwind-table td{
-    box-sizing: border-box;
-    display: table-cell;
-    padding: 16px 12px;
-
-    font-size: 14px;
-    font-weight: 500;
-    line-height: 20px;
-    tab-size: 4;
-    text-indent: 0px;
-    text-size-adjust: 100%;
-    vertical-align: middle;
-    text-wrap: nowrap;
-    white-space-collapse: collapse;
-
-    -webkit-font-smoothing: antialiased;
-
+.custom-dropdown{
+    padding: 20px;
 }

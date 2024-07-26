@@ -2,14 +2,16 @@ import { Component } from '@angular/core';
 import { FormBuilder, FormControl, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { ApiService } from '../../../services/api.service';
-import { NgbPaginationModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbDropdownModule, NgbModule, NgbPaginationModule } from '@ng-bootstrap/ng-bootstrap';
 import {RoundProgressComponent} from 'angular-svg-round-progressbar';
-import { NgFor, NgIf } from '@angular/common';
+import { NgFor, NgForOf, NgIf } from '@angular/common';
+import { ExcelService } from '../../../services/excel/excel.service';
+declare const $:any;
 
 @Component({
   selector: 'app-inventory-system',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterModule, NgbPaginationModule, RoundProgressComponent, NgIf, NgFor],
+  imports: [ReactiveFormsModule, RouterModule, NgbPaginationModule, RoundProgressComponent, NgIf, NgFor, NgbDropdownModule],
   templateUrl: './inventory-system.component.html',
   styleUrl: './inventory-system.component.scss'
 })
@@ -18,12 +20,16 @@ export class InventorySystemComponent {
   constructor(
     private fb: FormBuilder, 
     private route: Router,
-    private api: ApiService
+    private api: ApiService,
+    private excel: ExcelService
   ) {
     
   }
 
+  currentLocation = localStorage.getItem('location')
   currentData = 'lowStocks';
+
+  isOpen = false;
   
   lowStockCount = 0;
   totalAccountCount = 0;
@@ -34,12 +40,18 @@ export class InventorySystemComponent {
   totalActiveProductPercentage = 0;
 
   displayData: any;
-  
+  originalData:any;
+
+  temp_selectedId:any;
+
+  displayAccounts: any;
   page= 1;
-  pageSize = 10;
-  items= [5,5,5,5,5,5,55,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5]
+  pageLimit= 1;
+  pageSize = 0;
 
   searchBar: FormControl = new FormControl ('');
+  selectedAccount: FormControl = new FormControl('');
+  lowStockEdit: FormControl = new FormControl (0);
   
   ngOnInit(){
     this.checkUserLoggedIn();
@@ -70,7 +82,7 @@ export class InventorySystemComponent {
   }
 
   getStats(){
-    this.api.getAPI('/inventory/inventoryStats', [['location', 'soap-center']]).subscribe((res:any) =>{
+    this.api.getAPI('/inventory/inventoryStats', [['location', this.currentLocation]]).subscribe((res:any) =>{
       const data = res.data;
       this.lowStockCount = data.lowStockCount;
       this.totalAccountCount = data.totalAccountCount;
@@ -90,9 +102,19 @@ export class InventorySystemComponent {
       break;
 
       case 'lowStocks': 
-      this.api.getAPI('/inventory/lowInventory', [['location','soap-center'], ['search', searchValue]]).subscribe((res:any) => {
-        this.displayData = res.data[0].inventoryProducts;
-        this.displayData = [...this.displayData, ...this.displayData]
+      this.api.getAPI('/inventory/lowInventory', [['location', this.currentLocation], ['search', searchValue], ['page', this.page], ['limit', this.pageSize]]).subscribe((res:any) => {
+        if(res.data.length == 0){
+          this.pageSize = this.originalData.length;
+          this.displayData = []
+          this.originalData = []
+        }else{
+          this.originalData = res.data[0].inventoryProducts;
+          this.pageSize = this.originalData.length;
+          this.applyPagination()
+        }
+      });
+      this.api.getAPI('/accounts/getAccounts', []).subscribe((res:any) => {
+        this.displayAccounts = res.data;
       });
         
       break;
@@ -101,8 +123,73 @@ export class InventorySystemComponent {
     }
   }
 
-  check(){
-    console.log("Hi")
+  print(type:any){
+    if(this.selectedAccount.value == ''){
+      let data = this.originalData;
+        data.forEach((item: { _id: any; supplierId: any; }) => {
+          delete item._id;
+          delete item.supplierId;
+      });
+      if(type == 'sheet'){
+        this.excel.exportAsExcelFile(data, 'Low Stock')
+      }else if(type == 'pdf'){
+        this.excel.exportAsPdfFile(data, 'Low Stock')
+      }else{
+        console.log("ERROR")
+      }
+    } else{
+      let data = this.originalData.filter((prod:any) => prod.supplierId === this.selectedAccount.value);
+      data.forEach((item: { _id: any; supplierId: any; }) => {
+        delete item._id;
+        delete item.supplierId;
+      });
+      if(type == 'sheet'){
+        this.excel.exportAsExcelFile(data, 'Low Stock')
+      }else if(type == 'pdf'){
+        this.excel.exportAsPdfFile(data, 'Low Stock')
+      }else{
+        console.log("ERROR")
+      }
+    }
+  }
+
+  onCheckboxChange(value: string) {
+    if(value == this.selectedAccount.value){
+      this.selectedAccount.setValue('');
+    } else{
+      this.selectedAccount.setValue(value);
+    }
+  }
+
+  applyAccountFilter(){
+    if(this.selectedAccount.value == ''){
+      this.page = 1;
+      this.applyPagination();
+    } else{
+      console.log(this.originalData)
+      this.page = 1;
+      let data = this.originalData.filter((prod:any) => prod.supplierId === this.selectedAccount.value);
+      console.log(data)
+      this.pageSize = this.originalData.length;
+      let startindex = (this.page-1)*this.pageLimit;
+      let endIndex = (startindex + this.pageLimit)
+      this.displayData = data.slice(startindex, endIndex);
+    }
+  }
+
+  confirmLowStock(){
+    const body = {
+      "product": this.temp_selectedId,
+      "lowWarning": this.lowStockEdit.value
+    }
+    this.api.patchAPI('/inventory/lowInventory', [['location', this.currentLocation]], body).subscribe((res:any) => {
+      this.getData('lowStocks');
+      this.temp_selectedId = '';
+      this.closeModal('editLowStockModal');
+    });
+    //make api call
+    //close the modal
+    // reset temp variable
   }
 
   logout(){
@@ -114,10 +201,25 @@ export class InventorySystemComponent {
     });
   }
 
-  checker(params:any){
-    this.api.getAPI('/inventory/lowInventory', params).subscribe((res:any) => {
-      console.log(res)
-    });
+  openLowStockEditModal(id:any, lowStockNum:number, item_id:any){
+    this.temp_selectedId = item_id;
+    this.lowStockEdit.setValue(lowStockNum)
+    $("#"+id).modal('show');
   }
-  
+
+  openModal(id:any){
+    $("#"+id).modal('show');
+  }
+
+  closeModal(id:any){
+    $("#"+id).modal('hide');
+    //reset temp variable
+  }
+
+  applyPagination(){
+    this.pageSize = this.originalData.length;
+    let startindex = (this.page-1)*this.pageLimit;
+    let endIndex = (startindex + this.pageLimit)
+    this.displayData = this.originalData.slice(startindex, endIndex);
+  }
 }

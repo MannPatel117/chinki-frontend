@@ -146,33 +146,49 @@
                             class="block w-full rounded-md border-0 py-2 pl-7 pr-10 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                             placeholder="Search Low Stocks">
                         <div class="absolute inset-y-0 right-0 flex items-center">
-                            <button class="btn btn-primary px-5">Search</button>
+                            <button class="btn btn-primary px-5" (click)="getData('lowStocks')">Search</button>
                         </div>
                     </div>
                 </div>
-                <button class="btn btn-success px-10">Print</button>
-                <button class="btn btn-danger px-10">Print</button>
+                <button class="btn btn-success px-10" (click)="print('sheet')">Print</button>
+                <button class="btn btn-danger px-10" (click)="print('pdf')">Print</button>
+                <div ngbDropdown container="body">
+					<button class="btn btn-info" style="margin-right: 30px;" ngbDropdownToggle>Filter</button>
+					<div ngbDropdownMenu class="custom-dropdown">
+						<div *ngFor="let account of displayAccounts, let i=index" class="form-check">
+                            <input type="checkbox" class="form-check-input" [value]="account._id" [checked]="selectedAccount.value === account._id" (change)="onCheckboxChange(account._id)" [id]="'dropdowwn'+i" />
+                            <label class="form-check-label" [for]="'dropdowwn'+i">{{account.accountName}}</label>
+                        </div>
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input" value="DUMMY" [checked]="selectedAccount.value === 'DUMMY'" (change)="onCheckboxChange('DUMMY')" [id]="'dropdowwn'+99" />
+                            <label class="form-check-label" [for]="'dropdowwn'+99">DUMMY</label>
+                        </div>
+                        <button class="btn btn-primary" (click)="applyAccountFilter();" ngbDropdownItem>Apply</button>
+					</div>
+				</div>
+                
                 
             </div>
+            
             <div class="body-table" *ngIf="currentData == 'lowStocks'">
                 <table *ngIf="displayData?.length > 0" class="w-full border-collapse border border-gray-200 rounded-lg bg-white text-left text-sm text-gray-500 shadow-md">
                     <thead class="bg-gray-100">
                         <tr>
-                        <th scope="col" class="px-6 py-4 font-medium text-gray-900">Product Name</th>
-                        <th scope="col" class="px-6 py-4 font-medium text-gray-900">In Stock</th>
-                        <th scope="col" class="px-6 py-4 font-medium text-gray-900">Low Warning</th>
-                        <th scope="col" class="px-6 py-4 font-medium text-gray-900">Supplier</th>
-                        <th scope="col" class="px-6 py-4 font-medium text-gray-900"></th>
+                        <th scope="col" class="px-6 py-3 font-medium text-gray-900">Product Name</th>
+                        <th scope="col" class="px-6 py-3 font-medium text-gray-900">In Stock</th>
+                        <th scope="col" class="px-6 py-3 font-medium text-gray-900">Low Warning</th>
+                        <th scope="col" class="px-6 py-3 font-medium text-gray-900">Supplier</th>
+                        <th scope="col" class="px-6 py-3 font-medium text-gray-900"></th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-100 border-t border-gray-100">
                         <tr class="odd:bg-white even:bg-gray-50" *ngFor="let display of displayData">
-                            <th class="px-6 py-4 font-medium text-gray-900">{{display.product}}</th>
-                            <td class="px-6 py-4">{{display.quantity}}</td>
-                            <td class="px-6 py-4">{{display.lowWarning}}</td>
-                            <td class="px-6 py-4">{{display.supplierName}}</td>
-                            <td class="flex justify-end gap-4 px-6 py-4 font-medium">
-                                <a href="" class="text-blue-700">Edit</a>
+                            <th class="px-6 py-3 font-medium text-gray-900">{{display.product}}</th>
+                            <td class="px-6 py-3">{{display.quantity}}</td>
+                            <td class="px-6 py-3">{{display.lowWarning}}</td>
+                            <td class="px-6 py-3">{{display.supplierName}}</td>
+                            <td class="flex justify-end gap-4 px-6 py-3 font-medium">
+                                <a (click)="openLowStockEditModal('editLowStockModal', display.lowWarning, display._id)" class="text-blue-700">Edit</a>
                             </td>
                         </tr>
                     </tbody>
@@ -197,11 +213,30 @@
                 go to low stock
             </div>
             <div class="body-table" *ngIf="currentData == 'accounts'">
-
+                
             </div>
             <div class="body-search flex flex-center">
-                <ngb-pagination class="flex flex-center paginator" [(page)]="page" [pageSize]="pageSize"
-                    [collectionSize]="items.length" />
+                <ngb-pagination class="flex flex-center paginator" [(page)]="page" [pageSize]="pageLimit"
+                    [collectionSize]="pageSize" (pageChange)="applyPagination()"/>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="editLowStockModal" tabindex="-1" aria-labelledby="deleteItemModal" aria-hidden="true">
+    <div class="modal-dialog dialog700 modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header d-flex align-items-center flex-space-between">
+                <h1>Edit Low Stock</h1>
+                <img src="../../../../assets/img/icons/cross.svg" (click)="closeModal('editLowStockModal')" class="cross-btn" height="15px" width="15px" alt="">
+            </div>
+            <div class="modal-body">
+                <input type="number" min="0" [formControl]="lowStockEdit" class="block w-full px-4 py-3 text-base placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg text-neutral-600 bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300 ">
+            </div>
+            <div class="modal-footer d-flex flex-end">
+                <button class="btn btn-primary primary-button" (click)="confirmLowStock()">
+                    Confirm
+                </button>
             </div>
         </div>
     </div>
