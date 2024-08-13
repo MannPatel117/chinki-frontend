@@ -3,9 +3,12 @@ import { NgIf } from '@angular/common';
 import { FormBuilder, FormGroup, Validators , ReactiveFormsModule} from '@angular/forms';
 import { Router } from '@angular/router';
 import { HttpClientModule } from '@angular/common/http';
-import { ApiService } from '../../services/api.service';
+import { ApiService } from '../../services/api/api.service';
 import { ToastrService } from 'ngx-toastr';
 import { CustomToast } from '../../custom-toast/toast';
+import { SharedService } from '../../services/shared/shared.service';
+import { StoreBillService } from '../../services/store-bill/store-bill.service';
+
 @Component({
   selector: 'app-login',
   standalone: true,
@@ -16,7 +19,12 @@ import { CustomToast } from '../../custom-toast/toast';
 export class LoginComponent {
   loginForm!: FormGroup;
   loading = false;
-  constructor(private fb: FormBuilder, private route: Router,private api: ApiService, private toastr: ToastrService) {
+  constructor(private fb: FormBuilder,
+               private route: Router,
+               private api: ApiService, 
+               private toastr: ToastrService, 
+               private shared: SharedService,
+              private storeBill: StoreBillService) {
   
   }
 
@@ -25,25 +33,13 @@ export class LoginComponent {
     this.setFormBuilder();
   }
 
-  checkUserLoggedIn(){
-    const token= localStorage.getItem('token');
-    if(token){
-      this.api.getAPI('/adminUser/user', []).subscribe((res:any) =>{
-        if(res.statusCode == 200){
-          this.route.navigateByUrl('/pos/billing-system')
-        }
-        else{
-          this.route.navigateByUrl('/login')
-        }
-      }, (error) =>{
-        this.route.navigateByUrl('/login')
-      })
-    }
-    else{
-      this.route.navigateByUrl('/login')
+  async checkUserLoggedIn(){
+    const session = await this.shared.checkUserLoggedIn();
+    if(session){
+      this.route.navigateByUrl('/pos/billing-system')
     }
   }
-
+  
   // set formBuilder
 
   setFormBuilder(){
@@ -62,10 +58,11 @@ export class LoginComponent {
     }
     else{
       this.loading = true;
-      this.api.loginAdmin(this.loginForm.value).subscribe((res:any)=>{
+      this.api.loginAPI('/admin/user', this.loginForm.value).subscribe((res:any)=>{
         if(res){
-          localStorage.setItem('location', res.data.location)
+          localStorage.setItem('location', res.data.location);
           localStorage.setItem('token', res.data.accessToken);
+          localStorage.setItem('role',res.data.role)
           this.api.setToken();
           this.loading = false;
           this.route.navigateByUrl('/pos/billing-system')
@@ -80,7 +77,7 @@ export class LoginComponent {
           toastComponent: CustomToast,
           toastClass: "ngx-toastr"
         })
-      })
+      });
     }
   }
 }

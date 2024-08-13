@@ -46,7 +46,7 @@ export class InventorySystemComponent {
 
   displayAccounts: any;
   page= 1;
-  pageLimit= 1;
+  pageLimit= 10;
   pageSize = 0;
 
   searchBar: FormControl = new FormControl ('');
