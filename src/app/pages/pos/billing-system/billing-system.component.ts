@@ -1,4 +1,4 @@
-import { Component, ElementRef, Renderer2, ViewChild } from '@angular/core';
+import { Component, ElementRef, ViewChild } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ApiService } from '../../../services/api.service';
 import { Router, RouterModule } from '@angular/router';
@@ -98,7 +98,7 @@ export class BillingSystemComponent {
   
   ngOnInit(){
     this.loading = true;
-    this.checkUserLoggedIn();
+    // this.checkUserLoggedIn();
     this.setFormBuilder();
     this.invoiceSwitcher('A');
     this.getAllOffers();
