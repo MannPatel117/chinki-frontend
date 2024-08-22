@@ -1,21 +1,19 @@
+import { NgIf } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
-import { Router, RouterModule } from '@angular/router';
+import { RouterModule, Router } from '@angular/router';
 import { ApiService } from '../../../services/api.service';
-import { NgIf } from '@angular/common';
 
 @Component({
-  selector: 'app-user-history',
+  selector: 'app-products-master',
   standalone: true,
   imports: [RouterModule, NgIf],
-  templateUrl: './user-history.component.html',
-  styleUrl: './user-history.component.scss'
+  templateUrl: './products-master.component.html',
+  styleUrl: './products-master.component.scss'
 })
-export class UserHistoryComponent {
-
+export class ProductsMasterComponent {
   current_location: any;
   role:any = 'store';
-
   constructor(private fb: FormBuilder, private route: Router,private api: ApiService) {
     this.role = localStorage.getItem('role');
     this.current_location = localStorage.getItem('location')

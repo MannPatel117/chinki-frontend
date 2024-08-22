@@ -7,6 +7,7 @@ import { NgClass, NgFor, NgIf } from '@angular/common';
 import { ToastrService } from 'ngx-toastr';
 import { CustomToast } from '../../../custom-toast/toast';
 import { DatePipe } from '@angular/common';
+import { SharedService } from '../../../services/shared/shared.service';
 declare const $:any;
 
 @Component({
@@ -81,6 +82,8 @@ export class BillingSystemComponent {
 
   deleteIndex = -1;
 
+  role:any = 'store';
+
   userForm!: FormGroup;
   addUserForm!: FormGroup;
   billDataForm!: FormGroup;
@@ -93,37 +96,33 @@ export class BillingSystemComponent {
      private api: ApiService,
      private billData: StoreBillDataService,
      private toastr: ToastrService,
-     private datepipe: DatePipe) {
+     private datepipe: DatePipe,
+     private shared: SharedService,) {
+      this.role = localStorage.getItem('role');
+      this.current_location = localStorage.getItem('location')
   }
   
   ngOnInit(){
     this.loading = true;
-    // this.checkUserLoggedIn();
+    this.checkUserLoggedIn();
     this.setFormBuilder();
     this.invoiceSwitcher('A');
+  }
+  
+  init(){
     this.getAllOffers();
     this.getAllProducts();
+    this.fetchData(this.current_location)
   }
 
-  checkUserLoggedIn(){
-    const token= localStorage.getItem('token');
-    if(token){
-      this.api.getAdminUser().subscribe((res:any) =>{
-        if(res){
-          let location = res.data.location;
-          this.current_location = location;
-          this.fetchData(location)
-        }
-      }, (error) =>{
-        this.route.navigateByUrl('/login');
-        this.loading = false;
-        localStorage.clear();
-      })
-    }
-    else{
-        this.route.navigateByUrl('/login');
-        this.loading = false;
-        localStorage.clear();
+  async checkUserLoggedIn(){
+    const session = await this.shared.checkUserLoggedIn();
+    if(session){
+      this.init();
+    } else{
+      this.route.navigateByUrl('/login');
+      this.loading = false;
+      localStorage.clear();
     }
   }
 

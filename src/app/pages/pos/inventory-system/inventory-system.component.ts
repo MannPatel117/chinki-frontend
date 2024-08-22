@@ -17,13 +17,17 @@ declare const $:any;
 })
 export class InventorySystemComponent {
 
+  current_location: any;
+  role:any = 'store';
+  
   constructor(
     private fb: FormBuilder, 
     private route: Router,
     private api: ApiService,
     private excel: ExcelService
   ) {
-    
+    this.role = localStorage.getItem('role');
+    this.current_location = localStorage.getItem('location')
   }
 
   currentLocation = localStorage.getItem('location')
@@ -60,7 +64,7 @@ export class InventorySystemComponent {
   checkUserLoggedIn(){
     const token= localStorage.getItem('token');
     if(token){
-      this.api.getAPI('/adminUser/user', []).subscribe((res:any) =>{
+      this.api.getAPI('/admin/session', []).subscribe((res:any) =>{
         if(res.statusCode == 200){
           this.initAll();
         }

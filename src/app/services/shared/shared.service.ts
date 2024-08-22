@@ -11,19 +11,19 @@ export class SharedService {
 
   async checkUserLoggedIn(): Promise<boolean>{
     const token= localStorage.getItem('token');
-    if(token){
-      this.api.getAPI('/admin/session', []).subscribe((res:any) =>{
-        if(res.statusCode == 200){
+    if (token) {
+      try {
+        const res: any = await this.api.getAPI('/admin/session', []).toPromise();
+        if (res.statusCode === 200) {
           return true;
-        } else{
+        } else {
           return false;
         }
-      }, (error) =>{
+      } catch (error) {
         return false;
-      });
-    } else{
+      }
+    } else {
       return false;
     }
-    return false;
   }
 }
