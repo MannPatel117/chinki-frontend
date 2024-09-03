@@ -136,7 +136,7 @@
             </div>
             <div class="body-options w-full flex align-items-center flex-space-between">
                 <input id="search-bar" [formControl]="search" (change)="this.getProducts(true, false)" placeholder="Search" class="ml-1 block w-25 h-75 px-4 py-1 text-base placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg text-neutral-600 bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300 ng-untouched ng-pristine ng-invalid" ng-reflect-name="phnNumber">
-                <div class="btn-wrap flex flex-center">
+                <div class="btn-wrap flex flex-center gap1-5">
                     <div class="btn-wrap2">
                         <button (click)="printPdf()" [disabled]="displayData.length ==0" class="rounded-md bg-red-500 px-2.5 py-1.5 text-sm font-semibold text-white shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-red-600"><i class="bi bi-file-earmark-arrow-down"></i> &nbsp; PDF</button>
                     </div>
