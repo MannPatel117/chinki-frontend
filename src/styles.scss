@@ -147,6 +147,7 @@ app-sidebar{
 .sidebar-active{
     background-color: white;
     font-weight: 600;
+    border-radius: 5px;
     cursor: pointer;
     p{
         color: #187EF5;
@@ -493,3 +494,13 @@ app-sidebar{
 }
 
 
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* Hide spinners for Firefox */
+input[type="number"] {
+    -moz-appearance: textfield;
+}

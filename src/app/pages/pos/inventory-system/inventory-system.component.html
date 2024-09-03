@@ -174,20 +174,20 @@
                 <table *ngIf="displayData?.length > 0" class="w-full border-collapse border border-gray-200 rounded-lg bg-white text-left text-sm text-gray-500 shadow-md">
                     <thead class="bg-gray-100">
                         <tr>
-                        <th scope="col" class="px-6 py-3 font-medium text-gray-900">Product Name</th>
-                        <th scope="col" class="px-6 py-3 font-medium text-gray-900">In Stock</th>
-                        <th scope="col" class="px-6 py-3 font-medium text-gray-900">Low Warning</th>
-                        <th scope="col" class="px-6 py-3 font-medium text-gray-900">Supplier</th>
-                        <th scope="col" class="px-6 py-3 font-medium text-gray-900"></th>
+                        <th scope="col" class="px-4 py-2 font-medium text-gray-900">Product Name</th>
+                        <th scope="col" class="px-4 py-2 font-medium text-gray-900">In Stock</th>
+                        <th scope="col" class="px-4 py-2 font-medium text-gray-900">Low Warning</th>
+                        <th scope="col" class="px-4 py-2 font-medium text-gray-900">Supplier</th>
+                        <th scope="col" class="px-4 py-2 font-medium text-gray-900"></th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-100 border-t border-gray-100">
                         <tr class="odd:bg-white even:bg-gray-50" *ngFor="let display of displayData">
-                            <th class="px-6 py-3 font-medium text-gray-900">{{display.product}}</th>
-                            <td class="px-6 py-3">{{display.quantity}}</td>
-                            <td class="px-6 py-3">{{display.lowWarning}}</td>
-                            <td class="px-6 py-3">{{display.supplierName}}</td>
-                            <td class="flex justify-end gap-4 px-6 py-3 font-medium">
+                            <th class="px-4 py-2 text-xs font-medium text-gray-900">{{display.product}}</th>
+                            <td class="px-4 py-2 text-xs">{{display.quantity}}</td>
+                            <td class="px-4 py-2 text-xs">{{display.lowWarning}}</td>
+                            <td class="px-4 py-2 text-xs">{{display.supplierName}}</td>
+                            <td class="flex justify-end gap-4 px-4 py-2 font-medium">
                                 <a (click)="openLowStockEditModal('editLowStockModal', display.lowWarning, display._id)" class="text-blue-700">Edit</a>
                             </td>
                         </tr>
