@@ -5,17 +5,15 @@ import { ApiService } from '../../../services/api.service';
 import { NgIf } from '@angular/common';
 
 @Component({
-  selector: 'app-user-history',
+  selector: 'app-accounts-master',
   standalone: true,
   imports: [RouterModule, NgIf],
-  templateUrl: './user-history.component.html',
-  styleUrl: './user-history.component.scss'
+  templateUrl: './accounts-master.component.html',
+  styleUrl: './accounts-master.component.scss'
 })
-export class UserHistoryComponent {
-
+export class AccountsMasterComponent {
   current_location: any;
   role:any = 'store';
-
   constructor(private fb: FormBuilder, private route: Router,private api: ApiService) {
     this.role = localStorage.getItem('role');
     this.current_location = localStorage.getItem('location')

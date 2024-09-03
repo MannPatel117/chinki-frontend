@@ -36,7 +36,15 @@ export class LoginComponent {
   async checkUserLoggedIn(){
     const session = await this.shared.checkUserLoggedIn();
     if(session){
-      this.route.navigateByUrl('/pos/billing-system')
+      let role = localStorage.getItem('role');
+      if(role == 'factory'){
+        this.route.navigateByUrl('/pos/inventory-system')
+      } else {
+        this.route.navigateByUrl('/pos/billing-system')
+      }
+      
+    } else{
+
     }
   }
   

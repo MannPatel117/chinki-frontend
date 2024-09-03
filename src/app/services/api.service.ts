@@ -44,7 +44,7 @@ export class ApiService {
   }
 
   getAllProducts(){
-    return this.http.get(`${environment.apiUrl}/products/getAllActiveProducts`, this.header)
+    return this.http.get(`${environment.apiUrl}/products/product?pagination=false`, this.header)
   }
   
   getUserDetail(data:any){

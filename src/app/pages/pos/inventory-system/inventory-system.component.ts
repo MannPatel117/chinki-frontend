@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormControl, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
-import { ApiService } from '../../../services/api.service';
+import { ApiService } from '../../../services/api/api.service';
 import { NgbDropdownModule, NgbModule, NgbPaginationModule } from '@ng-bootstrap/ng-bootstrap';
 import {RoundProgressComponent} from 'angular-svg-round-progressbar';
 import { NgFor, NgForOf, NgIf } from '@angular/common';
@@ -17,13 +17,17 @@ declare const $:any;
 })
 export class InventorySystemComponent {
 
+  current_location: any;
+  role:any = 'store';
+  
   constructor(
     private fb: FormBuilder, 
     private route: Router,
     private api: ApiService,
     private excel: ExcelService
   ) {
-    
+    this.role = localStorage.getItem('role');
+    this.current_location = localStorage.getItem('location')
   }
 
   currentLocation = localStorage.getItem('location')
@@ -60,7 +64,7 @@ export class InventorySystemComponent {
   checkUserLoggedIn(){
     const token= localStorage.getItem('token');
     if(token){
-      this.api.getAPI('/adminUser/user', []).subscribe((res:any) =>{
+      this.api.getAPI('/admin/session', []).subscribe((res:any) =>{
         if(res.statusCode == 200){
           this.initAll();
         }
@@ -131,9 +135,9 @@ export class InventorySystemComponent {
           delete item.supplierId;
       });
       if(type == 'sheet'){
-        this.excel.exportAsExcelFile(data, 'Low Stock')
+        this.excel.exportAsExcelFile(data, 'Low Stock', "Low Stock")
       }else if(type == 'pdf'){
-        this.excel.exportAsPdfFile(data, 'Low Stock')
+        this.excel.exportAsPdfFile(data, 'Low Stock', 'Low Stock')
       }else{
         console.log("ERROR")
       }
@@ -144,9 +148,9 @@ export class InventorySystemComponent {
         delete item.supplierId;
       });
       if(type == 'sheet'){
-        this.excel.exportAsExcelFile(data, 'Low Stock')
+        this.excel.exportAsExcelFile(data, 'Low Stock', "Low Stock")
       }else if(type == 'pdf'){
-        this.excel.exportAsPdfFile(data, 'Low Stock')
+        this.excel.exportAsPdfFile(data, 'Low Stock', 'Low Stock')
       }else{
         console.log("ERROR")
       }
@@ -193,12 +197,8 @@ export class InventorySystemComponent {
   }
 
   logout(){
-    this.api.logout().subscribe((res:any) =>{
-      localStorage.removeItem('token')
-      this.route.navigateByUrl('/login')
-    },(error)=>{
-      
-    });
+    localStorage.removeItem('token')
+    this.route.navigateByUrl('/login')
   }
 
   openLowStockEditModal(id:any, lowStockNum:number, item_id:any){

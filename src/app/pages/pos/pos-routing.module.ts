@@ -5,6 +5,8 @@ import { InventorySystemComponent } from './inventory-system/inventory-system.co
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { UserHistoryComponent } from './user-history/user-history.component';
 import { BillHistoryComponent } from './bill-history/bill-history.component';
+import { ProductsMasterComponent } from './products-master/products-master.component';
+import { AccountsMasterComponent } from './accounts-master/accounts-master.component';
 
 const routes: Routes = [
   {
@@ -21,6 +23,12 @@ const routes: Routes = [
   },
   {
     path: 'bill-history', component: BillHistoryComponent
+  },
+  {
+    path: 'products-master', component: ProductsMasterComponent
+  },
+  {
+    path: 'accounts-master', component: AccountsMasterComponent
   },
 ];
 
