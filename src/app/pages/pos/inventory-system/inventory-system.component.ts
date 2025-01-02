@@ -1,17 +1,19 @@
+import { NgFor, NgIf } from '@angular/common';
 import { Component } from '@angular/core';
-import { FormBuilder, FormControl, ReactiveFormsModule } from '@angular/forms';
-import { Router, RouterModule } from '@angular/router';
+import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { RouterModule, Router } from '@angular/router';
 import { ApiService } from '../../../services/api/api.service';
-import { NgbDropdownModule, NgbModule, NgbPaginationModule } from '@ng-bootstrap/ng-bootstrap';
-import {RoundProgressComponent} from 'angular-svg-round-progressbar';
-import { NgFor, NgForOf, NgIf } from '@angular/common';
+import { NgbDropdownModule, NgbPaginationModule } from '@ng-bootstrap/ng-bootstrap';
+import { ToastrService } from 'ngx-toastr';
+import { SharedService } from '../../../services/shared/shared.service';
+import { CustomToast } from '../../../custom-toast/toast';
 import { ExcelService } from '../../../services/excel/excel.service';
 declare const $:any;
 
 @Component({
   selector: 'app-inventory-system',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterModule, NgbPaginationModule, RoundProgressComponent, NgIf, NgFor, NgbDropdownModule],
+  imports: [ReactiveFormsModule, RouterModule, NgIf, NgFor, NgbDropdownModule, NgbPaginationModule],
   templateUrl: './inventory-system.component.html',
   styleUrl: './inventory-system.component.scss'
 })
@@ -19,207 +21,325 @@ export class InventorySystemComponent {
 
   current_location: any;
   role:any = 'store';
-  
+  loading= false;
+  page = 1;
+  limit = 10;
+  collectionSize= 0;
+
+  productForm!: FormGroup;
+  search: FormControl = new FormControl ('');
+  supplierID: FormControl = new FormControl ('');
+  status: FormControl = new FormControl ('');
+  editStatus: FormControl = new FormControl ('');
+  editLowStock: FormControl = new FormControl (0);
+  editQuantity: FormControl = new FormControl (0);
+  editReason: FormControl = new FormControl('');
+
+  totalActiveProducts = 0;
+  totalProducts = 0;
+  displayData:any = [];
+  currentId:any;
+
+  statusEditFlag = false;
+  lowStockEditFlag = false;
+  quantityEditFlag = false;
+
   constructor(
     private fb: FormBuilder, 
     private route: Router,
     private api: ApiService,
-    private excel: ExcelService
+    private toastr: ToastrService, 
+    private excel: ExcelService,
+    private shared: SharedService
   ) {
     this.role = localStorage.getItem('role');
     this.current_location = localStorage.getItem('location')
   }
-
-  currentLocation = localStorage.getItem('location')
-  currentData = 'lowStocks';
-
-  isOpen = false;
-  
-  lowStockCount = 0;
-  totalAccountCount = 0;
-  totalActiveProductCount = 0;
-  totalProductCount = 0;
-
-  lowStockPercentage = 0;
-  totalActiveProductPercentage = 0;
-
-  displayData: any;
-  originalData:any;
-
-  temp_selectedId:any;
-
-  displayAccounts: any;
-  page= 1;
-  pageLimit= 10;
-  pageSize = 0;
-
-  searchBar: FormControl = new FormControl ('');
-  selectedAccount: FormControl = new FormControl('');
-  lowStockEdit: FormControl = new FormControl (0);
   
   ngOnInit(){
+    this.loading = true;
     this.checkUserLoggedIn();
+    this.setFormBuilder();
   }
 
-  checkUserLoggedIn(){
-    const token= localStorage.getItem('token');
-    if(token){
-      this.api.getAPI('/admin/session', []).subscribe((res:any) =>{
-        if(res.statusCode == 200){
-          this.initAll();
-        }
-        else{
-          this.route.navigateByUrl('/login')
-        }
-      }, (error) =>{
-        this.route.navigateByUrl('/login')
-      })
-    }
-    else{
-      this.route.navigateByUrl('/login')
-    }
-  }
-
-  initAll(){
+  init(){
+    this.getInventoryDetails(false, false);
     this.getStats();
-    this.getData(this.currentData);
+  }
+
+  async checkUserLoggedIn(){
+    const session = await this.shared.checkUserLoggedIn();
+    if(session){
+      this.init()
+    } else{
+      this.route.navigateByUrl('/login');
+      localStorage.clear();
+    }
+  }
+
+  setFormBuilder(){
+    this.productForm = this.fb.group({
+      itemName: ['', [Validators.required]],
+      aliasName: ['', [Validators.required]],
+      barcode: ['', [Validators.required]],
+      productType: ['finished'],
+      mrp: [0,[Validators.min(0)]],
+      discount: [0,[Validators.min(0)]],
+      sellingPrice: [0,[Validators.min(0)]],
+      wholeSalePrice: [0,[Validators.min(0)]],
+      gst: [0,[Validators.min(0)]],
+      hsnCode: [''],
+      status: ['active']
+    })
+
+    this.editReason.disable();
   }
 
   getStats(){
-    this.api.getAPI('/inventory/inventoryStats', [['location', this.currentLocation]]).subscribe((res:any) =>{
-      const data = res.data;
-      this.lowStockCount = data.lowStockCount;
-      this.totalAccountCount = data.totalAccountCount;
-      this.totalActiveProductCount = data.totalActiveProductCount;
-      this.totalProductCount = data.totalProductCount;
-      this.lowStockPercentage = Math.round((this.lowStockCount/this.totalActiveProductCount)*100);
-      this.totalActiveProductPercentage = Math.round((this.totalActiveProductCount/this.totalProductCount)*100);
-    })
-  }
-
-  getData(current:any){
-    this.currentData = current;
-    let searchValue = this.searchBar.value;
-    switch(current){
-      case 'products': console.log(current)
-        
-      break;
-
-      case 'lowStocks': 
-      this.api.getAPI('/inventory/lowInventory', [['location', this.currentLocation], ['search', searchValue], ['page', this.page], ['limit', this.pageSize]]).subscribe((res:any) => {
+    try{
+      this.api.getAPI('/products/stats', []).subscribe((res:any) => {
         if(res.data.length == 0){
-          this.pageSize = this.originalData.length;
-          this.displayData = []
-          this.originalData = []
+          this.loading = false;
+          this.toastr.show('error','Something went wrong',{ 
+            toastComponent: CustomToast,
+            toastClass: "ngx-toastr"
+          })
         }else{
-          this.originalData = res.data[0].inventoryProducts;
-          this.pageSize = this.originalData.length;
-          this.applyPagination()
+          this.totalActiveProducts = res.data.totalActiveProductCount;
+          this.totalProducts = res.data.totalProductCount;
+          this.loading = false;
         }
       });
-      this.api.getAPI('/accounts/getAccounts', []).subscribe((res:any) => {
-        this.displayAccounts = res.data;
-      });
-        
-      break;
-      case 'accounts': console.log(current)
-      break;
+    }
+    catch(err){
+      this.loading = false;
+      this.toastr.show('error','Something went wrong',{ 
+        toastComponent: CustomToast,
+        toastClass: "ngx-toastr"
+      })
     }
   }
 
-  print(type:any){
-    if(this.selectedAccount.value == ''){
-      let data = this.originalData;
-        data.forEach((item: { _id: any; supplierId: any; }) => {
-          delete item._id;
-          delete item.supplierId;
-      });
-      if(type == 'sheet'){
-        this.excel.exportAsExcelFile(data, 'Low Stock', "Low Stock")
-      }else if(type == 'pdf'){
-        this.excel.exportAsPdfFile(data, 'Low Stock', 'Low Stock')
-      }else{
-        console.log("ERROR")
+  getInventoryDetails(filter: boolean, reset:boolean){
+    this.loading = true;
+    try{
+      if(filter == true){
+        this.page = 1;
       }
-    } else{
-      let data = this.originalData.filter((prod:any) => prod.supplierId === this.selectedAccount.value);
-      data.forEach((item: { _id: any; supplierId: any; }) => {
-        delete item._id;
-        delete item.supplierId;
+      if(reset == true){
+        this.search.setValue("");
+        this.supplierID.setValue("");
+        this.status.setValue("");
+      }
+      this.api.getAPI('/inventory/InventoryDetail', [["location",  this.current_location],["search", this.search.value],["supplierId", this.supplierID.value],["status", this.status.value],["limit", this.limit],["page", this.page], ["pagination", true]]).subscribe((res:any) => {
+        if(res.data.docs.length == 0){
+          this.displayData = res.data.docs;
+          this.loading = false;
+        }else{
+          this.displayData = res.data.docs;
+          this.collectionSize = res.data.totalDocs;
+          this.loading = false;
+        }
       });
-      if(type == 'sheet'){
-        this.excel.exportAsExcelFile(data, 'Low Stock', "Low Stock")
-      }else if(type == 'pdf'){
-        this.excel.exportAsPdfFile(data, 'Low Stock', 'Low Stock')
-      }else{
-        console.log("ERROR")
+    }
+    catch(err){
+      this.loading = false;
+      this.toastr.show('error','Something went wrong',{ 
+        toastComponent: CustomToast,
+        toastClass: "ngx-toastr"
+      })
+    }
+  }
+
+  onCheckboxChange(value: string, event: Event): void {
+    const checkbox = event.target as HTMLInputElement;
+    if (checkbox.checked) {
+      if(value == 'finished' || value == 'estimated'){
+        this.supplierID.setValue(value);
+      }
+      if(value == 'active' || value == 'inactive'){
+        this.status.setValue(value);
+      }
+    } else {
+      if(value == 'finished' || value == 'estimated'){
+        this.supplierID.setValue("");
+      }
+      if(value == 'active' || value == 'inactive'){
+        this.status.setValue("");
       }
     }
   }
 
-  onCheckboxChange(value: string) {
-    if(value == this.selectedAccount.value){
-      this.selectedAccount.setValue('');
-    } else{
-      this.selectedAccount.setValue(value);
+
+  addProduct(){
+    this.closeModal('addProductModal');
+    this.loading = true;
+    try{
+      this.api.postAPI('/products/product', [], this.productForm.value).subscribe((res:any) => {
+        this.loading = false;
+        if(res.data.length == 0){
+          this.toastr.show('error','Something went wrong',{ 
+            toastComponent: CustomToast,
+            toastClass: "ngx-toastr"
+          })
+        }else{
+          this.toastr.show('success', res.message,{ 
+            toastComponent: CustomToast,
+            toastClass: "ngx-toastr",
+          })
+          this.init();
+        }
+      });
+    }
+    catch(err){
+      this.loading = false;
+      this.toastr.show('error','Something went wrong',{ 
+        toastComponent: CustomToast,
+        toastClass: "ngx-toastr"
+      })
     }
   }
 
-  applyAccountFilter(){
-    if(this.selectedAccount.value == ''){
-      this.page = 1;
-      this.applyPagination();
-    } else{
-      console.log(this.originalData)
-      this.page = 1;
-      let data = this.originalData.filter((prod:any) => prod.supplierId === this.selectedAccount.value);
-      console.log(data)
-      this.pageSize = this.originalData.length;
-      let startindex = (this.page-1)*this.pageLimit;
-      let endIndex = (startindex + this.pageLimit)
-      this.displayData = data.slice(startindex, endIndex);
-    }
-  }
-
-  confirmLowStock(){
-    const body = {
-      "product": this.temp_selectedId,
-      "lowWarning": this.lowStockEdit.value
-    }
-    this.api.patchAPI('/inventory/lowInventory', [['location', this.currentLocation]], body).subscribe((res:any) => {
-      this.getData('lowStocks');
-      this.temp_selectedId = '';
-      this.closeModal('editLowStockModal');
+  printExcel(){
+    this.loading = true
+    this.api.getAPI('/inventory/InventoryDetail', [["location",  this.current_location],["supplierId", this.supplierID.value],["status", this.status.value],["limit", this.limit],["page", this.page], ["pagination", false]]).subscribe((res:any) => {
+      if(res.data.length == 0){
+        this.loading = false;
+        this.toastr.show('error','Something went wrong',{ 
+          toastComponent: CustomToast,
+          toastClass: "ngx-toastr"
+        })
+      }else{
+        const data = res.data;
+        data.forEach((element:any) => {
+          delete element._id;
+          delete element.__v;
+          delete element.supplierId;
+          delete element.product;
+        });
+        this.excel.exportAsExcelFile(data, 'Inventory Product List', ' Inventory List '+ ((this.search.value).toUpperCase())+ " " + ((this.status.value).toUpperCase())+ " "+ ((this.current_location).toUpperCase()))
+        this.loading = false;
+      }
     });
-    //make api call
-    //close the modal
-    // reset temp variable
   }
 
-  logout(){
-    localStorage.removeItem('token')
-    this.route.navigateByUrl('/login')
+  printPdf(){
+    this.loading = true
+    this.api.getAPI('/inventory/InventoryDetail', [["location",  this.current_location],["supplierId", this.supplierID.value],["status", this.status.value],["limit", this.limit],["page", this.page], ["pagination", false]]).subscribe((res:any) => {
+      if(res.data.length == 0){
+        this.loading = false;
+        this.toastr.show('error','Something went wrong',{ 
+          toastComponent: CustomToast,
+          toastClass: "ngx-toastr"
+        })
+      }else{
+        const data = res.data;
+        data.forEach((element:any) => {
+          delete element._id;
+          delete element.__v;
+          delete element.supplierId;
+          delete element.product;
+          delete element.aliasName;
+        });
+        this.excel.exportAsPdfFile(data, 'Inventory Products List', ' Inventory List '+((this.search.value).toUpperCase())+ " " + ((this.status.value).toUpperCase())+ " "+ ((this.current_location).toUpperCase()))
+        this.loading = false;
+      }
+    });
   }
 
-  openLowStockEditModal(id:any, lowStockNum:number, item_id:any){
-    this.temp_selectedId = item_id;
-    this.lowStockEdit.setValue(lowStockNum)
-    $("#"+id).modal('show');
+  editProduct(){
+    this.closeModal('editProductModal');
+    this.loading = true;
+    try{
+      this.api.patchAPI('/products/product', [['id', this.currentId]], this.productForm.value).subscribe((res:any) => {
+        this.loading = false;
+        if(res.data.length == 0){
+          this.toastr.show('error','Something went wrong',{ 
+            toastComponent: CustomToast,
+            toastClass: "ngx-toastr"
+          })
+        }else{
+          this.init();
+          this.toastr.show('success', res.message,{ 
+            toastComponent: CustomToast,
+            toastClass: "ngx-toastr",
+          })
+        }
+      });
+    }
+    catch(err){
+      this.loading = false;
+      this.toastr.show('error','Something went wrong',{ 
+        toastComponent: CustomToast,
+        toastClass: "ngx-toastr"
+      })
+    }
+  }
+
+  deleteProduct(){
+    this.closeModal('deleteProductModal');
+    try{
+      this.api.deleteAPI('/products/product', [['id', this.currentId]]).subscribe((res:any) => {
+        this.loading = false;
+        if(res.data.length == 0){
+          this.toastr.show('error','Something went wrong',{ 
+            toastComponent: CustomToast,
+            toastClass: "ngx-toastr"
+          })
+        }else{
+          this.init();
+          this.toastr.show('success', res.message,{ 
+            toastComponent: CustomToast,
+            toastClass: "ngx-toastr",
+          })
+        }
+      });
+    }
+    catch(err){
+      this.loading = false;
+      this.toastr.show('error','Something went wrong',{ 
+        toastComponent: CustomToast,
+        toastClass: "ngx-toastr"
+      })
+    }
+  }
+
+  openDeleteModal(currentProd:any){
+    this.currentId = currentProd._id;
+    $("#deleteProductModal").modal('show');
+  }
+
+  openEditModal(currentProd:any){
+    this.currentId = currentProd._id;
+    this.statusEditFlag = false;
+    this.lowStockEditFlag = false;
+    this.quantityEditFlag = false;
+    this.editStatus.setValue(currentProd.status)
+    this.editLowStock.setValue(currentProd.lowWarning)
+    this.editQuantity.get('quantity')?.setValue(currentProd.quantity)
+    this.setFormValues(currentProd, this.productForm);
+    $("#editInventoryModal").modal('show');
+  }
+
+  setFormValues(currentProd: any, form: FormGroup) {
+    Object.keys(currentProd).forEach(key => {
+      if (form.get(key)) {
+        form.get(key)?.setValue(currentProd[key]);
+      }
+    });
   }
 
   openModal(id:any){
     $("#"+id).modal('show');
+    this.setFormBuilder();
   }
 
   closeModal(id:any){
     $("#"+id).modal('hide');
-    //reset temp variable
   }
 
-  applyPagination(){
-    this.pageSize = this.originalData.length;
-    let startindex = (this.page-1)*this.pageLimit;
-    let endIndex = (startindex + this.pageLimit)
-    this.displayData = this.originalData.slice(startindex, endIndex);
+  logout(){
+    this.route.navigateByUrl('/login');
+    localStorage.clear();
   }
 }
