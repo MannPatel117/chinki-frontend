@@ -1,3 +1,13 @@
+<div class="loader flex-col gap1-5" *ngIf="loading">
+    <div class="cube-loader">
+        <div class="cube cube1"></div>
+        <div class="cube cube2"></div>
+        <div class="cube cube3"></div>
+        <div class="cube cube4"></div>
+    </div>
+    <h3>Loading</h3>
+</div>
+
 <div class="body flex-center">
     <div class="sidebar">
         <div class="sidebar-head flex-center">
@@ -107,134 +117,194 @@
         </div>
     </div>
     <div class="main-body flex-start">
-        <div class="body-content flex flex-col flex-space-between">
-            <div class="body-menu flex flex-center">
-                <div class="chinki-card col-wrap flex flex-col flex-center" [class.active-card]="currentData == 'lowStocks'">
-                    <div class="card-header flex flex-start">Low Stocks Products</div>
-                    <div class="card-body flex flex-space-between align-flex-end items-end">
-                        <h1 class="flex items-end">{{lowStockCount}}</h1>
-                        <h5 class="flex-end" [class.greenPercent]="lowStockPercentage == 0">{{lowStockPercentage}} %</h5>
-                    </div>
-                    <div class="card-footer flex flex-end" (click)="getData('lowStocks')">
-                        <h4>View All</h4><h4>--></h4>
-                    </div>
-                </div>
-                <div class="chinki-card col-wrap flex flex-col flex-center" [class.active-card]="currentData == 'products'">
-                    <div class="card-header flex flex-start">Total Active Products</div>
-                    <div class="card-body flex flex-space-between align-flex-end items-end">
-                        <h1 class="flex items-end">{{totalActiveProductCount}}</h1>
-                        <h5 class="flex-end" [class.greenPercent]="totalActiveProductPercentage == 100">{{totalActiveProductPercentage}} %</h5>
-                    </div>
-                    <div class="card-footer flex flex-end" (click)="getData('products')">
-                        <h4>View All</h4><h4>--></h4>
-                    </div>
-                </div>
-                <div class="chinki-card col-wrap flex flex-col flex-center" [class.active-card]="currentData == 'accounts'">
-                    <div class="card-header flex flex-start">Total Accounts</div>
-                    <div class="card-body flex flex-space-between align-flex-end items-end">
-                        <h1 class="flex items-end">{{totalAccountCount}}</h1>
-                    </div>
-                    <div class="card-footer flex flex-end" (click)="getData('accounts')">
-                        <h4>View All</h4><h4>--></h4>
-                    </div>
+        <div class="body-content flex flex-col gap1-5">
+            <div class="body-head w-full flex flex-center flex-space-between">
+                <div></div>
+                <div class="btn-wrap flex gap2">
+                    <button class="rounded-md bg-blue-600 px-2.5 py-1.5 text-sm font-semibold text-white shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-blue-600" *ngIf="role != 'store' && role != 'crm' && role !='factory'" (click)="openModal('addEntryModal')" >Add Entry</button>
                 </div>
             </div>
-            <div class="body-search flex flex-center gap1-5">
-                <div class="w-full">
-                    <div class="relative rounded-md shadow-sm w-full">
-                        <input type="text" [formControl]="searchBar" style="padding-right: 200px;" name="price" id="price"
-                            class="block w-full rounded-md border-0 py-2 pl-7 pr-10 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                            placeholder="Search Low Stocks">
-                        <div class="absolute inset-y-0 right-0 flex items-center">
-                            <button class="btn btn-primary px-5" (click)="getData('lowStocks')">Search</button>
-                        </div>
-                    </div>
+            <div class="body-stats w-full flex flex-center gap2 px-5 relative">
+                <div class="w-full justify-content-center flex gap1 whitespace-nowrap">
+                    <h2 class="text-neutral-100">Total Active Products &nbsp; :</h2>
+                    <h2 class="text-neutral-100">{{totalActiveProducts}}</h2>
                 </div>
-                <button class="btn btn-success px-10" (click)="print('sheet')">Print</button>
-                <button class="btn btn-danger px-10" (click)="print('pdf')">Print</button>
-                <div ngbDropdown container="body">
-					<button class="btn btn-info" style="margin-right: 30px;" ngbDropdownToggle>Filter</button>
-					<div ngbDropdownMenu class="custom-dropdown">
-						<div *ngFor="let account of displayAccounts, let i=index" class="form-check">
-                            <input type="checkbox" class="form-check-input" [value]="account._id" [checked]="selectedAccount.value === account._id" (change)="onCheckboxChange(account._id)" [id]="'dropdowwn'+i" />
-                            <label class="form-check-label" [for]="'dropdowwn'+i">{{account.accountName}}</label>
-                        </div>
-                        <div class="form-check">
-                            <input type="checkbox" class="form-check-input" value="DUMMY" [checked]="selectedAccount.value === 'DUMMY'" (change)="onCheckboxChange('DUMMY')" [id]="'dropdowwn'+99" />
-                            <label class="form-check-label" [for]="'dropdowwn'+99">DUMMY</label>
-                        </div>
-                        <button class="btn btn-primary" (click)="applyAccountFilter();" ngbDropdownItem>Apply</button>
-					</div>
-				</div>
-                
-                
+                <div class="w-full justify-content-center flex gap1 whitespace-nowrap">
+                    <h2 class="text-neutral-100">Total Products &nbsp; :</h2>
+                    <h2 class="text-neutral-100">{{totalProducts}}</h2>
+                </div>
             </div>
             
-            <div class="body-table" *ngIf="currentData == 'lowStocks'">
-                <table *ngIf="displayData?.length > 0" class="w-full border-collapse border border-gray-200 rounded-lg bg-white text-left text-sm text-gray-500 shadow-md">
-                    <thead class="bg-gray-100">
+            <div class="body-options w-full flex align-items-center flex-space-between">
+                <input id="search-bar" [formControl]="search" (change)="this.getInventoryDetails(true, false)" placeholder="Search" class="ml-1 block w-25 h-75 px-4 py-1 text-base placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg text-neutral-600 bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300 ng-untouched ng-pristine ng-invalid" ng-reflect-name="phnNumber">
+                <div class="btn-wrap flex flex-center gap1-5">
+                    <div class="btn-wrap2">
+                        <button (click)="printPdf()" [disabled]="displayData.length ==0" class="rounded-md bg-red-500 px-2.5 py-1.5 text-sm font-semibold text-white shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-red-600"><i class="bi bi-file-earmark-arrow-down"></i> &nbsp; PDF</button>
+                    </div>
+                    <div class="btn-wrap2">
+                        <button (click)="printExcel()" [disabled]="displayData.length ==0" class="rounded-md bg-emerald-500 px-2.5 py-1.5 text-sm font-semibold text-white shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-emerald-600"><i class="bi bi-file-earmark-arrow-down"></i> &nbsp; Excel</button>
+                    </div>
+                    <div ngbDropdown class="btn-wrap2 flex flex-center" placement="bottom-end" container="body" #prodfilter="ngbDropdown">
+                        <button ngbDropdownToggle class="rounded-md px-2.5 py-1.5 text-sm font-semibold text-gray-900 bg-slate-100 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50" > <i class="bi bi-filter"></i> &nbsp; Filter</button>
+                        <div ngbDropdownMenu class="custom-dropdown mt-2 divide-y divide-gray-100 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                            <div class="form-check px-3 py-2">
+                                <p class="text-sm text-gray-700 font-medium mb-1 ml--1">Product Type</p>
+                                <input type="checkbox" class="form-check-input" value="finished" [checked]="supplierID.value === 'finished'"  (change)="onCheckboxChange('finished', $event)" id="prod-finished" />
+                                <label class="ml-1 block text-sm text-gray-700" for="prod-finished">Finished</label>
+                                <input type="checkbox" class="form-check-input" value="estimated" [checked]="supplierID.value === 'estimated'"  (change)="onCheckboxChange('estimated', $event)" id="prod-estimated" />
+                                <label class="ml-1 block text-sm text-gray-700" for="prod-estimated">Estimated</label>
+                            </div>
+                            <div class="form-check px-3 py-2">
+                                <p class="text-sm text-gray-700 font-medium mb-1 ml--1">Status</p>
+                                <input type="checkbox" class="form-check-input" value="active" [checked]="status.value === 'active'"  (change)="onCheckboxChange('active', $event)" id="status-active" />
+                                <label class="ml-1 block text-sm text-gray-700" for="status-active">Active</label>
+                                <input type="checkbox" class="form-check-input" value="inactive" [checked]="status.value === 'inactive'"  (change)="onCheckboxChange('inactive', $event)" id="status-inactive" />
+                                <label class="ml-1 block text-sm text-gray-700" for="status-inactive">Inactive</label>
+                            </div>
+                            <div class="py-2 px-3">
+                                <button class="btn btn-primary text-sm" (click)="getInventoryDetails(true, false); prodfilter.close()" >Apply</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="body-table w-full table-responsive">
+                <table *ngIf="displayData?.length > 0" class="w-full text-left table-auto min-w-max overflow-auto">
+                    <thead>
                         <tr>
-                        <th scope="col" class="px-4 py-2 font-medium text-gray-900">Product Name</th>
-                        <th scope="col" class="px-4 py-2 font-medium text-gray-900">In Stock</th>
-                        <th scope="col" class="px-4 py-2 font-medium text-gray-900">Low Warning</th>
-                        <th scope="col" class="px-4 py-2 font-medium text-gray-900">Supplier</th>
-                        <th scope="col" class="px-4 py-2 font-medium text-gray-900"></th>
+                            <th class="py-3 px-2 transition-colors cursor-pointer border-y border-slate-200 bg-slate-50 hover:bg-slate-100 font-sans text-sm font-normal leading-none text-slate-700">
+                                Product Name
+                            </th>
+                            <th class="py-3 px-2 transition-colors cursor-pointer border-y border-slate-200 bg-slate-50 hover:bg-slate-100 font-sans text-sm font-normal leading-none text-slate-700">
+                                Barcode
+                            </th>
+                            <th class="py-3 px-2 transition-colors cursor-pointer border-y border-slate-200 bg-slate-50 hover:bg-slate-100 font-sans text-sm font-normal leading-none text-slate-700">
+                                Quantity
+                            </th>
+                            <th class="py-3 px-2 transition-colors cursor-pointer border-y border-slate-200 bg-slate-50 hover:bg-slate-100 font-sans text-sm font-normal leading-none text-slate-700">
+                                Low Stock
+                            </th>
+                            <th class="py-3 px-2 transition-colors cursor-pointer border-y border-slate-200 bg-slate-50 hover:bg-slate-100 font-sans text-sm font-normal leading-none text-slate-700">
+                            Status
+                            </th>
+                            <th class="py-3 px-5 transition-colors cursor-pointer border-y border-slate-200 bg-slate-50 hover:bg-slate-100 font-sans text-sm font-normal leading-none text-slate-700">
+                            </th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-gray-100 border-t border-gray-100">
-                        <tr class="odd:bg-white even:bg-gray-50" *ngFor="let display of displayData">
-                            <th class="px-4 py-2 text-xs font-medium text-gray-900">{{display.product}}</th>
-                            <td class="px-4 py-2 text-xs">{{display.quantity}}</td>
-                            <td class="px-4 py-2 text-xs">{{display.lowWarning}}</td>
-                            <td class="px-4 py-2 text-xs">{{display.supplierName}}</td>
-                            <td class="flex justify-end gap-4 px-4 py-2 font-medium">
-                                <a (click)="openLowStockEditModal('editLowStockModal', display.lowWarning, display._id)" class="text-blue-700">Edit</a>
-                            </td>
+                    <tbody>
+                        <tr *ngFor="let display of displayData">
+                        <td class="py-2 px-2 border-b border-slate-200">
+                            <div class="flex flex-col">
+                                <p class="text-sm font-semibold text-slate-700">
+                                    {{display.itemName}}
+                                </p>
+                            </div>
+                        </td>
+                        <td class="py-2 px-2 border-b border-slate-200">
+                            <p class="text-xs text-slate-500">
+                                {{display.barcode}}
+                            </p>
+                        </td>
+                        <td class="py-2 px-2 border-b border-slate-200">
+                            <p class="text-xs text-slate-500">
+                                {{display.quantity}}
+                            </p>
+                        </td>
+                        <td class="py-2 px-2 border-b border-slate-200">
+                            <p class="text-xs text-slate-500">
+                                {{display.lowWarning}}
+                            </p>
+                        </td>
+                        <td class="py-2 px-2 border-b border-slate-200">
+                            <div class="w-max">
+                                <div *ngIf="display.status == 'active'" class="relative grid items-center px-2 py-1 font-sans text-xs font-bold text-green-700 uppercase rounded-md select-none whitespace-nowrap bg-green-500/20">
+                                    <span class="">active</span>
+                                </div>
+                                <div *ngIf="display.status == 'inactive'" class="relative grid items-center px-2 py-1 font-sans text-xs font-bold text-red-700 uppercase rounded-md select-none whitespace-nowrap bg-red-500/20">
+                                    <span class="">inactive</span>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="py-2 px-2 border-b border-slate-200">
+                            <a (click)="openEditModal(display)" class="text-blue-700 text-xs font-semibold">Edit</a>
+                            <a (click)="openDeleteModal(display)" class="ml-2.5 text-red-700 text-xs font-semibold">Delete</a>
+                        </td>
                         </tr>
                     </tbody>
-                </table>
+                    </table>
+
                 <div *ngIf="displayData?.length == 0" class="not-found w-full h-full">
                     <div class="container flex items-center px-6 py-12 mx-auto">
                         <div class="flex flex-col items-center max-w-sm mx-auto text-center">
-                            <h1 class="mt-3 text-xl font-semibold text-gray-800 md:text-3xl">No Low Stock data found</h1>
+                            <h1 class="mt-3 text-xl font-semibold text-gray-800 md:text-3xl">No Inventory data found</h1>
                             <p class="mt-4 text-gray-500 dark:text-gray-400">The filters or search applied could not find any data.</p>
                 
                             <div class="flex items-center w-full mt-6 gap-x-3 shrink-0 sm:w-auto">
-                                <button (click)="getData('products')" class="w-1/2 px-5 py-2 text-sm tracking-wide text-white transition-colors duration-200 bg-blue-500 rounded-lg shrink-0 sm:w-auto hover:bg-blue-600 dark:hover:bg-blue-500 dark:bg-blue-600">
-                                    Go to Active Products
+                                <button (click)="getInventoryDetails(true, true)" class="w-1/2 px-5 py-2 text-sm tracking-wide text-white transition-colors duration-200 bg-blue-500 rounded-lg shrink-0 sm:w-auto hover:bg-blue-600 dark:hover:bg-blue-500 dark:bg-blue-600">
+                                    Remove Filters
                                 </button>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-  
-            <div class="body-table" *ngIf="currentData == 'products'">
-                go to low stock
-            </div>
-            <div class="body-table" *ngIf="currentData == 'accounts'">
-                
-            </div>
-            <div class="body-search flex flex-center">
-                <ngb-pagination class="flex flex-center paginator" [(page)]="page" [pageSize]="pageLimit"
-                    [collectionSize]="pageSize" (pageChange)="applyPagination()"/>
+            <div class="body-footer w-full">
+                <ngb-pagination class="flex flex-center paginator" *ngIf="displayData?.length != 0" [(page)]="page" [pageSize]="limit"
+                    [collectionSize]="collectionSize" (pageChange)="getInventoryDetails(false, false)"/>
             </div>
         </div>
     </div>
 </div>
 
-<div class="modal fade" id="editLowStockModal" tabindex="-1" aria-labelledby="deleteItemModal" aria-hidden="true">
+<div class="modal fade" id="editInventoryModal" tabindex="-1" aria-labelledby="editInventoryModal" aria-hidden="true">
     <div class="modal-dialog dialog700 modal-dialog-centered modal-dialog-scrollable">
         <div class="modal-content">
             <div class="modal-header d-flex align-items-center flex-space-between">
-                <h1>Edit Low Stock</h1>
-                <img src="../../../../assets/img/icons/cross.svg" (click)="closeModal('editLowStockModal')" class="cross-btn" height="15px" width="15px" alt="">
+                <h1>Edit Inventory Product</h1>
+                <img src="../../../../assets/img/icons/cross.svg" (click)="closeModal('editInventoryModal')" class="cross-btn" height="15px" width="15px" alt="">
             </div>
             <div class="modal-body">
-                <input type="number" min="0" [formControl]="lowStockEdit" class="block w-full px-4 py-3 text-base placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg text-neutral-600 bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300 ">
+                <div class="form-row flex-center flex-space-between gap3 margin-top p-2">
+                    <div class="form-wrap w-100">
+                        <label for="lowStock" class="block text-sm font-medium text-neutral-600">Edit Low Stock Warning
+                        </label>
+                        <div class="mt-1">
+                            <input id="lowStock" [formControl]="editLowStock" (change)="this.lowStockEditFlag = true" type="number" placeholder="Low Stock" class="block w-full px-4 py-1 text-base placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg text-neutral-600 bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300 ">
+                        </div>
+                    </div>
+                    <div class="form-wrap w-100">
+                        <label for="status" class="block text-sm font-medium text-neutral-600">Edit Status
+                        </label>
+                        <div class="mt-1">
+                            <select id="status" [formControl]="editStatus" (change)="this.statusEditFlag = true"  placeholder="status" class="block w-full px-4 py-2 text-base placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg text-neutral-600 bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300 ">
+                                <option class="form-check-label block px-4 py-2 text-sm text-gray-700" value="active">Active</option>
+                                <option class="form-check-label block px-4 py-2 text-sm text-gray-700" value="inactive">Inactive</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-row flex-center flex-space-between gap3 margin-top p-2">
+                    <div class="form-wrap w-100">
+                        <label for="quantity" class="block text-sm font-medium text-neutral-600">Edit Quantity
+                        </label>
+                        <div class="mt-1">
+                            <input id="quantity" [formControl]="editQuantity" placeholder="Quantity" (change)="this.editReason.enable()"  class="block w-full px-4 py-1 text-base placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg text-neutral-600 bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300 ">
+                        </div>
+                    </div>
+                    <div class="form-wrap w-100">
+                        <label for="reason" class="block text-sm font-medium text-neutral-600">Select Reason for Quantity Update
+                        </label>
+                        <div class="mt-1">
+                            <select id="reason" [formControl]="editReason" placeholder="status" class="block w-full px-4 py-2 text-base placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg text-neutral-600 bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300 ">
+                                <option class="form-check-label block px-4 py-2 text-sm text-gray-700" value="Opening Entry">Opening Entry</option>
+                                <option class="form-check-label block px-4 py-2 text-sm text-gray-700" value="Adjusting Error">Adjusting Error</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
             </div>
             <div class="modal-footer d-flex flex-end">
-                <button class="btn btn-primary primary-button" (click)="confirmLowStock()">
+                <button class="btn btn-primary primary-button">
                     Confirm
                 </button>
             </div>

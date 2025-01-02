@@ -81,6 +81,7 @@ export class ProductsMasterComponent {
       wholeSalePrice: [0,[Validators.min(0)]],
       gst: [0,[Validators.min(0)]],
       hsnCode: [''],
+      supplierId: [''],
       status: ['active']
     })
   }
