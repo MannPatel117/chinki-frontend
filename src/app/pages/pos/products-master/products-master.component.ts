@@ -315,6 +315,12 @@ export class ProductsMasterComponent {
     $("#editProductModal").modal('show');
   }
 
+  openViewModal(currentProd:any){
+    this.currentId = currentProd._id;
+    this.setFormValues(currentProd, this.productForm);
+    $("#viewProductModal").modal('show');
+  }
+
   setFormValues(currentProd: any, form: FormGroup) {
     Object.keys(currentProd).forEach(key => {
       if (form.get(key)) {

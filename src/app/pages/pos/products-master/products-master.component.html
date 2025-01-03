@@ -121,7 +121,7 @@
             <div class="body-head w-full flex flex-center flex-space-between">
                 <div></div>
                 <div class="btn-wrap flex gap2">
-                    <button class="rounded-md bg-blue-600 px-2.5 py-1.5 text-sm font-semibold text-white shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-blue-600" *ngIf="role != 'store' && role != 'crm' && role !='factory'" (click)="openModal('addProductModal')" >Add Product</button>
+                    <button class="rounded-md bg-blue-600 px-2.5 py-1.5 text-sm font-semibold text-white shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-blue-600" *ngIf="role == 'admin' || role == 'superadmin'" (click)="openModal('addProductModal')" >Add Product</button>
                 </div>
             </div>
             <div class="body-stats w-full flex flex-center gap2 px-5 relative">
@@ -238,8 +238,9 @@
                             </div>
                         </td>
                         <td class="py-2 px-2 border-b border-slate-200">
-                            <a (click)="openEditModal(display)" class="text-blue-700 text-xs font-semibold">Edit</a>
-                            <a (click)="openDeleteModal(display)" class="ml-2.5 text-red-700 text-xs font-semibold">Delete</a>
+                            <a *ngIf="role == 'admin' || role == 'superadmin'" (click)="openEditModal(display)" class="text-blue-700 text-xs font-semibold">Edit</a>
+                            <a *ngIf="role == 'admin' || role == 'superadmin'" (click)="openDeleteModal(display)" class="ml-2.5 text-red-700 text-xs font-semibold">Delete</a>
+                            <a *ngIf="role == 'admin' || role == 'superadmin'" (click)="openViewModal(display)" class="ml-2.5 text-blue-700 text-xs font-semibold">View</a>
                         </td>
                         </tr>
                     </tbody>
@@ -493,6 +494,110 @@
                 <div class="btn btn-success primary-button" [class.disabled]="productForm.invalid" (click)="editProduct()">
                     Edit Product
                 </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="viewProductModal" tabindex="-1" aria-labelledby="viewProductModal" aria-hidden="true">
+    <div class="modal-dialog dialog700 modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header d-flex align-items-center flex-space-between">
+                <h1>View Product</h1>
+                <img src="../../../../assets/img/icons/cross.svg" (click)="closeModal('viewProductModal')" class="cross-btn" height="15px" width="15px" alt="">
+            </div>
+            <div class="modal-body">
+                <form [formGroup]="productForm">
+                    <div class="form-row flex-center flex-space-between gap1-5 margin-top p-2">
+                        <div class="form-wrap w-100">
+                            <label for="itemName" class="block text-sm font-medium text-neutral-600">Item Name
+                            </label>
+                            <div class="mt-1">
+                                <input id="itemName" readonly formControlName="itemName" placeholder="Item Name" class="block w-full px-4 py-1 text-base placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg text-neutral-600 bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300 ">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-row flex-center flex-space-between gap1-5 margin-top p-2">
+                        <div class="form-wrap">
+                            <label for="aliasName"  class="block text-sm font-medium text-neutral-600">Alias Name
+                            </label>
+                            <div class="mt-1">
+                                <input id="aliasName" readonly formControlName="aliasName" placeholder="Alias Name" class="block w-full px-4 py-1 text-base placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg text-neutral-600 bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300 ">
+                            </div>
+                        </div>
+                        <div class="form-wrap">
+                            <label for="barcode" class="block text-sm font-medium text-neutral-600">Barcode
+                            </label>
+                            <div class="mt-1">
+                                <input id="barcode" readonly formControlName="barcode" placeholder="Barcode" class="block w-full px-4 py-1 text-base placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg text-neutral-600 bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300 ">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-row flex-center flex-space-between gap1-5 margin-top p-2">
+                        <div class="form-wrap">
+                            <label for="mrp" class="block text-sm font-medium text-neutral-600">MRP
+                            </label>
+                            <div class="mt-1">
+                                <input id="mrp" readonly formControlName="mrp" type="number" placeholder="MRP" (change)="calcDiscount()" class="block w-full px-4 py-1 text-base placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg text-neutral-600 bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300 ">
+                            </div>
+                        </div>
+                        <div class="form-wrap">
+                            <label for="sellingPrice" class="block text-sm font-medium text-neutral-600">Selling Rate
+                            </label>
+                            <div class="mt-1">
+                                <input id="sellingPrice" readonly formControlName="sellingPrice" type="number" placeholder="Selling Rate" (change)="calcDiscount()" class="block w-full px-4 py-1 text-base placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg text-neutral-600 bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300 ">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-row flex-center flex-space-between gap1-5 margin-top p-2">
+                        <div class="form-wrap">
+                            <label for="discount" class="block text-sm font-medium text-neutral-600">Discount %
+                            </label>
+                            <div class="mt-1">
+                                <input id="discount" readonly formControlName="discount" placeholder="Discount %" type="number" class="block w-full px-4 py-1 text-base placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg text-neutral-600 bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300 ">
+                            </div>
+                        </div>
+                        <div class="form-wrap">
+                            <label for="wholeSalePrice" class="block text-sm font-medium text-neutral-600">Wholesale Price
+                            </label>
+                            <div class="mt-1">
+                                <input id="wholeSalePrice" readonly formControlName="wholeSalePrice" type="number" placeholder="Wholesale Price" class="block w-full px-4 py-1 text-base placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg text-neutral-600 bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300 ">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-row flex-center flex-space-between gap1-5 margin-top p-2">
+                        <div class="form-wrap">
+                            <label for="gst" class="block text-sm font-medium text-neutral-600">GST %
+                            </label>
+                            <div class="mt-1">
+                                <input id="gst" readonly formControlName="gst" type="number" placeholder="GST %" class="block w-full px-4 py-1 text-base placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg text-neutral-600 bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300 ">
+                            </div>
+                        </div>
+                        <div class="form-wrap">
+                            <label for="hsnCode" class="block text-sm font-medium text-neutral-600">HSNCode
+                            </label>
+                            <div class="mt-1">
+                                <input id="hsnCode" readonly formControlName="hsnCode" placeholder="HSNCode" class="block w-full px-4 py-1 text-base placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg text-neutral-600 bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300 ">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-row flex-center flex-space-between gap3 margin-top p-2">
+                        <div class="form-wrap w-100">
+                            <label for="productType" class="block text-sm font-medium text-neutral-600">Product Type
+                            </label>
+                            <div class="mt-1">
+                                <input id="productType" readonly formControlName="productType" placeholder="Product Type" class="block w-full px-4 py-1 text-base placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg text-neutral-600 bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300 ">
+                                </div>
+                            </div>
+                            <div class="form-wrap w-100">
+                                <label for="status" class="block text-sm font-medium text-neutral-600">Status
+                                </label>
+                                <div class="mt-1">
+                                    <input id="status" readonly formControlName="status" placeholder="status" class="block w-full px-4 py-1 text-base placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg text-neutral-600 bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300 ">
+                            </div>
+                        </div>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
