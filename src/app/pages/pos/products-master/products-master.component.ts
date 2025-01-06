@@ -81,7 +81,6 @@ export class ProductsMasterComponent {
       wholeSalePrice: [0,[Validators.min(0)]],
       gst: [0,[Validators.min(0)]],
       hsnCode: [''],
-      supplierId: [''],
       status: ['active']
     })
   }
@@ -123,6 +122,7 @@ export class ProductsMasterComponent {
         this.status.setValue("");
       }
       this.api.getAPI('/products/product', [["search",  this.search.value],["productType", this.productType.value],["status", this.status.value],["limit", this.limit],["page", this.page]]).subscribe((res:any) => {
+        this.loading = true;
         if(res.data.docs.length == 0){
           this.displayData = res.data.docs;
           this.loading = false;
