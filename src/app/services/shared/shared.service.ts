@@ -9,11 +9,11 @@ export class SharedService {
 
   constructor(private api: ApiService, private route: Router) { }
 
-  async checkUserLoggedIn(): Promise<boolean>{
+  async checkUserLoggedIn(role:any): Promise<boolean>{
     const token= localStorage.getItem('token');
     if (token) {
       try {
-        const res: any = await this.api.getAPI('/admin/session', []).toPromise();
+        const res: any = await this.api.getAPI('/adminUser/session', [["role", role]]).toPromise();
         if (res.statusCode === 200) {
           return true;
         } else {

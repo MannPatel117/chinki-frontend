@@ -116,7 +116,8 @@ export class BillingSystemComponent {
   }
 
   async checkUserLoggedIn(){
-    const session = await this.shared.checkUserLoggedIn();
+    let role = localStorage.getItem('role');
+    const session = await this.shared.checkUserLoggedIn(role);
     if(session){
       this.init();
     } else{

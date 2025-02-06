@@ -1,10 +1,11 @@
-.logo-main{
+
+.logo-text{
     color: #187EF5;
-    font-size: clamp(1.4rem, 1.4rem, 2rem);
     font-weight: 700;
-    position: absolute;
-    top: 5%;
-    left: 5%;
+}
+
+.logo-subtext{
+    font-weight: 400;
 }
 
 section{
@@ -23,4 +24,27 @@ section{
 
 .loader h3{
     color: white !important;
+}
+
+
+.mob-view img{
+    display: none;
+}
+
+@media (max-width: 1279px) {
+    .mob-view{
+        background: rgb(24,126,245);
+        // background: linear-gradient(180deg, rgba(24,126,245,1) 40%, rgba(244,252,255,1) 80%);
+        align-items: center;
+    }
+
+    .mob-view img{
+        display: block;
+        height: 150px;
+        width: 200px;
+    }
+
+    .form-wrap{
+        box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+    }
 }

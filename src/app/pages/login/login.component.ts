@@ -34,17 +34,15 @@ export class LoginComponent {
   }
 
   async checkUserLoggedIn(){
-    const session = await this.shared.checkUserLoggedIn();
+    let role = localStorage.getItem('role');
+    const session = await this.shared.checkUserLoggedIn(role);
     if(session){
-      let role = localStorage.getItem('role');
       if(role == 'factory'){
         this.route.navigateByUrl('/pos/inventory-system')
       } else {
         this.route.navigateByUrl('/pos/billing-system')
       }
       
-    } else{
-
     }
   }
   
@@ -59,29 +57,31 @@ export class LoginComponent {
 
   submit(){
     if(this.loginForm.invalid){
-      this.toastr.show('error','Enter valid credentials',{ 
+      this.toastr.show('error','Enter Valid Credentials',{ 
         toastComponent: CustomToast,
         toastClass: "ngx-toastr",
       })
     }
     else{
       this.loading = true;
-      this.api.loginAPI('/admin/user', this.loginForm.value).subscribe((res:any)=>{
+      this.api.loginAPI('/adminUser/login', this.loginForm.value).subscribe((res:any)=>{
         if(res){
-          localStorage.setItem('location', res.data.location);
-          localStorage.setItem('token', res.data.accessToken);
-          localStorage.setItem('role',res.data.role)
+          localStorage.setItem('location', JSON.stringify(res.data.user.inventory));
+          localStorage.setItem('token', res.data.token);
+          localStorage.setItem('role',res.data.user.role);
+          localStorage.setItem('firstName',res.data.user.firstName);
+          localStorage.setItem('lastName',res.data.user.lastName)
           this.api.setToken();
           this.loading = false;
           this.route.navigateByUrl('/pos/billing-system')
-          this.toastr.show('success','Successfully Logged In',{ 
+          this.toastr.show('success','Login Successful',{ 
             toastComponent: CustomToast,
             toastClass: "ngx-toastr",
           })
         }
       }, (error)=>{
         this.loading = false;
-        this.toastr.show('error','Invalid credentials',{ 
+        this.toastr.show('error','Invalid Credentials',{ 
           toastComponent: CustomToast,
           toastClass: "ngx-toastr"
         })

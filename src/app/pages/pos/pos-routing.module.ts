@@ -10,6 +10,9 @@ import { AccountsMasterComponent } from './accounts-master/accounts-master.compo
 
 const routes: Routes = [
   {
+    path: '', component: BillingSystemComponent
+  },
+  {
     path: 'billing-system', component: BillingSystemComponent
   },
   {
