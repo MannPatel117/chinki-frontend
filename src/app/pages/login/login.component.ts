@@ -65,7 +65,7 @@ export class LoginComponent {
     else{
       this.loading = true;
       this.api.loginAPI('/adminUser/login', this.loginForm.value).subscribe((res:any)=>{
-        if(res){
+        if(res.success==true){
           localStorage.setItem('location', JSON.stringify(res.data.user.inventory));
           localStorage.setItem('token', res.data.token);
           localStorage.setItem('role',res.data.user.role);
@@ -78,6 +78,8 @@ export class LoginComponent {
             toastComponent: CustomToast,
             toastClass: "ngx-toastr",
           })
+        } else{
+          console.log(res)
         }
       }, (error)=>{
         this.loading = false;

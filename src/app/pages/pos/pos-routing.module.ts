@@ -7,33 +7,71 @@ import { UserHistoryComponent } from './user-history/user-history.component';
 import { BillHistoryComponent } from './bill-history/bill-history.component';
 import { ProductsMasterComponent } from './products-master/products-master.component';
 import { AccountsMasterComponent } from './accounts-master/accounts-master.component';
+import { HomeComponent } from './home/home.component';
+import { MainComponent } from './main/main.component';
+
 
 const routes: Routes = [
   {
-    path: '', component: BillingSystemComponent
-  },
-  {
-    path: 'billing-system', component: BillingSystemComponent
-  },
-  {
-    path: 'inventory-system', component: InventorySystemComponent
-  },
-  {
-    path: 'dashboard', component: DashboardComponent
-  },
-  {
-    path: 'user-history', component: UserHistoryComponent
-  },
-  {
-    path: 'bill-history', component: BillHistoryComponent
-  },
-  {
-    path: 'products-master', component: ProductsMasterComponent
-  },
-  {
-    path: 'accounts-master', component: AccountsMasterComponent
+    path: '',
+    component: HomeComponent, // Use HomeComponent as layout
+    children: [
+      {
+        path: 'main', component: MainComponent
+      },
+      {
+        path: '', redirectTo: 'main', pathMatch: 'full' 
+      },
+      {
+        path: 'billing-system', component: BillingSystemComponent
+      },
+      {
+        path: 'inventory-system', component: InventorySystemComponent
+      },
+      {
+        path: 'dashboard', component: DashboardComponent
+      },
+      {
+        path: 'user-history', component: UserHistoryComponent
+      },
+      {
+        path: 'bill-history', component: BillHistoryComponent
+      },
+      {
+        path: 'products-master', component: ProductsMasterComponent
+      },
+      {
+        path: 'accounts-master', component: AccountsMasterComponent
+      },
+    ],
   },
 ];
+// const routes: Routes = [
+//   {
+//     path: '', component: HomeComponent
+//   },
+//   {
+//     path: 'billing-system', component: BillingSystemComponent
+//   },
+//   {
+//     path: 'inventory-system', component: InventorySystemComponent
+//   },
+//   {
+//     path: 'dashboard', component: DashboardComponent
+//   },
+//   {
+//     path: 'user-history', component: UserHistoryComponent
+//   },
+//   {
+//     path: 'bill-history', component: BillHistoryComponent
+//   },
+//   {
+//     path: 'products-master', component: ProductsMasterComponent
+//   },
+//   {
+//     path: 'accounts-master', component: AccountsMasterComponent
+//   },
+// ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],

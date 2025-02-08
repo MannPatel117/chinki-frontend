@@ -94,6 +94,7 @@ app-sidebar{
 .sidebar-head{
     height: 15%;
     width: 100%;
+    cursor: pointer;
 }
 
 .sidebar-head img{
@@ -503,4 +504,132 @@ input[type="number"]::-webkit-inner-spin-button {
 /* Hide spinners for Firefox */
 input[type="number"] {
     -moz-appearance: textfield;
+}
+
+.mobile-on{
+    display: none !important;
+}
+
+.mobile-head{
+    height: 10vh;
+    width: 100vw;
+    padding: 20px 20px;
+
+}
+
+.mobile-head h1{
+   color: white;
+   font-weight: 700;
+   font-size: 1.5rem; 
+}
+
+.profile{
+    background-color: white;
+    border-radius: 100%;
+    width: 6vh;
+    height: 6vh;
+    font-weight: 800;
+    font-size: 1.5rem;
+    color: #187EF5;
+}
+
+.mobile-nav{
+    height: 60px;
+    width: 210px;
+    border-radius: 60px;
+    background-color: #187EF5;
+    position: absolute;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    bottom: -2%;
+    display: flex;
+    gap: 10px;
+    padding: 10px;
+    justify-content: space-evenly;
+}
+
+.mobile-nav div{
+    height: 40px;
+    width: 40px;
+    border-radius: 50px;
+}
+
+.mobile-nav div svg{
+    height: 20px;
+    width: 20px;
+    --primary: white;
+    --secondary: #187EF5;
+}
+
+.mobile-nav .sidebar-active svg{
+    --primary: #187EF5;
+    --secondary: white;
+}
+
+.side-screen {
+    z-index: 999;
+    position: fixed;
+    top: 0;
+    right: -100%; // Initially hidden
+    width: 100%;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.5); // Semi-transparent background
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    transition: right 0.3s ease-in-out;
+  }
+  
+  .side-screen.active {
+    right: 0; // Show the sidebar when active
+  }
+  
+  .side-content {
+    width: 80%;
+    height: 100%;
+    background: white;
+    padding: 20px;
+    box-shadow: -5px 0 10px rgba(0, 0, 0, 0.2);
+    animation: slideIn 0.3s ease-in-out;
+  }
+  
+  @keyframes slideIn {
+    from {
+      transform: translateX(100%);
+    }
+    to {
+      transform: translateX(0);
+    }
+  }
+
+
+@media (max-width: 1279px) {
+    .mobile-off{
+        display: none !important;
+    }
+
+    .mobile-on{
+        display: flex !important;
+    }
+
+    .body{
+        flex-direction: column;
+    }
+
+    .main-body{
+        width: 100vw;
+        height: 90vh;
+        align-items: flex-end;
+        flex-direction: column;
+    }
+
+    .body-content{
+        width: 100vw;
+        border-radius: 20px 20px 00px 0px;
+        height: 100%;
+        background-color: #EEF6FF;
+    }
+
+    
+
 }

@@ -72,3 +72,104 @@ input, select{
 label{
     font-size: 0.75rem;
 }
+
+@media (max-width: 1279px) {
+    .body-stats{
+        height: 10vh;
+        flex-direction: column;
+        gap: 05px;
+    }
+
+    .body-stats div{
+        justify-content: space-between !important;
+    }
+
+    .btn-wrap{
+        width: 100%;
+        justify-content: space-between !important;
+    }
+
+    .btn-wraps{
+        display: flex;
+        gap: 20px;
+    }
+
+    .body-content{
+        padding: 20px 40px 100px 40px;
+    }
+    /*
+
+    .body-table{
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+    .flex-wrap{
+        flex-wrap: wrap;
+    }
+
+    .prod-card{
+        background-color: white;
+        width: calc(50% - 10px); 
+        min-width: 300px;
+        height: 100px;
+        border-radius: 20px;
+        padding: 10px;
+        box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px;
+        gap: 10px;
+    }
+
+    .prod-card img{
+        border-radius: 20px;
+        width: 80px;
+        height: 80px;
+        flex-shrink: 0;
+    }
+
+    .prod-card-text{
+        flex: 1;
+        width: calc(100% - 120px); 
+        height: 100%;
+        padding: 2px;
+        gap: 2px;
+    }
+
+    .prod-card-text h2{
+        color: #187EF5;
+        font-size: 1rem;
+        font-weight: 800;
+        height: 100%;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 100%;
+    }
+
+    .prod-card-text h3{
+        color: #717171;
+        font-size: 0.9rem;
+        font-weight: 700;
+    }
+
+    .prod-card-text h4{
+        color: #4d4d4d;
+        font-size: 0.9rem;
+        font-weight: 700;
+        font-style: italic;
+        width: calc(fit-content + 5px);
+    }
+
+    .prod-card-actions{
+        width: 30px;
+        height: 100%;
+        flex-shrink: 0;
+    }
+
+    .badge{
+        font-size: 0.6rem;
+        line-height: 0.6rem;
+        display: flex;
+    }
+
+    */
+}
