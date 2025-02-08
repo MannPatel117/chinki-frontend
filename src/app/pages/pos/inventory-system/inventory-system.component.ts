@@ -6,7 +6,8 @@ import { ApiService } from '../../../services/api/api.service';
 import { NgbDropdownModule, NgbPaginationModule } from '@ng-bootstrap/ng-bootstrap';
 import { ToastrService } from 'ngx-toastr';
 import { SharedService } from '../../../services/shared/shared.service';
-import { CustomToast } from '../../../custom-toast/toast';
+import { SuccessToast } from '../../../toast/success-toast/toast';
+import { ErrorToast } from '../../../toast/error-toast/toast';
 import { ExcelService } from '../../../services/excel/excel.service';
 declare const $:any;
 
@@ -102,7 +103,7 @@ export class InventorySystemComponent {
         if(res.data.length == 0){
           this.loading = false;
           this.toastr.show('error','Something went wrong',{ 
-            toastComponent: CustomToast,
+            toastComponent: ErrorToast,
             toastClass: "ngx-toastr"
           })
         }else{
@@ -115,7 +116,7 @@ export class InventorySystemComponent {
     catch(err){
       this.loading = false;
       this.toastr.show('error','Something went wrong',{ 
-        toastComponent: CustomToast,
+        toastComponent: ErrorToast,
         toastClass: "ngx-toastr"
       })
     }
@@ -146,7 +147,7 @@ export class InventorySystemComponent {
     catch(err){
       this.loading = false;
       this.toastr.show('error','Something went wrong',{ 
-        toastComponent: CustomToast,
+        toastComponent: ErrorToast,
         toastClass: "ngx-toastr"
       })
     }
@@ -180,12 +181,12 @@ export class InventorySystemComponent {
         this.loading = false;
         if(res.data.length == 0){
           this.toastr.show('error','Something went wrong',{ 
-            toastComponent: CustomToast,
+            toastComponent: ErrorToast,
             toastClass: "ngx-toastr"
           })
         }else{
           this.toastr.show('success', res.message,{ 
-            toastComponent: CustomToast,
+            toastComponent: SuccessToast,
             toastClass: "ngx-toastr",
           })
           this.init();
@@ -195,7 +196,7 @@ export class InventorySystemComponent {
     catch(err){
       this.loading = false;
       this.toastr.show('error','Something went wrong',{ 
-        toastComponent: CustomToast,
+        toastComponent: ErrorToast,
         toastClass: "ngx-toastr"
       })
     }
@@ -207,7 +208,7 @@ export class InventorySystemComponent {
       if(res.data.length == 0){
         this.loading = false;
         this.toastr.show('error','Something went wrong',{ 
-          toastComponent: CustomToast,
+          toastComponent: ErrorToast,
           toastClass: "ngx-toastr"
         })
       }else{
@@ -230,7 +231,7 @@ export class InventorySystemComponent {
       if(res.data.length == 0){
         this.loading = false;
         this.toastr.show('error','Something went wrong',{ 
-          toastComponent: CustomToast,
+          toastComponent: ErrorToast,
           toastClass: "ngx-toastr"
         })
       }else{
@@ -256,13 +257,13 @@ export class InventorySystemComponent {
         this.loading = false;
         if(res.data.length == 0){
           this.toastr.show('error','Something went wrong',{ 
-            toastComponent: CustomToast,
+            toastComponent: ErrorToast,
             toastClass: "ngx-toastr"
           })
         }else{
           this.init();
           this.toastr.show('success', res.message,{ 
-            toastComponent: CustomToast,
+            toastComponent: SuccessToast,
             toastClass: "ngx-toastr",
           })
         }
@@ -271,7 +272,7 @@ export class InventorySystemComponent {
     catch(err){
       this.loading = false;
       this.toastr.show('error','Something went wrong',{ 
-        toastComponent: CustomToast,
+        toastComponent: ErrorToast,
         toastClass: "ngx-toastr"
       })
     }
@@ -284,13 +285,13 @@ export class InventorySystemComponent {
         this.loading = false;
         if(res.data.length == 0){
           this.toastr.show('error','Something went wrong',{ 
-            toastComponent: CustomToast,
+            toastComponent: ErrorToast,
             toastClass: "ngx-toastr"
           })
         }else{
           this.init();
           this.toastr.show('success', res.message,{ 
-            toastComponent: CustomToast,
+            toastComponent: SuccessToast,
             toastClass: "ngx-toastr",
           })
         }
@@ -299,7 +300,7 @@ export class InventorySystemComponent {
     catch(err){
       this.loading = false;
       this.toastr.show('error','Something went wrong',{ 
-        toastComponent: CustomToast,
+        toastComponent: ErrorToast,
         toastClass: "ngx-toastr"
       })
     }

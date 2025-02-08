@@ -5,7 +5,8 @@ import { Router } from '@angular/router';
 import { HttpClientModule } from '@angular/common/http';
 import { ApiService } from '../../services/api/api.service';
 import { ToastrService } from 'ngx-toastr';
-import { CustomToast } from '../../custom-toast/toast';
+import { SuccessToast } from '../../toast/success-toast/toast';
+import { ErrorToast } from '../../toast/error-toast/toast';
 import { SharedService } from '../../services/shared/shared.service';
 import { StoreBillService } from '../../services/store-bill/store-bill.service';
 
@@ -58,7 +59,7 @@ export class LoginComponent {
   submit(){
     if(this.loginForm.invalid){
       this.toastr.show('error','Enter Valid Credentials',{ 
-        toastComponent: CustomToast,
+        toastComponent: ErrorToast,
         toastClass: "ngx-toastr",
       })
     }
@@ -75,7 +76,7 @@ export class LoginComponent {
           this.loading = false;
           this.route.navigateByUrl('/pos/billing-system')
           this.toastr.show('success','Login Successful',{ 
-            toastComponent: CustomToast,
+            toastComponent: SuccessToast,
             toastClass: "ngx-toastr",
           })
         } else{
@@ -84,7 +85,7 @@ export class LoginComponent {
       }, (error)=>{
         this.loading = false;
         this.toastr.show('error','Invalid Credentials',{ 
-          toastComponent: CustomToast,
+          toastComponent: ErrorToast,
           toastClass: "ngx-toastr"
         })
       });

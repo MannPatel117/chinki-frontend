@@ -5,7 +5,8 @@ import { Router, RouterModule } from '@angular/router';
 import { StoreBillDataService } from '../../../services/store-bill-data.service';
 import { NgClass, NgFor, NgIf } from '@angular/common';
 import { ToastrService } from 'ngx-toastr';
-import { CustomToast } from '../../../custom-toast/toast';
+import { SuccessToast } from '../../../toast/success-toast/toast';
+import { ErrorToast } from '../../../toast/error-toast/toast';
 import { DatePipe } from '@angular/common';
 import { SharedService } from '../../../services/shared/shared.service';
 declare const $:any;
@@ -311,7 +312,7 @@ export class BillingSystemComponent {
         this.closeModal('getUserModal');
         this.phnNumber.reset();
         this.toastr.show('success','User found',{ 
-        toastComponent: CustomToast,
+        toastComponent: SuccessToast,
         toastClass: "ngx-toastr",
         })
         this.billData.storeData(this.currentActiveInvoice, this.currentActiveInvoiceData)
@@ -320,7 +321,7 @@ export class BillingSystemComponent {
       else{
         this.closeModal('getUserModal');
         this.toastr.show('error','User not found',{ 
-          toastComponent: CustomToast,
+          toastComponent: ErrorToast,
           toastClass: "ngx-toastr",
           })
           this.loading = false;
@@ -374,7 +375,7 @@ export class BillingSystemComponent {
           this.closeModal('addUserModal');
           this.addUserForm.reset();
           this.toastr.show('success','User created',{ 
-          toastComponent: CustomToast,
+          toastComponent: SuccessToast,
           toastClass: "ngx-toastr",
           })
           this.loading = false;
@@ -383,7 +384,7 @@ export class BillingSystemComponent {
       }, (error)=>{
         this.loading = false;
         this.toastr.show('error','User not created',{ 
-          toastComponent: CustomToast,
+          toastComponent: ErrorToast,
           toastClass: "ngx-toastr"
         })
       })
@@ -418,7 +419,7 @@ export class BillingSystemComponent {
     else{
       this.redeemPoints.reset();
       this.toastr.show('error','Error Invalid Redeem Points',{ 
-        toastComponent: CustomToast,
+        toastComponent: ErrorToast,
         toastClass: "ngx-toastr",
       })
     }
