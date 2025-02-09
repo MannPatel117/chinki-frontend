@@ -74,7 +74,7 @@ export class LoginComponent {
           localStorage.setItem('lastName',res.data.user.lastName)
           this.api.setToken();
           this.loading = false;
-          this.route.navigateByUrl('/pos/billing-system')
+          this.route.navigateByUrl('/pos/main')
           this.toastr.show('success','Login Successful',{ 
             toastComponent: SuccessToast,
             toastClass: "ngx-toastr",

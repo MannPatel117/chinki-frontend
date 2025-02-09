@@ -353,9 +353,4 @@ export class ProductsMasterComponent {
   closeModal(id:any){
     $("#"+id).modal('hide');
   }
-
-  logout(){
-    this.route.navigateByUrl('/login');
-    localStorage.clear();
-  }
 }

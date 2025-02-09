@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { Router, NavigationEnd  } from '@angular/router';
+import { Router, NavigationEnd, RouterModule  } from '@angular/router';
 import { filter } from 'rxjs/operators'; 
 @Component({
   selector: 'app-home',
@@ -33,8 +33,8 @@ export class HomeComponent {
 
   }
   logout(){
-
-    
+    this.router.navigateByUrl('/login');
+    localStorage.clear();
   }
 
   isSidebarOpen = false;
