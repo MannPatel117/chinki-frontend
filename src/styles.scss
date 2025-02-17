@@ -132,6 +132,12 @@ app-sidebar{
     font-size: 15px;
 }
 
+@media (max-width: 1340px){
+    .sidebar-nav-option-wrap p{
+        font-size: 14px;
+    }
+}
+
 .sidebar-nav-option-wrap:hover{
     background-color: white;
     font-weight: 600;
@@ -452,6 +458,62 @@ app-sidebar{
     padding: 5px 25px 5px 25px !important;
 }
 
+
+.body-head{
+    height: 7.5%;
+}
+
+.body-stats{
+    height: 7.5%;
+    background: rgba(16,126,255,1);
+    border-radius: 10px;
+    overflow: hidden; 
+}
+
+.body-options{
+    height: 7.5%;
+}
+
+.body-table{
+    height: 70%;
+    padding: 0;
+}
+
+.body-footer{
+    height: 7.5%;
+}
+
+.ml-1{
+    margin-left: 0.5rem;
+}
+
+.ml--1{
+    margin-left: -1rem;
+}
+
+
+.btn-wrap2{
+    height: 100%;
+    overflow: hidden;
+}
+
+.btn-white{
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+}
+
+.form-check{
+    padding: 0.5rem 1rem 0.5rem 2rem !important;
+}
+
+.custom-dropdown{
+    padding-left: 5px;
+}
+
+.custom-dropdown input{
+    margin-left: -1em !important;
+ }
+
+
 @media only screen and (max-width: 1250px) {
     .sidebar-nav-option-wrap{
         height: 30px;
@@ -628,8 +690,27 @@ input[type="number"] {
         border-radius: 20px 20px 00px 0px;
         height: 100%;
         background-color: #EEF6FF;
+        padding: 20px 40px 100px 40px !important;
     }
 
-    
+    .body-stats{
+        height: 10vh;
+        flex-direction: column;
+        gap: 05px;
+    }
+
+    .body-stats div{
+        justify-content: space-between !important;
+    }
+
+    .btn-wrap{
+        width: 100%;
+        justify-content: space-between !important;
+    }
+
+    .btn-wraps{
+        display: flex;
+        gap: 20px;
+    }
 
 }

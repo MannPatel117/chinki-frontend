@@ -9,6 +9,9 @@ import { ProductsMasterComponent } from './products-master/products-master.compo
 import { AccountsMasterComponent } from './accounts-master/accounts-master.component';
 import { HomeComponent } from './home/home.component';
 import { MainComponent } from './main/main.component';
+import { AccountDetailsComponent } from './account-details/account-details.component';
+import { GoodsComponent } from './accounts-master/goods/goods.component';
+import { TransactionsComponent } from './accounts-master/transactions/transactions.component';
 
 
 const routes: Routes = [
@@ -42,6 +45,15 @@ const routes: Routes = [
       },
       {
         path: 'accounts-master', component: AccountsMasterComponent
+      },
+      {
+        path: 'accounts-master/:id', component: AccountDetailsComponent
+      },
+      {
+        path: 'accounts/goods', component: GoodsComponent
+      },
+      {
+        path: 'accounts/transactions', component: TransactionsComponent
       },
     ],
   },

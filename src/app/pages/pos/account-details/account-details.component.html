@@ -9,12 +9,16 @@
 <div class="main-body flex-start">
     <div class="body-content flex flex-col gap1-5 mobile-off">
         <div class="body-head w-full flex flex-center flex-space-between">
-            <div></div>
+            <div>
+                <h1>
+                    Supplier Name : {{supplierData?.accountName}}
+                </h1>
+            </div>
             <div class="btn-wrap flex gap2">
-                <button class="rounded-md bg-blue-600 px-2.5 py-1.5 text-sm font-semibold text-white shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-blue-600" *ngIf="role == 'admin' || role == 'superadmin' || role == 'storeadmin' || role == 'factoryadmin'" (click)="openModal('addAccountModal')" >Add Account</button>
+                <button class="rounded-md bg-blue-600 px-2.5 py-1.5 text-sm font-semibold text-white shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-blue-600" *ngIf="role == 'admin' || role == 'superadmin'" >View Balance Sheet</button>
             </div>
         </div>
-        <div class="body-stats w-full flex flex-center gap2 px-5 relative">
+        <!-- <div class="body-stats w-full flex flex-center gap2 px-5 relative">
             <div class="w-full justify-content-center flex gap1 whitespace-nowrap">
                 <h2 class="text-neutral-100">Total Creditors &nbsp; :</h2>
                 <h2 class="text-neutral-100">{{creditorsCount}}</h2>
@@ -33,18 +37,18 @@
                 <div class="btn-wrap2">
                     <button (click)="printExcel()" [disabled]="displayData.length ==0" class="rounded-md bg-emerald-500 px-2.5 py-1.5 text-sm font-semibold text-white shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-emerald-600"><i class="bi bi-file-earmark-arrow-down"></i> &nbsp; Excel</button>
                 </div>
-                <div ngbDropdown class="btn-wrap2 flex flex-center" placement="bottom-end" container="body" #filter="ngbDropdown">
+                <div ngbDropdown class="btn-wrap2 flex flex-center" placement="bottom-end" container="body" #prodfilter="ngbDropdown">
                     <button ngbDropdownToggle class="rounded-md px-2.5 py-1.5 text-sm font-semibold text-gray-900 bg-slate-100 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50" > <i class="bi bi-filter"></i> &nbsp; Filter</button>
                     <div ngbDropdownMenu class="custom-dropdown mt-2 divide-y divide-gray-100 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                         <div class="form-check px-3 py-2">
                             <p class="text-sm text-gray-700 font-medium mb-1 ml--1">Sub Group</p>
-                            <input type="checkbox" class="form-check-input" value="Sundry Creditors" [checked]="subGroup.value === 'Sundry Creditors'"  (change)="onCheckboxChange('Sundry Creditors', $event)" id="Sundry Creditors" />
-                            <label class="ml-1 block text-sm text-gray-700" for="Sundry Creditors">Sundry Creditors</label>
-                            <input type="checkbox" class="form-check-input" value="Sundry Debtors" [checked]="subGroup.value === 'Sundry Debtors'"  (change)="onCheckboxChange('Sundry Debtors', $event)" id="Sundry Debtors" />
-                            <label class="ml-1 block text-sm text-gray-700" for="Sundry Debtors">Sundry Debtors</label>
+                            <input type="checkbox" class="form-check-input" value="finished" [checked]="subGroup.value === 'Sundry Creditors'"  (change)="onCheckboxChange('Sundry Creditors', $event)" id="prod-finished" />
+                            <label class="ml-1 block text-sm text-gray-700" for="prod-finished">Sundry Creditors</label>
+                            <input type="checkbox" class="form-check-input" value="estimated" [checked]="subGroup.value === 'Sundry Debtors'"  (change)="onCheckboxChange('Sundry Debtors', $event)" id="prod-estimated" />
+                            <label class="ml-1 block text-sm text-gray-700" for="prod-estimated">Sundry Debtors</label>
                         </div>
                         <div class="py-2 px-3">
-                            <button class="btn btn-primary text-sm" (click)="getAccounts(true, false); filter.close()" >Apply</button>
+                            <button class="btn btn-primary text-sm" (click)="getAccounts(true, false); prodfilter.close()" >Apply</button>
                         </div>
                     </div>
                 </div>
@@ -141,10 +145,10 @@
         <div class="body-footer w-full">
             <ngb-pagination class="flex flex-center paginator" *ngIf="displayData?.length != 0" [(page)]="page" [pageSize]="limit"
                 [collectionSize]="collectionSize" (pageChange)="getAccounts(false, false)"/>
-        </div>
+        </div> -->
     </div>
     <div class="body-content flex flex-col gap1-5 mobile-on">
-        <div class="body-head w-full flex flex-center flex-space-between">
+        <!-- <div class="body-head w-full flex flex-center flex-space-between">
             <input id="search-bar" [formControl]="search" (change)="this.getAccounts(true, false)" placeholder="Search" class="ml-1 block w-100 h-75 px-4 py-1 text-base placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg text-neutral-600 bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300 ng-untouched ng-pristine ng-invalid">
         </div>
         <div class="body-options w-full flex align-items-center flex-space-between">
@@ -265,173 +269,6 @@
         <div class="body-footer w-full">
             <ngb-pagination class="flex flex-center paginator" *ngIf="displayData?.length != 0" [(page)]="page" [pageSize]="limit"
                 [collectionSize]="collectionSize" (pageChange)="getAccounts(false, false)"/>
-        </div>
+        </div> -->
     </div>
 </div>
-
-<div class="modal fade" id="addAccountModal" tabindex="-1" aria-labelledby="addAccountModal" aria-hidden="true">
-    <div class="modal-dialog dialog700 modal-dialog-centered modal-dialog-scrollable">
-        <div class="modal-content">
-            <div class="modal-header d-flex align-items-center flex-space-between">
-                <h1>Add Product</h1>
-                <img src="../../../../assets/img/icons/cross.svg" (click)="closeModal('addAccountModal')" class="cross-btn" height="15px" width="15px" alt="">
-            </div>
-            <div class="modal-body">
-                <form [formGroup]="accountForm">
-                    <div class="form-row flex-center flex-space-between gap1-5 margin-top p-2">
-                        <div class="form-wrap w-100">
-                            <label for="accountName" class="block text-sm font-medium text-neutral-600">Enter Account Name
-                            </label>
-                            <div class="mt-1">
-                                <input id="accountName" formControlName="accountName" placeholder="Account Name" class="block w-full text-sm px-4 py-1 text-base placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg text-neutral-600 bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300 ">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-row flex-center flex-space-between gap1-5 margin-top p-2">
-                        <div class="form-wrap">
-                            <label for="aliasName" class="block text-sm font-medium text-neutral-600">Enter Alias Name
-                            </label>
-                            <div class="mt-1">
-                                <input id="aliasName" formControlName="aliasName" placeholder="Alias Name" class="block w-full text-sm px-4 py-1 text-base placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg text-neutral-600 bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300 ">
-                            </div>
-                        </div>
-                        <div class="form-wrap">
-                            <label for="phone_Number" class="block text-sm font-medium text-neutral-600">Enter Phone Number
-                            </label>
-                            <div class="mt-1">
-                                <input id="phone_Number" formControlName="phone_Number" placeholder="Phone Number" class="block w-full text-sm px-4  py-1 text-base placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg text-neutral-600 bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300 ">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-row flex-center flex-space-between gap1-5 margin-top p-2">
-                        <div class="form-wrap w-100">
-                            <label for="addressLine1" class="block text-sm font-medium text-neutral-600">Enter Address Line 1
-                            </label>
-                            <div class="mt-1">
-                                <input id="addressLine1" formControlName="addressLine1" placeholder="Address Line 1" class="block w-full text-sm px-4 py-1 text-base placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg text-neutral-600 bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300 ">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-row flex-center flex-space-between gap1-5 margin-top p-2">
-                        <div class="form-wrap w-100">
-                            <label for="addressLine2" class="block text-sm font-medium text-neutral-600">Enter Address Line 2
-                            </label>
-                            <div class="mt-1">
-                                <input id="addressLine2" formControlName="addressLine2" placeholder="Address Line 2" class="block w-full text-sm px-4 py-1 text-base placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg text-neutral-600 bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300 ">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-row flex-center flex-space-between gap1-5 margin-top p-2">
-                        <div class="form-wrap">
-                            <label for="city" class="block text-sm font-medium text-neutral-600">Enter City
-                            </label>
-                            <div class="mt-1">
-                                <input id="city" formControlName="city" placeholder="City" class="block w-full text-sm px-4 py-1 text-base placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg text-neutral-600 bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300 ">
-                            </div>
-                        </div>
-                        <div class="form-wrap">
-                            <label for="state" class="block text-sm font-medium text-neutral-600">Enter State
-                            </label>
-                            <div class="mt-1">
-                                <input id="state" formControlName="state" placeholder="State" class="block w-full text-sm px-4  py-1 text-base placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg text-neutral-600 bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300 ">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-row flex-center flex-space-between gap1-5 margin-top p-2">
-                        <div class="form-wrap">
-                            <label for="pincode" class="block text-sm font-medium text-neutral-600">Enter Pincode
-                            </label>
-                            <div class="mt-1">
-                                <input id="pincode" formControlName="pincode" type="number" placeholder="Pincode" class="block w-full text-sm px-4 py-1 text-base placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg text-neutral-600 bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300 ">
-                            </div>
-                        </div>
-                        <div class="form-wrap">
-                            <label for="email" class="block text-sm font-medium text-neutral-600">Enter Email
-                            </label>
-                            <div class="mt-1">
-                                <input id="email" formControlName="email" placeholder="Email" class="block w-full px-4 py-1 text-sm text-base placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg text-neutral-600 bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300 ">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-row flex-center flex-space-between gap3 margin-top p-2">
-                        <div class="form-wrap w-100">
-                            <label for="subGroup" class="block text-sm font-medium text-neutral-600">Enter Sub Group
-                            </label>
-                            <div class="mt-1">
-                                <select id="subGroup" formControlName="subGroup" placeholder="Sub Group" class="block w-full text-sm px-4 py-2 text-base placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg text-neutral-600 bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300 ">
-                                    <option class="form-check-label block px-4 py-3 text-sm text-gray-700" value='Sundry Creditors'>Sundry Creditors</option>
-                                    <option class="form-check-label block px-4 py-3 text-sm text-gray-700" value='Sundry Debtors'>'Sundry Debtors'</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="form-wrap w-100">
-                            <label for="underGroup" class="block text-sm font-medium text-neutral-600">Enter Under Group
-                            </label>
-                            <div class="mt-1">
-                                <input id="underGroup" formControlName="underGroup" placeholder="Under Group" class="block w-full px-4 py-1 text-sm text-base placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg text-neutral-600 bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300 ">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-row flex-center flex-space-between gap1-5 margin-top p-2">
-                        <div class="form-wrap">
-                            <label for="paymentTerm" class="block text-sm font-medium text-neutral-600">Enter Payment Term
-                            </label>
-                            <div class="mt-1">
-                                <input id="paymentTerm" formControlName="paymentTerm" type="number" placeholder="Payment Term" class="block w-full text-sm px-4 py-1 text-base placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg text-neutral-600 bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300 ">
-                            </div>
-                        </div>
-                        <div class="form-wrap">
-                            <label for="gstNumber" class="block text-sm font-medium text-neutral-600">Enter GST Number
-                            </label>
-                            <div class="mt-1">
-                                <input id="gstNumber" formControlName="gstNumber" placeholder="GST Number" class="block w-full px-4 py-1 text-sm text-base placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg text-neutral-600 bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300 ">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-row flex-center flex-space-between gap1-5 margin-top p-2">
-                        <div class="form-wrap">
-                            <label for="openingBalanceCredit" class="block text-sm font-medium text-neutral-600">Enter Opening Balance - Credit
-                            </label>
-                            <div class="mt-1">
-                                <input id="openingBalanceCredit" formControlName="openingBalanceCredit" type="number" placeholder="Opening Balance - Credit" class="block w-full text-sm px-4 py-1 text-base placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg text-neutral-600 bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300 ">
-                            </div>
-                        </div>
-                        <div class="form-wrap">
-                            <label for="openingBalanceDebit" class="block text-sm font-medium text-neutral-600">Enter Opening Balance - Debit
-                            </label>
-                            <div class="mt-1">
-                                <input id="openingBalanceDebit" formControlName="openingBalanceDebit" type="number" placeholder="Opening Balance - Debit" class="block w-full text-sm px-4 py-1 text-base placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg text-neutral-600 bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300 ">
-                            </div>
-                        </div>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer d-flex flex-end">
-                <div class="btn btn-success primary-button" [class.disabled]="accountForm.invalid" (click)="addAccount()">
-                    Add Account
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-
-<div class="modal fade" id="deleteAccountModal" tabindex="-1" aria-labelledby="deleteAccountModal" aria-hidden="true">
-    <div class="modal-dialog dialog700 modal-dialog-centered modal-dialog-scrollable">
-        <div class="modal-content">
-            <div class="modal-header d-flex align-items-center flex-space-between">
-                <h1>Delete Item</h1>
-                <img src="../../../../assets/img/icons/cross.svg" (click)="closeModal('deleteAccountModal')" class="cross-btn" height="15px" width="15px" alt="">
-            </div>
-            <div class="modal-body">
-                <h5>Are you sure you want to delete account?</h5>
-            </div>
-            <div class="modal-footer d-flex flex-end">
-                <button class="btn btn-primary primary-button" (click)="deleteAccount()">
-                    Confirm
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
-

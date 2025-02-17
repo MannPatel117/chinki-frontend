@@ -129,9 +129,9 @@
                         </div>
                     </td>
                     <td class="py-2 px-2 border-b border-slate-200">
-                        <a *ngIf="role == 'admin' || role == 'superadmin'" (click)="openEditModal(display)" class="text-blue-700 text-xs font-semibold">Edit</a>
-                        <a *ngIf="role == 'admin' || role == 'superadmin'" (click)="openDeleteModal(display)" class="ml-2.5 text-red-700 text-xs font-semibold">Delete</a>
                         <a (click)="openViewModal(display)" class="ml-2.5 text-blue-700 text-xs font-semibold">View</a>
+                        <a *ngIf="role == 'admin' || role == 'superadmin'" (click)="openDeleteModal(display)" class="ml-2.5 text-red-700 text-xs font-semibold">Delete</a>
+                        <a *ngIf="role == 'admin' || role == 'superadmin'" (click)="openEditModal(display)" class="text-amber-500 text-xs font-semibold">Edit</a>
                     </td>
                     </tr>
                 </tbody>
@@ -159,20 +159,9 @@
     </div>
     <div class="body-content flex flex-col gap1-5 mobile-on">
         <div class="body-head w-full flex flex-center">
-            <input id="search-bar" [formControl]="search" (change)="this.getProducts(true, false)" placeholder="Search" class="ml-1 block w-100 h-75 px-4 py-1 text-base placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg text-neutral-600 bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300 ng-untouched ng-pristine ng-invalid" ng-reflect-name="search">
-        </div>
-        <div class="body-stats w-full flex flex-center gap2 px-5 relative mobile-off">
-            <div class="w-full justify-content-center flex gap1 whitespace-nowrap">
-                <h2 class="text-neutral-100">Total Active Products &nbsp; :</h2>
-                <h2 class="text-neutral-100">{{totalActiveProducts}}</h2>
-            </div>
-            <div class="w-full justify-content-center flex gap1 whitespace-nowrap">
-                <h2 class="text-neutral-100">Total Products &nbsp; :</h2>
-                <h2 class="text-neutral-100">{{totalProducts}}</h2>
-            </div>
+            <input id="search-bar" [formControl]="search" (change)="this.getProducts(true, false)" placeholder="Search" class="ml-1 block w-100 h-75 px-4 py-1 text-base placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg text-neutral-600 bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300 ng-untouched ng-pristine ng-invalid">
         </div>
         <div class="body-options w-full flex align-items-center flex-space-between">
-            
             <div class="btn-wrap flex flex-center gap1-5">
                 <div class="btn-wraps">
                     <div class="btn-wrap2">

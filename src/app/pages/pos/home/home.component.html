@@ -64,6 +64,21 @@
                         <p>Accounts Master</p>
                     </div>
                 </a>
+                <a *ngIf="role !='factory'" class="sidebar-nav-option" routerLink="/pos/accounts/transactions">
+                    <div class="sidebar-nav-option-wrap flex-start gap1-5" routerLinkActive="sidebar-active">
+                        <svg width="270" height="300" viewBox="0 0 270 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd" clip-rule="evenodd" d="M225 15C233.284 15 240 8.28427 240 0H250C261.046 0 270 8.95431 270 20V280C270 291.046 261.046 300 250 300H20C8.95431 300 0 291.046 0 280V20C0 8.9543 8.95431 0 20 0H30C30 8.28427 36.7157 15 45 15C53.2843 15 60 8.28427 60 0H90C90 8.28427 96.7157 15 105 15C113.284 15 120 8.28427 120 0H150C150 8.28427 156.716 15 165 15C173.284 15 180 8.28427 180 0H210C210 8.28427 216.716 15 225 15Z" [attr.fill]="'var(--primary)'"/>
+                            <rect x="60" y="60" width="150" height="29" rx="10" [attr.fill]="'var(--secondary)'"/>
+                            <rect x="60" y="119" width="100" height="30" rx="10" [attr.fill]="'var(--secondary)'"/>
+                            <rect x="180" y="119" width="30" height="30" rx="5" [attr.fill]="'var(--secondary)'"/>
+                            <rect x="180" y="169" width="30" height="30" rx="10" [attr.fill]="'var(--secondary)'"/>
+                            <rect x="180" y="218" width="30" height="30" rx="10" [attr.fill]="'var(--secondary)'"/>
+                            <rect x="60" y="169" width="100" height="30" rx="10" [attr.fill]="'var(--secondary)'"/>
+                            <rect x="60" y="218" width="100" height="30" rx="10" [attr.fill]="'var(--secondary)'"/>
+                        </svg>
+                        <p class="text-xs xl:text-sm 2xl:text-base">Accounts Transaction</p>
+                    </div>
+                </a>
                 <a *ngIf="role !='factory'" class="sidebar-nav-option" routerLink="/pos/user-history" routerLinkActive="sidebar-active">
                     <div class="sidebar-nav-option-wrap flex-start gap1-5" routerLinkActive="sidebar-active">
                         <svg width="250" height="270" viewBox="0 0 250 270" fill="none" xmlns="http://www.w3.org/2000/svg">
