@@ -1,6 +1,6 @@
-import { NgFor, NgIf } from '@angular/common';
-import { Component } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { NgClass, NgFor, NgIf } from '@angular/common';
+import { Component, HostListener } from '@angular/core';
+import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterModule, Router } from '@angular/router';
 import { ApiService } from '../../../services/api/api.service';
 import { NgbDropdownModule, NgbPaginationModule } from '@ng-bootstrap/ng-bootstrap';
@@ -14,7 +14,7 @@ import { ActivatedRoute } from '@angular/router';
 @Component({
   selector: 'app-account-details',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterModule, NgIf, NgFor, NgbDropdownModule, NgbPaginationModule],
+  imports: [ReactiveFormsModule, RouterModule, NgIf, NgFor, NgbDropdownModule, NgbPaginationModule, FormsModule, NgClass],
   templateUrl: './account-details.component.html',
   styleUrl: './account-details.component.scss'
 })
@@ -110,4 +110,6 @@ export class AccountDetailsComponent {
         this.route.navigateByUrl('/pos/accounts-master');
       }
     }
+
+    
 }

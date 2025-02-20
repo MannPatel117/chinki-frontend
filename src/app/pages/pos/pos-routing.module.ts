@@ -12,6 +12,7 @@ import { MainComponent } from './main/main.component';
 import { AccountDetailsComponent } from './account-details/account-details.component';
 import { GoodsComponent } from './accounts-master/goods/goods.component';
 import { TransactionsComponent } from './accounts-master/transactions/transactions.component';
+import { ViewEditGoodsComponent } from './accounts-master/view-edit-goods/view-edit-goods.component';
 
 
 const routes: Routes = [
@@ -50,10 +51,13 @@ const routes: Routes = [
         path: 'accounts-master/:id', component: AccountDetailsComponent
       },
       {
-        path: 'accounts/goods', component: GoodsComponent
+        path: 'accounts/transactions', component: TransactionsComponent
       },
       {
-        path: 'accounts/transactions', component: TransactionsComponent
+        path: 'accounts/transactions/goods/:inventory', component: GoodsComponent
+      },
+      {
+        path: 'accounts/transactions/goodsAction/:transactionID/:type', component: ViewEditGoodsComponent
       },
     ],
   },

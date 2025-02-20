@@ -131,7 +131,7 @@
                     <td class="py-2 px-2 border-b border-slate-200">
                         <a (click)="openViewModal(display)" class="ml-2.5 text-blue-700 text-xs font-semibold">View</a>
                         <a *ngIf="role == 'admin' || role == 'superadmin'" (click)="openDeleteModal(display)" class="ml-2.5 text-red-700 text-xs font-semibold">Delete</a>
-                        <a *ngIf="role == 'admin' || role == 'superadmin'" (click)="openEditModal(display)" class="text-amber-500 text-xs font-semibold">Edit</a>
+                        <a *ngIf="role == 'admin' || role == 'superadmin'" (click)="openEditModal(display)" class="text-amber-500 text-xs font-semibold ml-2.5">Edit</a>
                     </td>
                     </tr>
                 </tbody>

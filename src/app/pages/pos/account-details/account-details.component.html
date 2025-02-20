@@ -18,6 +18,7 @@
                 <button class="rounded-md bg-blue-600 px-2.5 py-1.5 text-sm font-semibold text-white shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-blue-600" *ngIf="role == 'admin' || role == 'superadmin'" >View Balance Sheet</button>
             </div>
         </div>
+        
         <!-- <div class="body-stats w-full flex flex-center gap2 px-5 relative">
             <div class="w-full justify-content-center flex gap1 whitespace-nowrap">
                 <h2 class="text-neutral-100">Total Creditors &nbsp; :</h2>
@@ -148,6 +149,7 @@
         </div> -->
     </div>
     <div class="body-content flex flex-col gap1-5 mobile-on">
+        
         <!-- <div class="body-head w-full flex flex-center flex-space-between">
             <input id="search-bar" [formControl]="search" (change)="this.getAccounts(true, false)" placeholder="Search" class="ml-1 block w-100 h-75 px-4 py-1 text-base placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg text-neutral-600 bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300 ng-untouched ng-pristine ng-invalid">
         </div>
@@ -272,3 +274,39 @@
         </div> -->
     </div>
 </div>
+
+<script>
+    // JavaScript to toggle the dropdown
+        const dropdownButton = document.getElementById('dropdown-button');
+        const dropdownMenu = document.getElementById('dropdown-menu');
+        const searchInput = document.getElementById('search-input');
+        let isOpen = false; // Set to true to open the dropdown by default
+        
+        // Function to toggle the dropdown state
+        function toggleDropdown() {
+          isOpen = !isOpen;
+          dropdownMenu.classList.toggle('hidden', !isOpen);
+        }
+        
+        // Set initial state
+        toggleDropdown();
+        
+        dropdownButton.addEventListener('click', () => {
+          toggleDropdown();
+        });
+        
+        // Add event listener to filter items based on input
+        searchInput.addEventListener('input', () => {
+          const searchTerm = searchInput.value.toLowerCase();
+          const items = dropdownMenu.querySelectorAll('a');
+        
+          items.forEach((item) => {
+            const text = item.textContent.toLowerCase();
+            if (text.includes(searchTerm)) {
+              item.style.display = 'block';
+            } else {
+              item.style.display = 'none';
+            }
+          });
+        });
+    </script>

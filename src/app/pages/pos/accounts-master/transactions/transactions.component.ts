@@ -32,7 +32,7 @@ export class TransactionsComponent {
   debtorsCount = 0;
   displayData:any = [];
   currentId:any;
-  currentPayment = '';
+  currentTransaction = '';
   
   transactionForm!:FormGroup;
 
@@ -90,7 +90,7 @@ export class TransactionsComponent {
             selectInventoryName: [''],
             challanDate: [null],
             documentNumber: [null],
-            supplier: [0],
+            supplier: [0, [Validators.required]],
             inventory: [0, [Validators.min(1)]],
             billNumber: [null],
             billDate: [null],
@@ -349,7 +349,7 @@ export class TransactionsComponent {
         }
     
         addTransaction(){
-          $("#add"+this.currentPayment).modal('hide');
+          $("#add"+this.currentTransaction).modal('hide');
               this.loading = true;
               try{
                 this.api.postAPI('/accountTransaction/accountTransaction', [], this.transactionForm.value).subscribe((res:any) => {
@@ -442,6 +442,9 @@ export class TransactionsComponent {
         }
     
         
+        goToPurchase(inventoryID: string) {
+          this.route.navigate(['/pos/accounts/transactions/goods', inventoryID]); 
+        }
 
         inventorySelected(){
           $("#selectInventory").modal('hide');
@@ -451,17 +454,16 @@ export class TransactionsComponent {
             this.api.getAPI('/inventorys/inventory/'+id, [["details", false]]).subscribe((res:any)=>{
               if(res.success == true){
                 const data = res.data;
-                if(this.currentPayment == "purchase"){
-                  this.transactionForm.get('transactionType')?.setValue("purchase");
-                  this.transactionForm.get('documentNumber')?.setValue(data.goodsReceiptDocNo); 
-                } else if(this.currentPayment == "receipt"){
+                if(this.currentTransaction == "purchase"){
+                  this.goToPurchase(id);
+                } else if(this.currentTransaction == "receipt"){
                   this.transactionForm.get('transactionType')?.setValue("receipt");
                   this.transactionForm.get('documentNumber')?.setValue(data.receiptVoucherDocNo); 
-                } else if(this.currentPayment == "payment"){
+                } else if(this.currentTransaction == "payment"){
                   this.transactionForm.get('transactionType')?.setValue("payment");
                   this.transactionForm.get('documentNumber')?.setValue(data.paymentVoucherDocNo); 
                 }
-                $("#add"+this.currentPayment).modal('show');
+                $("#add"+this.currentTransaction).modal('show');
                 this.transactionForm.get('supplier')?.enable(); 
                 this.transactionForm.get('paymentType')?.enable(); 
               } else{
@@ -500,18 +502,20 @@ export class TransactionsComponent {
     
       openModalAddTrans(id:any){
         this.transactionForm.reset();
-        this.currentPayment=id;
+        this.currentTransaction=id;
         if(this.inventory.length >1){
           $("#selectInventory").modal('show');
           this.shared.multiInventory();
         } else if(this.inventory.length == 1){
           let inventory = this.inventory[0];
           this.transactionForm.get('inventory')?.setValue(inventory);
+          this.transactionForm.get('selectInventoryName')?.setValue(this.getInventoryName(inventory));
           this.inventorySelected();
         } else{
           $("#noInventory").modal('show');
         }
       } 
+
 
         openModal(id:any){
           $("#"+id).modal('show');
@@ -523,10 +527,12 @@ export class TransactionsComponent {
 
         openViewModal(currentItem:any){
           this.currentId = currentItem.transactionID;
-          this.setFormValues(currentItem, this.transactionForm);
-          this.transactionForm.get('supplier')?.disable(); 
-          this.transactionForm.get('paymentType')?.disable(); 
-          if(currentItem.transactionType == 'payment' || currentItem.transactionType == 'receipt'){
+          if(currentItem.transactionType == 'purchase'){
+            this.route.navigate([`/pos/accounts/transactions/goodsAction`, this.currentId, 'view']); 
+          } else{
+            this.setFormValues(currentItem, this.transactionForm);
+            this.transactionForm.get('supplier')?.disable(); 
+            this.transactionForm.get('paymentType')?.disable(); 
             $("#viewpaymentreceipt").modal('show');
           }
         }
@@ -539,9 +545,13 @@ export class TransactionsComponent {
 
         openEditModal(currentItem:any){
           this.currentId = currentItem.transactionID;
-          this.setFormValues(currentItem, this.transactionForm);
-          this.transactionForm.get('supplier')?.disable(); 
-          $("#editpaymentreceipt").modal('show');
+          if(currentItem.transactionType == 'purchase'){
+            this.route.navigate([`/pos/accounts/transactions/goodsAction`, this.currentId, 'edit']); 
+          } else{
+            this.setFormValues(currentItem, this.transactionForm);
+              this.transactionForm.get('supplier')?.disable(); 
+              $("#editpaymentreceipt").modal('show');
+          }
         }
 
         closeEditModal(id:any){
