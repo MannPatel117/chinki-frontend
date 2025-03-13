@@ -1,19 +1,22 @@
-import { Component, ElementRef, ViewChild } from '@angular/core';
-import { FormArray, FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ApiService } from '../../../services/api.service';
+import { ChangeDetectorRef, Component, ElementRef, HostListener, ViewChild } from '@angular/core';
+import { FormArray, FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ApiService } from '../../../services/api/api.service';
 import { Router, RouterModule } from '@angular/router';
-import { StoreBillDataService } from '../../../services/store-bill-data.service';
 import { NgClass, NgFor, NgIf } from '@angular/common';
 import { ToastrService } from 'ngx-toastr';
-import { CustomToast } from '../../../custom-toast/toast';
+import { SuccessToast } from '../../../toast/success-toast/toast';
+import { ErrorToast } from '../../../toast/error-toast/toast';
 import { DatePipe } from '@angular/common';
 import { SharedService } from '../../../services/shared/shared.service';
+import { StoreBillService } from '../../../services/store-bill/store-bill.service';
 declare const $:any;
 
 @Component({
   selector: 'app-billing-system',
   standalone: true,
-  imports: [NgIf, ReactiveFormsModule, RouterModule, NgFor, NgClass],  
+  imports: [NgIf, ReactiveFormsModule, RouterModule, NgFor, NgClass, 
+    FormsModule, DatePipe
+  ],  
   providers: [DatePipe],
   templateUrl: './billing-system.component.html',
   styleUrl: './billing-system.component.scss'
@@ -25,6 +28,7 @@ export class BillingSystemComponent {
   currentActiveInvoice : string = 'A';
   currentActiveInvoiceData = {
     "totalAmount": 0,
+    "totalAmountF": 0,
     "UserName": "",
     "UserPhnNumber": "",
     "UserAddress": "",
@@ -35,17 +39,26 @@ export class BillingSystemComponent {
     "CustomerType": "",
     "PaymentType": "cash",
     "currentOffer":{ 
-      "_id": "",
+      "couponID": "",
+      "isCoupon": false,
+      "offerID": "",
       "offerName": "",
-      "minimumPrice": 0,
-      "product": "",
-      "location": [],
-      "__v": 0,
-      "mrp": 0 
+      "minOrderValue": 0,
+      "discountPerc": 0,
+      "discountAmount": 0,
+      "actualDiscountAmount": 0,
+      "offerType": "",
+      "FreeProduct": {
+        "productName":"",
+        "productID":"",
+        "barcode":"",
+        "mrp":0
+      },
+      "inventory": [],
     },
     "BillDetails": [
       {
-        "itemName": "",
+        "productName": "",
         "quantity": 0,
         "mrp": 0,
         "discount": 0,
@@ -54,22 +67,37 @@ export class BillingSystemComponent {
         "gst": 0,
         "gstAmount": 0,
         "finalAmount":0,
-        "_id":"",
+        "productID":"",
         "productType": ""
       }
     ],
-    "currentRow": 0
+    "BillFinished": [
+      {
+        "productName": "",
+        "quantity": 0,
+        "mrp": 0,
+        "discount": 0,
+        "rate": 0,
+        "amount": 0,
+        "gst": 0,
+        "gstAmount": 0,
+        "finalAmount":0,
+        "productID":"",
+        "productType": ""
+      }
+    ],
+    "currentRow": 0,
+    "currentRowFinished": 0
   }
 
   allProductsList:any
 
   currentBillTableData: any[][] = [];
-  current_location: any;
-  current_invoiceNumber: any;
   current_billNumber: any;
   totalRows = 0;
   maxHeight = "";
   currentRow = 0;
+  currentRowFinished = 0;
 
   currentRewardsTab = 'Redeem';
   currentRewardsHistory:any;
@@ -78,28 +106,72 @@ export class BillingSystemComponent {
   pointsUsed = 0;
 
   offers: any;
-  selectedOffer:any;
+  selectedOffer = {
+    "couponID": "",
+    "isCoupon": false,
+    "offerID": "",
+    "offerName": "",
+    "minOrderValue": 0,
+    "discountPerc": 0,
+    "discountAmount": 0,
+    "actualDiscountAmount": 0,
+    "offerType": "",
+    "inventory": [],
+    "FreeProduct": {
+      "productName":"",
+      "productID":"",
+      "barcode":"",
+      "mrp":0
+    }};
 
   deleteIndex = -1;
 
   role:any = 'store';
 
+  inventory:any =[];
+  inventorySelected: FormControl = new FormControl ('');
+
+  inventoryName: any = [];
+
   userForm!: FormGroup;
   addUserForm!: FormGroup;
   billDataForm!: FormGroup;
+
+  
   barcodeScan: FormControl = new FormControl ('');
-  phnNumber:FormControl = new FormControl('', [Validators.minLength(10), Validators.maxLength(10), Validators.required]);
+  couponSearch: FormControl = new FormControl ('');
   redeemPoints:FormControl = new FormControl(0, [Validators.min(0)]);
 
   constructor(private fb: FormBuilder,
      private route: Router,
      private api: ApiService,
-     private billData: StoreBillDataService,
+     private billData: StoreBillService,
      private toastr: ToastrService,
      private datepipe: DatePipe,
-     private shared: SharedService,) {
+     private shared: SharedService,
+    private cdr: ChangeDetectorRef) {
       this.role = localStorage.getItem('role');
-      this.current_location = localStorage.getItem('location')
+      this.inventory = JSON.parse(localStorage.getItem('location') || '[]');
+      this.shared.multiInventory()
+      .then((multi) => {
+        if(multi == true){
+          this.fetchFilterInfo();
+          $('#selectInventoryBill').modal({
+            backdrop: 'static', // Prevent closing when clicking outside
+            keyboard: false     // (Optional) Prevent closing with ESC key
+          });
+          $('#selectInventoryBill').modal('show');
+        } else {
+          this.inventorySelected.setValue(this.inventory[0])
+          this.init();
+        }
+      } ) // Will log true or false
+      .catch(error => console.error("Error checking multiInventory:", error));
+  }
+
+  confirmInventory(){
+    $('#selectInventoryBill').modal('hide');
+    this.init();
   }
   
   ngOnInit(){
@@ -112,13 +184,51 @@ export class BillingSystemComponent {
   init(){
     this.getAllOffers();
     this.getAllProducts();
-    this.fetchData(this.current_location)
+    this.fetchData(this.inventorySelected.value)
+  }
+
+  fetchFilterInfo() {
+    this.loading = true;
+    try {
+      this.api
+        .getAPI('/inventorys', [
+          ['pagination', false],
+          ['inventory', JSON.stringify(this.inventory)],
+        ])
+        .subscribe((res: any) => {
+          this.loading = true;
+          if (res.success == true) {
+            this.inventoryName = res.data;
+            this.loading = false;
+          } else {
+            this.loading = false;
+            this.toastr.show('error', 'Something went wrong', {
+              toastComponent: ErrorToast,
+              toastClass: 'ngx-toastr',
+            });
+          }
+        }),
+        (error: any) => {
+          this.loading = false;
+          this.toastr.show('error', 'Something went wrong', {
+            toastComponent: ErrorToast,
+            toastClass: 'ngx-toastr',
+          });
+        };
+    } catch (error) {
+      this.loading = false;
+      this.toastr.show('error', 'Something went wrong', {
+        toastComponent: ErrorToast,
+        toastClass: 'ngx-toastr',
+      });
+    }
   }
 
   async checkUserLoggedIn(){
-    const session = await this.shared.checkUserLoggedIn();
+    let role = localStorage.getItem('role');
+    const session = await this.shared.checkUserLoggedIn(role);
     if(session){
-      this.init();
+      
     } else{
       this.route.navigateByUrl('/login');
       this.loading = false;
@@ -127,24 +237,67 @@ export class BillingSystemComponent {
   }
 
   fetchData(location:any){
+
     this.loading = true;
-    this.api.getInventory(location).subscribe((res:any) =>{
-      let invoiceNumber = res.data[0].invoiceNumber;
-      this.userForm.get('invoiceNumber')?.setValue(invoiceNumber);
+    try{
+      this.api.getAPI('/inventorys/inventory/2', []).subscribe((res:any) => {
+        if(res.data.length == 0){
+        
+        }else{
+          let invoiceNumber = res.data.invoiceNumber+1;
+          let inventoryName = res.data.inventoryName;
+          this.userForm.get('invoiceNumber')?.setValue(invoiceNumber);
+          this.userForm.get('inventoryName')?.setValue(inventoryName);
+          this.loading = false;
+        }
+      }
+    ),(error:any)=>{
       this.loading = false;
-    })
+      this.toastr.show('error','Something went wrong',{ 
+        toastComponent: ErrorToast,
+        toastClass: "ngx-toastr"
+      })
+    };
+    }
+    catch(err){
+      this.loading = false;
+      this.toastr.show('error','Something went wrong',{ 
+        toastComponent: ErrorToast,
+        toastClass: "ngx-toastr"
+      })
+    }
+    this.loading= false;
   }
 
   getAllProducts(){
     this.loading = true;
-    this.api.getAllProducts().subscribe((res:any) =>{
-      if(res){
-        this.allProductsList = res.data;
-        this.loading = false;
+    try{
+      this.api.getAPI('/inventoryDetails/billing', [["status",  "active"], ["inventory",  JSON.stringify([this.inventorySelected.value])]]).subscribe((res:any) => {
+        this.loading = true;
+        if(res.data.length == 0){
+          this.allProductsList = res.data;
+          this.loading = false;
+        }else{
+          this.allProductsList = res.data;
+          this.loading = false;
+        }
       }
-    }, (error) =>{
+    ),(error:any)=>{
       this.loading = false;
-    })
+      this.toastr.show('error','Something went wrong',{ 
+        toastComponent: ErrorToast,
+        toastClass: "ngx-toastr"
+      })
+    };
+    }
+    catch(err){
+      this.loading = false;
+      this.toastr.show('error','Something went wrong',{ 
+        toastComponent: ErrorToast,
+        toastClass: "ngx-toastr"
+      })
+    }
+    this.loading= false;
   }
 
   setData(){
@@ -166,15 +319,18 @@ export class BillingSystemComponent {
       this.focusBarcode();
       this.loading = false; 
     }, 50);
+    console.log(this.rows.value)
   }
 
   scanBarcode() {
-    const index = this.allProductsList.findIndex((product: { barcode: any; }) => product.barcode === this.barcodeScan.value);
+    console.log(this.rows.value)
+    const index = this.allProductsList.findIndex((product: { MasterProduct: any; }) => product.MasterProduct.barcode === this.barcodeScan.value);
     let currentRowString = String(this.currentRow);
-    
+    let prdid:any=-1;
     const existingItemRow = Object.entries(this.rows.controls).find(([rowIndex, rowControl]) => {
-        const itemNameControl = rowControl.get('itemName');
-        return itemNameControl && itemNameControl.value === this.allProductsList[index].itemName;
+        const itemNameControl = rowControl.get('productID');
+        prdid = itemNameControl?.value || -1;
+        return itemNameControl && itemNameControl.value === this.allProductsList[index].MasterProduct.productID;
     });
 
     if (existingItemRow) {
@@ -184,26 +340,29 @@ export class BillingSystemComponent {
             const currentQuantity = quantityControl.value || 0;
             let rowCount = +existingRowIndex;
             quantityControl.setValue(currentQuantity + 1);
-            this.rows.get(existingRowIndex)?.get('finalAmount')?.setValue(this.calcFinalAmount(this.allProductsList[index].sellingPrice, this.rows.get(existingRowIndex)?.get('quantity')?.value));
+            this.rows.get(existingRowIndex)?.get('finalAmount')?.setValue(this.calcFinalAmount(this.allProductsList[index].MasterProduct.sellingPrice, this.rows.get(existingRowIndex)?.get('quantity')?.value));
             this.currentActiveInvoiceData.BillDetails[rowCount] = this.rows.get(existingRowIndex)?.value;
-            this.billData.storeData(this.currentActiveInvoice, this.currentActiveInvoiceData)
+            this.billData.storeData(this.currentActiveInvoice, this.currentActiveInvoiceData);
         }
     } else {
-        this.rows.get(currentRowString)?.get('itemName')?.setValue(this.allProductsList[index].itemName);
+        this.rows.get(currentRowString)?.get('productName')?.setValue(this.allProductsList[index].MasterProduct.productName);
         this.rows.get(currentRowString)?.get('quantity')?.setValue(1);
-        this.rows.get(currentRowString)?.get('mrp')?.setValue(this.allProductsList[index].mrp);
-        this.rows.get(currentRowString)?.get('discount')?.setValue(this.calcDiscount(this.allProductsList[index].mrp,this.allProductsList[index].sellingPrice));
-        this.rows.get(currentRowString)?.get('rate')?.setValue(this.allProductsList[index].sellingPrice);
-        this.rows.get(currentRowString)?.get('amount')?.setValue(this.calcAmount(this.allProductsList[index].sellingPrice,this.allProductsList[index].gst));
-        this.rows.get(currentRowString)?.get('gst')?.setValue(this.allProductsList[index].gst);
-        this.rows.get(currentRowString)?.get('gstAmount')?.setValue(this.calcGSTAmount(this.allProductsList[index].sellingPrice,this.allProductsList[index].gst));
-        this.rows.get(currentRowString)?.get('finalAmount')?.setValue(this.calcFinalAmount(this.allProductsList[index].sellingPrice, this.rows.get(currentRowString)?.get('quantity')?.value));
-        this.rows.get(currentRowString)?.get('_id')?.setValue(this.allProductsList[index]._id)
-        this.rows.get(currentRowString)?.get('productType')?.setValue(this.allProductsList[index].productType)
+        this.rows.get(currentRowString)?.get('mrp')?.setValue(this.allProductsList[index].MasterProduct.mrp);
+        this.rows.get(currentRowString)?.get('discount')?.setValue(this.calcDiscount(this.allProductsList[index].MasterProduct.mrp,this.allProductsList[index].MasterProduct.sellingPrice));
+        this.rows.get(currentRowString)?.get('rate')?.setValue(this.allProductsList[index].MasterProduct.sellingPrice);
+        this.rows.get(currentRowString)?.get('amount')?.setValue(this.calcAmount(this.allProductsList[index].MasterProduct.sellingPrice,this.allProductsList[index].MasterProduct.gst));
+        this.rows.get(currentRowString)?.get('gst')?.setValue(this.allProductsList[index].MasterProduct.gst);
+        this.rows.get(currentRowString)?.get('gstAmount')?.setValue(this.calcGSTAmount(this.allProductsList[index].MasterProduct.sellingPrice,this.allProductsList[index].MasterProduct.gst));
+        this.rows.get(currentRowString)?.get('finalAmount')?.setValue(this.calcFinalAmount(this.allProductsList[index].MasterProduct.sellingPrice, this.rows.get(currentRowString)?.get('quantity')?.value));
+        this.rows.get(currentRowString)?.get('productID')?.setValue(this.allProductsList[index].productID)
+        this.rows.get(currentRowString)?.get('productType')?.setValue(this.allProductsList[index].MasterProduct.productType)
         this.currentActiveInvoiceData.BillDetails[this.currentRow] = this.rows.get(currentRowString)?.value;
         this.currentRow = this.currentRow + 1;
         this.currentActiveInvoiceData.currentRow = this.currentRow;
         this.billData.storeData(this.currentActiveInvoice, this.currentActiveInvoiceData)
+        if(this.rows.length==this.currentRow){
+          this.rows.push(this.newRow());
+        }
     }
     this.barcodeScan.reset();
     this.calcTotalAmount();
@@ -216,7 +375,7 @@ export class BillingSystemComponent {
         this.removeItem(currentRow);
       }
       else{
-        this.rows.get(row)?.get('finalAmount')?.setValue(this.calcFinalAmount(this.allProductsList[currentRow].sellingPrice, this.rows.get(row)?.get('quantity')?.value));
+        this.rows.get(row)?.get('finalAmount')?.setValue(this.calcFinalAmount(this.allProductsList[currentRow].MasterProduct.sellingPrice, this.rows.get(row)?.get('quantity')?.value));
       }
     }
     else if(changed == 'mrp'){
@@ -260,12 +419,12 @@ export class BillingSystemComponent {
 
   calcAmount(rate:number, gst:number){
     let amount = (rate - (rate*gst/(gst+100)))
-    return amount;
+    return parseFloat(amount.toFixed(2));
   }
 
   calcGSTAmount(rate:number, gst:number){
     let gstAmt = (rate*gst/(gst+100))
-    return gstAmt;
+    return parseFloat(gstAmt.toFixed(2));
   }
 
   calcFinalAmount(rate:number, quantity:number){
@@ -282,111 +441,18 @@ export class BillingSystemComponent {
     this.billData.storeData(this.currentActiveInvoice, this.currentActiveInvoiceData)
   }
 
+  calcTotalAmountFinished(){
+    this.currentActiveInvoiceData.totalAmountF = 0
+    for(let i = 0; i < this.currentActiveInvoiceData.BillFinished.length; i++){
+      let row = String(i)
+      this.currentActiveInvoiceData.totalAmountF = this.currentActiveInvoiceData.totalAmountF + this.currentActiveInvoiceData.BillFinished[i].finalAmount;
+    }
+    this.billData.storeData(this.currentActiveInvoice, this.currentActiveInvoiceData)
+  }
+
   getMRP(id:string){
-    console.log(id)
-    let product = this.allProductsList.find((product: { _id: string; }) => product._id === id);
-    return product.mrp
-  }
-
-  searchUser(){
-    if(this.phnNumber.valid){
-      let data = this.phnNumber.value;
-      this.api.getUserDetail(data).subscribe((res:any) =>{
-      this.loading = true;
-      if(res.data.length !=0){
-        const data = res.data[0]
-        this.userForm.get('phnNumber')?.setValue(data.phone_Number)
-        this.currentActiveInvoiceData.UserPhnNumber = data.phone_Number;
-        this.userForm.get('name')?.setValue(data.name)
-        this.currentActiveInvoiceData.UserName = data.name;
-        this.userForm.get('address')?.setValue(data.address.addressLine2)
-        this.currentActiveInvoiceData.UserAddress = data.address.addressLine2;
-        this.userForm.get('rewardPoints')?.setValue(data.rewardPoint)
-        this.currentActiveInvoiceData.RewardPoints = data.rewardPoint;
-        this.currentRewardsHistory = data.rewardPointsHistory;
-        this.currentActiveInvoiceData.RewardsHistory = data.rewardPointsHistory;
-        this.userForm.get('customerType')?.setValue("Existing");
-        this.currentActiveInvoiceData.CustomerType = "Existing";
-        this.closeModal('getUserModal');
-        this.phnNumber.reset();
-        this.toastr.show('success','User found',{ 
-        toastComponent: CustomToast,
-        toastClass: "ngx-toastr",
-        })
-        this.billData.storeData(this.currentActiveInvoice, this.currentActiveInvoiceData)
-        this.loading = false;
-      }
-      else{
-        this.closeModal('getUserModal');
-        this.toastr.show('error','User not found',{ 
-          toastComponent: CustomToast,
-          toastClass: "ngx-toastr",
-          })
-          this.loading = false;
-          this.addUserForm.get('phnNumber')?.setValue(data);
-        this.openModal('addUserModal')
-      }
-    })
-    }
-  }
-
-  addUser(){
-    if(!this.addUserForm.invalid){
-      this.loading = true;
-      const input = this.addUserForm.value;
-      const obj = {
-        "name": input.name,
-        "phone_Number": input.phnNumber,
-        "address": {
-            "addressLine1": input.addressL1,
-            "addressLine2": input.addressL2,
-            "addressLine3": input.addressL3,
-            "city": input.city,
-            "state": input.state,
-            "pincode":  input.pincode
-        },
-        "rewardPoint": 0,
-        "rewardPointsHistory":[],
-        "totalTransaction": 0
-      }
-      this.api.addUser(obj).subscribe((res:any)=>{
-        if(res){
-          const data = res.data;
-          this.userForm.get('phnNumber')?.setValue(data.phone_Number)
-          this.currentActiveInvoiceData.UserPhnNumber = data.phone_Number;
-          this.userForm.get('name')?.setValue(data.name)
-          this.currentActiveInvoiceData.UserName = data.name;
-          if(data.address){
-            this.userForm.get('address')?.setValue(data.address.addressLine2)
-            this.currentActiveInvoiceData.UserAddress = data.address.addressLine2;
-          }
-          else{
-            this.userForm.get('address')?.setValue('')
-            this.currentActiveInvoiceData.UserAddress = '';
-          }  
-          this.userForm.get('rewardPoints')?.setValue(data.rewardPoint)
-          this.currentActiveInvoiceData.RewardPoints = data.rewardPoint;
-          this.currentRewardsHistory = data.rewardPointsHistory;
-          this.currentActiveInvoiceData.RewardsHistory = data.rewardPointsHistory;
-          this.userForm.get('customerType')?.setValue("New")
-          this.currentActiveInvoiceData.CustomerType = "New";
-          this.closeModal('addUserModal');
-          this.addUserForm.reset();
-          this.toastr.show('success','User created',{ 
-          toastComponent: CustomToast,
-          toastClass: "ngx-toastr",
-          })
-          this.loading = false;
-          this.billData.storeData(this.currentActiveInvoice, this.currentActiveInvoiceData)
-        }
-      }, (error)=>{
-        this.loading = false;
-        this.toastr.show('error','User not created',{ 
-          toastComponent: CustomToast,
-          toastClass: "ngx-toastr"
-        })
-      })
-    }
+    let product = this.allProductsList.find((product: { productID: string; }) => product.productID === id);
+    return product.MasterProduct.mrp
   }
 
   customerTypeChanged(){
@@ -417,7 +483,7 @@ export class BillingSystemComponent {
     else{
       this.redeemPoints.reset();
       this.toastr.show('error','Error Invalid Redeem Points',{ 
-        toastComponent: CustomToast,
+        toastComponent: ErrorToast,
         toastClass: "ngx-toastr",
       })
     }
@@ -432,36 +498,206 @@ export class BillingSystemComponent {
   }
 
   getAllOffers(){
-    this.api.getAllOffers().subscribe((res:any) =>{
-      this.offers = res.data;
-    })
+    try {
+      this.api
+        .getAPI('/offers/', [
+          ['pagination', false],
+          ['status', true],
+          ['isCoupon', false],
+        ])
+        .subscribe((res: any) => {
+          this.loading = true;
+          if (res.data.length == 0) {
+            this.offers = res.data;
+            this.loading = false;
+          } else {
+            this.offers = res.data;
+            this.loading = false;
+          }
+        }),
+        (error: any) => {
+          this.loading = false;
+          this.toastr.show('error', 'Something went wrong', {
+            toastComponent: ErrorToast,
+            toastClass: 'ngx-toastr',
+          });
+        };
+    } catch (err) {
+      this.loading = false;
+      this.toastr.show('error', 'Something went wrong', {
+        toastComponent: ErrorToast,
+        toastClass: 'ngx-toastr',
+      });
+    }
+  }
+
+  convertOfferData(offer: any): any {
+    return {
+      ...offer,
+      minOrderValue: parseFloat(offer.minOrderValue as string),
+      discountPerc: offer.discountPerc ? parseFloat(offer.discountPerc as string) : null,
+      discountAmount: offer.discountAmount ? parseFloat(offer.discountAmount as string) : null,
+      actualDiscountAmount: offer.actualDiscountAmount ? parseFloat(offer.actualDiscountAmount as string) : null,
+    };
   }
 
   checkOfferLocation(offer:any){
-    let locationCheck = offer.location.includes(this.current_location)
+    let locationCheck = offer.inventory.includes(this.inventorySelected.value)
     return locationCheck;
   }
 
-  offerApplied(offer:any){
-    this.selectedOffer = offer;
-    this.selectedOffer.mrp = this.getMRP(this.selectedOffer.product)
-    this.currentActiveInvoiceData.currentOffer._id = this.selectedOffer._id;
+  offerApplied(offer:any, isCoupon: boolean){
+    if(this.selectedOffer.offerID!=''){
+      this.offerUnApply();
+    }
+    if(isCoupon == false){
+      this.currentActiveInvoiceData.currentOffer.couponID =  '';
+      this.currentActiveInvoiceData.currentOffer.isCoupon = false;
+      this.selectedOffer.couponID = '';
+      this.selectedOffer.isCoupon = false;
+    }
+    this.selectedOffer = this.convertOfferData(offer);
+    this.currentActiveInvoiceData.currentOffer.offerID = this.selectedOffer.offerID;
     this.currentActiveInvoiceData.currentOffer.offerName = this.selectedOffer.offerName;
-    this.currentActiveInvoiceData.currentOffer.minimumPrice = this.selectedOffer.minimumPrice;
-    this.currentActiveInvoiceData.currentOffer.product = this.selectedOffer.product;
-    this.currentActiveInvoiceData.currentOffer.location = this.selectedOffer.location;
-    this.currentActiveInvoiceData.currentOffer.mrp = this.selectedOffer.mrp;
-    this.billData.storeData(this.currentActiveInvoice, this.currentActiveInvoiceData)
+    this.currentActiveInvoiceData.currentOffer.minOrderValue = this.selectedOffer.minOrderValue;
+    this.currentActiveInvoiceData.currentOffer.offerType = this.selectedOffer.offerType;
+    if(this.selectedOffer.offerType == 'free_product'){
+      this.currentActiveInvoiceData.currentOffer.FreeProduct.productName = this.selectedOffer.FreeProduct.productName;
+      this.currentActiveInvoiceData.currentOffer.FreeProduct.productID = this.selectedOffer.FreeProduct.productID;
+      this.currentActiveInvoiceData.currentOffer.FreeProduct.barcode = this.selectedOffer.FreeProduct.barcode;
+      this.currentActiveInvoiceData.currentOffer.FreeProduct.mrp = this.getMRP(this.selectedOffer.FreeProduct.productID)
+      this.selectedOffer.FreeProduct.mrp = this.getMRP(this.selectedOffer.FreeProduct.productID)
+    } else if(this.selectedOffer.offerType == 'flat_discount'){
+      this.currentActiveInvoiceData.currentOffer.discountPerc = this.selectedOffer.discountPerc;
+      let amount = this.currentActiveInvoiceData.totalAmount * ((this.selectedOffer.discountPerc)/100);
+      let finalAmount = parseFloat(amount.toFixed(2));
+      if(amount >= this.selectedOffer.discountAmount){
+        this.currentActiveInvoiceData.currentOffer.actualDiscountAmount = this.selectedOffer.discountAmount;
+        this.selectedOffer.actualDiscountAmount = this.selectedOffer.discountAmount;
+      } else{
+        this.selectedOffer.actualDiscountAmount = finalAmount;
+        this.currentActiveInvoiceData.currentOffer.actualDiscountAmount = this.selectedOffer.actualDiscountAmount;
+      }
+      this.currentActiveInvoiceData.currentOffer.discountAmount = this.selectedOffer.discountAmount;
+      this.currentActiveInvoiceData.totalAmount = this.currentActiveInvoiceData.totalAmount - this.selectedOffer.actualDiscountAmount;
+    }
+    
+    this.currentActiveInvoiceData.currentOffer.inventory = this.selectedOffer.inventory;
+    this.billData.storeData(this.currentActiveInvoice, this.currentActiveInvoiceData);
+    this.closeModal('offersModal');
   }
 
   offerUnApply(){
-    this.selectedOffer = null;
-    this.currentActiveInvoiceData.currentOffer._id = "";
+    this.selectedOffer = {
+      "couponID": "",
+      "isCoupon": false,
+      "offerID": "",
+      "offerName": "",
+      "minOrderValue": 0,
+      "discountPerc": 0,
+      "discountAmount": 0,
+      "actualDiscountAmount": 0,
+      "offerType": "",
+      "inventory": [],
+      "FreeProduct": {
+        "productName":"",
+        "productID":"",
+        "barcode":"",
+        "mrp":0
+      }};
+    this.currentActiveInvoiceData.currentOffer.offerID = "";
     this.currentActiveInvoiceData.currentOffer.offerName = "";
-    this.currentActiveInvoiceData.currentOffer.minimumPrice = 0
-    this.currentActiveInvoiceData.currentOffer.product = "";
-    this.currentActiveInvoiceData.currentOffer.location = [];
+    this.currentActiveInvoiceData.currentOffer.minOrderValue = 0;
+    
+    if(this.currentActiveInvoiceData.currentOffer.offerType == 'free_product'){
+      this.currentActiveInvoiceData.currentOffer.FreeProduct.productName = "";
+      this.currentActiveInvoiceData.currentOffer.FreeProduct.productID = "";
+      this.currentActiveInvoiceData.currentOffer.FreeProduct.barcode = "";
+      this.currentActiveInvoiceData.currentOffer.FreeProduct.mrp = 0
+      this.currentActiveInvoiceData.currentOffer.FreeProduct.mrp = 0;
+    } else if(this.currentActiveInvoiceData.currentOffer.offerType == 'flat_discount'){
+      this.currentActiveInvoiceData.totalAmount = this.currentActiveInvoiceData.totalAmount + this.currentActiveInvoiceData.currentOffer.actualDiscountAmount;
+      this.currentActiveInvoiceData.currentOffer.discountPerc = 0;
+      this.currentActiveInvoiceData.currentOffer.actualDiscountAmount = 0;
+      this.currentActiveInvoiceData.currentOffer.discountAmount = 0;
+    }
+    this.currentActiveInvoiceData.currentOffer.inventory = [];
+    this.currentActiveInvoiceData.currentOffer.offerType = "";
     this.billData.storeData(this.currentActiveInvoice, this.currentActiveInvoiceData)
+  }
+
+  applyCoupon(){
+    this.offerUnApply();
+    try{
+      this.api.getAPI('/offers/couponRedeem/'+ this.couponSearch.value, []).subscribe((res:any) => {
+        if(res.success == true){
+          if(res.data.length== 0){
+            this.toastr.show('error','Already used',{ 
+              toastComponent: ErrorToast,
+              toastClass: "ngx-toastr"
+            })
+          }else{
+            let id = res.data[0].offerID
+            try{
+              this.api.getAPI('/offers/offer/'+ id, []).subscribe((res:any) => {
+                if(res.success == true){
+                  this.currentActiveInvoiceData.currentOffer.couponID =  this.couponSearch.value;
+                  this.currentActiveInvoiceData.currentOffer.isCoupon = true;
+                  this.selectedOffer.couponID = this.couponSearch.value;
+                  this.selectedOffer.isCoupon = true;
+                  this.couponSearch.setValue('');
+                  this.offerApplied(res.data, true)
+                }else{
+                  this.toastr.show('error','Something went wrong',{ 
+                    toastComponent: ErrorToast,
+                    toastClass: "ngx-toastr"
+                  })
+                }
+              }
+            ),(error:any)=>{
+              this.loading = false;
+              this.toastr.show('error','Something went wrong',{ 
+                toastComponent: ErrorToast,
+                toastClass: "ngx-toastr"
+              })
+            };
+            }
+            catch(err){
+              this.loading = false;
+              this.toastr.show('error','Something went wrong',{ 
+                toastComponent: ErrorToast,
+                toastClass: "ngx-toastr"
+              })
+            }
+            this.toastr.show('success','Coupon Applied',{ 
+              toastComponent: SuccessToast,
+              toastClass: "ngx-toastr"
+            })
+          }
+          
+        }else{
+          this.toastr.show('error','Something went wrong',{ 
+            toastComponent: ErrorToast,
+            toastClass: "ngx-toastr"
+          })
+        }
+      }
+    ),(error:any)=>{
+      this.loading = false;
+      this.toastr.show('error','Something went wrong',{ 
+        toastComponent: ErrorToast,
+        toastClass: "ngx-toastr"
+      })
+    };
+    }
+    catch(err){
+      this.loading = false;
+      this.toastr.show('error','Something went wrong',{ 
+        toastComponent: ErrorToast,
+        toastClass: "ngx-toastr"
+      })
+    }
+    this.selectedOffer.isCoupon = true
   }
 
   paymentType(){
@@ -471,15 +707,61 @@ export class BillingSystemComponent {
   }, 10);
   }
 
-  saveBill(){
+  async filterFinished() {
+    return new Promise((resolve) => {
+        this.currentActiveInvoiceData.BillFinished = this.currentActiveInvoiceData.BillDetails.filter(
+            (item) => item.productType === 'finished'
+        );
+        this.calcTotalAmountFinished();
+        resolve(true);
+    });
+}
+
+  async saveBill(){
+
+    
+    await this.filterFinished();
     const body = this.currentActiveInvoiceData;
     delete (body as any).RewardPoints;
     delete (body as any).RewardsHistory;
     delete (body as any).UserAddress;
     delete (body as any).UserName;
     delete (body as any).currentRow;
-    (body as any).location = this.current_location
-    console.log(body)
+    (body as any).location = this.inventorySelected.value
+    try {
+      this.api
+        .postAPI('/bills/bill', [], body)
+        .subscribe(
+          (res: any) => {
+            this.loading = false;
+            if (res.success == false) {
+              this.toastr.show('error', res.data, {
+                toastComponent: ErrorToast,
+                toastClass: 'ngx-toastr',
+              });
+            } else {
+              this.toastr.show('success', res.message, {
+                toastComponent: SuccessToast,
+                toastClass: 'ngx-toastr',
+              });
+              this.clearBill();
+            }
+          },
+          (err: any) => {
+            this.loading = false;
+            this.toastr.show('error', err.error.data, {
+              toastComponent: ErrorToast,
+              toastClass: 'ngx-toastr',
+            });
+          }
+        );
+    } catch (err) {
+      this.loading = false;
+      this.toastr.show('error', 'Something went wrong', {
+        toastComponent: ErrorToast,
+        toastClass: 'ngx-toastr',
+      });
+    }
     const printContents = document.getElementById('bill-content');
     if (printContents) {
       // Create a new iframe
@@ -550,24 +832,9 @@ export class BillingSystemComponent {
     }
   }
 
-  deleteBill(){
-    this.loading = true;
-    this.userForm.reset();
-    this.redeemPoints.reset();
-    this.phnNumber.reset();
-    this.confirmRedeemFlag = false;
-    this.billDataForm.reset();
-    this.currentRow = 0;
-    this.currentActiveInvoiceData = this.billData.deleteData(this.currentActiveInvoice);
-    setTimeout(() => {
-      this.billData.storeData(this.currentActiveInvoice, this.currentActiveInvoiceData);
-      this.setData();
-      this.closeModal('deleteModal');
-    }, 500);
-    
-  }
+  
 
-  invoiceSwitcher(invoiceNumer:string){
+  async invoiceSwitcher(invoiceNumer:string){
     this.addUserForm.reset();
     switch(invoiceNumer){
       case 'A': 
@@ -585,15 +852,20 @@ export class BillingSystemComponent {
     }
     // this.fetchData(this.current_location);
     this.barcodeScan.reset();
-    this.calculateRows();
-    this.setData();
+    await this.calculateRows().then(
+      ()=>{
+        this.setData();
+      }
+    );
+    
   }
 
   setFormBuilder(){
     this.userForm = this.fb.group({
       invoiceNumber: [''],
+      inventoryName: [''],
       name: [''],
-      phnNumber: [''],
+      phnNumber: ['', [Validators.minLength(10), Validators.maxLength(10)]],
       address: [''],
       rewardPoints: [''],
       customerType: [''],
@@ -602,13 +874,14 @@ export class BillingSystemComponent {
 
     this.addUserForm = this.fb.group({
       name: [''],
-      phnNumber: ['', [Validators.minLength(10), Validators.maxLength(10), Validators.required]],
-      addressL1: [''],
-      addressL2: [''],
-      addressL3: [''],
+      phoneNumber: ['', [Validators.minLength(10), Validators.maxLength(10), Validators.required]],
+      addressLine1: [''],
+      addressLine2: [''],
+      addressLine3: [''],
       city: [''],
       state: [''],
-      pincode: [0, [Validators.minLength(6), Validators.maxLength(6)]]
+      pincode: [0, [Validators.minLength(6), Validators.maxLength(6)]],
+      customerType: [''],
     })
 
     this.billDataForm = this.fb.group({
@@ -622,7 +895,7 @@ export class BillingSystemComponent {
 
   newRow(): FormGroup {
     return this.fb.group({
-        itemName: [''],
+      productName: [''],
         quantity: [0],
         mrp: [0],
         discount: [0],
@@ -631,26 +904,27 @@ export class BillingSystemComponent {
         gst: [0],
         gstAmount: [0],
         finalAmount: [0],
-        _id: [''],
+        productID: [''],
         productType: ['']
     });
   }
 
-  calculateRows(){
-    this.rows.clear();
-    setTimeout(() => {
+  async calculateRows(){
+    return new Promise((resolve) => {
+      this.rows.clear();
+    setTimeout(async () => {
       const divElement = this.tableBody.nativeElement as HTMLElement;
       const height = divElement.clientHeight;
       let rows = Math.floor(height/30)
       rows = rows - 3;
       let calculatedHeight = (rows-2) * 30.8;
       this.maxHeight = `${calculatedHeight}px`
-      this.initializeEmptyTable(rows)
-      this.totalRows = rows;
+      await this.initializeEmptyTable(rows).then(()=>{
+        this.totalRows = rows;
       if(this.currentActiveInvoiceData.BillDetails.length > 0){
         for(let index=0; index < this.currentActiveInvoiceData.currentRow; index++){
           let currentRowString = String(index)
-          this.rows.get(currentRowString)?.get('itemName')?.setValue(this.currentActiveInvoiceData.BillDetails[index].itemName);
+          this.rows.get(currentRowString)?.get('productName')?.setValue(this.currentActiveInvoiceData.BillDetails[index].productName);
           this.rows.get(currentRowString)?.get('quantity')?.setValue(this.currentActiveInvoiceData.BillDetails[index].quantity);
           this.rows.get(currentRowString)?.get('mrp')?.setValue(this.currentActiveInvoiceData.BillDetails[index].mrp);
           this.rows.get(currentRowString)?.get('discount')?.setValue(this.currentActiveInvoiceData.BillDetails[index].discount);
@@ -659,17 +933,27 @@ export class BillingSystemComponent {
           this.rows.get(currentRowString)?.get('gst')?.setValue(this.currentActiveInvoiceData.BillDetails[index].gst);
           this.rows.get(currentRowString)?.get('gstAmount')?.setValue(this.currentActiveInvoiceData.BillDetails[index].gstAmount);
           this.rows.get(currentRowString)?.get('finalAmount')?.setValue(this.currentActiveInvoiceData.BillDetails[index].finalAmount);
+          this.rows.get(currentRowString)?.get('productID')?.setValue(this.currentActiveInvoiceData.BillDetails[index].productID)
+          this.rows.get(currentRowString)?.get('productType')?.setValue(this.currentActiveInvoiceData.BillDetails[index].productType)
         }
       }
       this.currentRow = this.currentActiveInvoiceData.currentRow;
+      })
+      console.log("DOEN ")
+      resolve(true);
     }, 50);
+  });
   }
 
   initializeEmptyTable(row: any){
-    this.billDataForm.reset();
-    for (let i = 0; i < row-2; i++) {
-      this.rows.push(this.newRow());
-    }
+    return new Promise((resolve) => {
+      this.billDataForm.reset();
+      for (let i = 0; i < row-2; i++) {
+        this.rows.push(this.newRow());
+      }
+      resolve(true);
+  });
+    
   }
 
   focusBarcode(){
@@ -678,9 +962,19 @@ export class BillingSystemComponent {
 
   openModal(id:any){
     if(id == 'rewardsModal'){
-      this.calculatePoints(this.currentRewardsHistory)
+      const phn = this.userForm.get('phnNumber')?.value;
+      if(phn == ''){
+        this.toastr.show('error','No User Selected',{ 
+          toastComponent: ErrorToast,
+          toastClass: "ngx-toastr"
+        })
+      } else {
+        this.getRewardsHistory(phn)
+        $("#"+id).modal('show');
+      }
+    } else{
+      $("#"+id).modal('show');
     }
-    $("#"+id).modal('show');
   }
 
   openItemModal(id:any, index:number){
@@ -698,35 +992,212 @@ export class BillingSystemComponent {
     return formattedDate || ''; // Handle null or undefined result
   }
 
-  getColor(value: number): string {
-    if (value > 0) {
-      return '#63CE61';
-    } else if (value < 0) {
-      return '#FF4D4D';
-    } else {
-      return 'black'; // Or any color for zero
+  @HostListener('window:keydown', ['$event'])
+  onKeyDown(event: KeyboardEvent) {
+    if (event.ctrlKey && event.key.toLowerCase() === 'b') {
+      event.preventDefault(); // Prevent default browser behavior (if needed)
+      this.saveBill();
     }
   }
 
-  calculatePoints(history:any){
-    this.pointsEarned = 0;
-    this.pointsUsed = 0;
-    for(let hist of history){
-      if(hist.pointsUsed > 0){
-        this.pointsEarned = this.pointsEarned + hist.pointsUsed;
-      }
-      else if(hist.pointsUsed < 0){
-        this.pointsUsed = this.pointsUsed + hist.pointsUsed
-      }
-    }
+
+  hoverselectedProduct: any; // Default selected
+  searchTerm = ''; // Search input
+  dropdownOpen = false; // Dropdown visibility
+
+  // Filter function
+  get filteredProduct() {
+    return this.searchTerm === ''
+      ? this.allProductsList // Show all products when search is empty
+      : this.allProductsList.MasterProduct.filter((product: { productName: string; barcode: string; aliasName: string }) =>
+          [product.productName, product.barcode, product.aliasName]
+            .some(field => field?.toLowerCase().includes(this.searchTerm.toLowerCase()))
+        );
   }
 
-  logout(){
-    this.api.logout().subscribe((res:any) =>{
-      localStorage.removeItem('token')
-      this.route.navigateByUrl('/login')
-    },(error)=>{
-      
-    });
+  // Toggle dropdown
+  toggleDropdown() {
+    this.dropdownOpen = !this.dropdownOpen;
+    this.hoverselectedProduct = '';
+    this.hoverselectedIndex = -1;
   }
+
+  // Set selected value and close dropdown
+  selectProduct(selectedBarcode: any) {
+    this.hoverselectedProduct = selectedBarcode;
+    this.searchTerm = ''; // Clear search after selecting
+    this.dropdownOpen = false; // Close dropdown
+    this.barcodeScan.setValue(selectedBarcode);
+    this.scanBarcode();
+  }
+
+  hoverselectedIndex = -1; // Track the currently highlighted item
+
+  onKeydown(event: KeyboardEvent) {
+    if (!this.dropdownOpen || this.filteredProduct.length === 0) return;
+  
+    if (event.key === 'ArrowDown') {
+      event.preventDefault();
+      this.hoverselectedIndex = (this.hoverselectedIndex + 1) % this.filteredProduct.length;
+    } 
+    else if (event.key === 'ArrowUp') {
+      event.preventDefault();
+      this.hoverselectedIndex = (this.hoverselectedIndex - 1 + this.filteredProduct.length) % this.filteredProduct.length;
+    } 
+    else if (event.key === 'Enter') {
+      event.preventDefault();
+      if (this.hoverselectedIndex >= 0) {
+        this.selectProduct(this.filteredProduct[this.hoverselectedIndex].MasterProduct.barcode);
+      }
+    } 
+    else if (event.key === 'Escape') {
+      this.dropdownOpen = false;
+    }
+  
+    this.cdr.detectChanges();  // ✅ Ensure UI updates instantly
+  
+    // ✅ Auto-scroll to the selected item
+    setTimeout(() => {
+      const selectedItem = document.querySelector('.selected-item');
+      if (selectedItem) {
+        selectedItem.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+    }, 10);
+  }
+
+
+
+  /*
+  
+    Checked Code
+  
+  */
+
+    confirmUser(){
+          const phnNumber = this.userForm.get('phnNumber')?.value;
+          if(phnNumber.length != 10){
+            this.toastr.show('error','Enter valid phone number',{ 
+              toastComponent: ErrorToast,
+              toastClass: "ngx-toastr"
+            })
+          } else {
+            this.closeModal('bill-searchAddUserModal');
+            this.loading = true;
+            
+            this.api.getAPI('/users/user/'+phnNumber, []).subscribe((res:any) => {
+              if(res.success == true){
+                this.setUserForm(res.data)
+                this.loading = false;
+                this.toastr.show('success','User found',{ 
+                  toastComponent: SuccessToast,
+                  toastClass: "ngx-toastr"
+                })
+              }else{
+                this.toastr.show('error','User not found',{ 
+                  toastComponent: ErrorToast,
+                  toastClass: "ngx-toastr"
+                })
+                this.loading = false;
+                $("#bill-addUserModal").modal('show'); 
+                this.userForm.get('phnNumber')?.setValue("");
+                this.addUserForm.get('phoneNumber')?.setValue(phnNumber);
+              }
+            });
+          } 
+        }
+
+
+        addUser(){
+          if(!this.addUserForm.invalid){
+            this.loading = true;
+            this.closeModal('bill-addUserModal');
+            try{
+              this.api.postAPI('/users/user', [], this.addUserForm.value).subscribe((res:any) => {
+                this.loading = false;
+                if(res.success == true){
+                  this.toastr.show('success', res.message,{ 
+                    toastComponent: SuccessToast,
+                    toastClass: "ngx-toastr",
+                  })
+                  this.setUserForm(res.data);
+                }else{
+                  this.toastr.show('error',res.data,{ 
+                    toastComponent: ErrorToast,
+                    toastClass: "ngx-toastr"
+                  })
+                }
+              }, (err:any)=>{
+                this.loading = false;
+                this.toastr.show('error',err.error.data,{ 
+                  toastComponent: ErrorToast,
+                  toastClass: "ngx-toastr"
+                })
+              });
+            }
+            catch(err){
+              this.loading = false;
+              this.toastr.show('error','Something went wrong',{ 
+                toastComponent: ErrorToast,
+                toastClass: "ngx-toastr"
+              })
+            }
+          }
+        }
+
+        setUserForm(data:any){
+          this.userForm.get('phnNumber')?.setValue(data.phoneNumber)
+          this.currentActiveInvoiceData.UserPhnNumber = data.phoneNumber;
+          this.userForm.get('name')?.setValue(data.name)
+          this.currentActiveInvoiceData.UserName = data.name;
+          this.userForm.get('address')?.setValue(data.addressLine1)
+          this.currentActiveInvoiceData.UserAddress = data.addressLine1;
+          this.userForm.get('rewardPoints')?.setValue(data.rewardPoint)
+          this.currentActiveInvoiceData.RewardPoints = data.rewardPoint;
+          // this.currentRewardsHistory = data.rewardPointsHistory;
+          // this.currentActiveInvoiceData.RewardsHistory = data.rewardPointsHistory;
+          this.userForm.get('customerType')?.setValue(data.customerType);
+          this.currentActiveInvoiceData.CustomerType = data.customerType;
+          this.billData.storeData(this.currentActiveInvoice, this.currentActiveInvoiceData)
+        }
+
+        clearBill(){
+          this.loading = true;
+          this.userForm.reset();
+          this.redeemPoints.reset();
+          this.confirmRedeemFlag = false;
+          this.billDataForm.reset();
+          this.currentRow = 0;
+          this.currentActiveInvoiceData = this.billData.deleteData(this.currentActiveInvoice);
+          console.log(this.currentActiveInvoiceData);
+          this.fetchData(this.inventorySelected.value);
+          setTimeout(() => {
+            console.log(this.currentActiveInvoiceData);
+            this.billData.storeData(this.currentActiveInvoice, this.currentActiveInvoiceData);
+            this.setData();
+            this.closeModal('bill-clearModal');
+            console.log(this.currentActiveInvoiceData);
+          }, 500);
+        }
+
+        rewardsData:any = [];
+        rewardsEarned:Number = 0;
+        rewardsRedeemed: Number = 0;
+
+        getRewardsHistory(phone:any){
+            this.api.getAPI('/users/rewards', [['phoneNumber', phone]]).subscribe((res:any) => {
+              if(res.success == true){
+                this.rewardsData = res.data.rewards;
+                this.rewardsRedeemed = res.data.totalRedeemed;
+                this.rewardsEarned = res.totalEarned;
+                this.loading = false;
+              }else{
+                this.loading = false;   
+                this.toastr.show('error',res.message,{ 
+                  toastComponent: ErrorToast,
+                  toastClass: "ngx-toastr"
+                })
+              }
+            });
+        }
+  
 }

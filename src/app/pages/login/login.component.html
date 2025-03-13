@@ -5,15 +5,16 @@
         <div class="cube cube3"></div>
         <div class="cube cube4"></div>
     </div>
-    <h3>Loading</h3>
 </div>
+
 <section>
-    <h1 class="logo-main">Chinki POS</h1>
     <div class="flex min-h-screen overflow-hidden">
-        <div class="flex flex-col justify-center flex-1 px-12 py-12 sm:px-6 lg:flex-none lg:px-20 xl:px-24">
-            <div class="w-full max-w-xl mx-auto lg:w-96">
+        <div class="flex flex-col justify-evenly flex-1 px-12 py-12 sm:px-6 xl:flex-none lg:px-20 xl:px-24 mob-view">
+            <img src="../../../assets/img/company/logo-main.png" alt="">
+            <div class="w-full max-w-xl mx-auto lg:w-96 bg-white px-8 py-24 rounded-lg form-wrap">
                 <div>
-                    <h2 class="text-3xl font-extrabold text-neutral-600"> Login </h2>
+                    <h1 class="text-l mb-1 logo-subtext">Welcome to</h1>
+                    <h1 class="text-2xl logo-text">Chinki Saathi</h1>
                 </div>
                 <div>
                     <div class="mt-6">
@@ -38,15 +39,15 @@
                                 </div>
                             </div>
                             <div>
-                                <button type="submit" (click)="submit()" (keydown.enter)="submit()" [class.disabled]="loginForm.invalid" class="flex items-center justify-center w-full px-10 py-3 text-base font-medium text-center text-white transition duration-500 ease-in-out transform bg-blue-500 rounded-xl hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">Sign in</button>
+                                <button type="submit" (click)="submit()" (keydown.enter)="submit()" [class.disabled]="loginForm.invalid" class="flex items-center justify-center w-full px-10 py-3 text-base font-medium text-center text-white transition duration-500 ease-in-out transform bg-blue-500 rounded-xl hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">Login</button>
                             </div>
                         </form>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="relative flex-1 hidden w-0 overflow-hidden lg:block">
-            <img class="absolute inset-0 object-cover w-full h-full" src="../../../../assets/img/chinki-w-bg.png" alt="">
+        <div class="relative flex-1 hidden w-0 overflow-hidden xl:block">
+            <img class="absolute inset-0 object-cover w-full h-full" src="../../../assets/img/company/logo-w-bg-login.png" alt="">
         </div>
     </div>
 </section>

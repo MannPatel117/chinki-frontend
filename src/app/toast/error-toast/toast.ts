@@ -12,7 +12,7 @@ import {
   import { Toast, ToastrService, ToastPackage } from 'ngx-toastr';
   
   @Component({
-    selector: '[custom-toast-component]',
+    selector: '[error-toast-component]',
     standalone: true,
     imports: [NgIf],  
     styleUrl: './toast.scss',
@@ -53,7 +53,7 @@ import {
     ],
     preserveWhitespaces: false,
   })
-  export class CustomToast extends Toast {
+  export class ErrorToast extends Toast {
   
     action(event: Event) {
       event.stopPropagation();

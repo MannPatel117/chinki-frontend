@@ -1,0 +1,63 @@
+.body-content{
+    padding: 20px 40px;
+}
+
+h2{
+    font-weight: 500;
+}
+
+.body-head h1{
+    font-weight: 700;
+    font-size: 1.25rem; 
+    color: #187EF5;
+}
+
+.padding-0{
+    padding: 0px 0px 0px 1rem !important;
+}
+
+.w-fix-content{
+    width: fit-content;
+}
+
+.gap3{
+    gap: 30px;
+}
+
+
+.body-table{
+    height: 82.5%;
+}
+
+.body-footer{
+    height: 10%;
+}
+
+th{
+    background-color: #187EF5;
+    color: white;
+    font-weight: 600;
+}
+
+td{
+    height: 25px !important;
+    width: 60px;
+    
+}
+td > input{
+    height: 90%;
+    font-size: 12px;
+    width: 100%;
+    background-color: transparent;
+}
+.w-20{
+    width: 20%;
+}
+
+.w-80{
+    width: 80%;
+}
+
+.btn-wrap{
+    width: 100%;
+}

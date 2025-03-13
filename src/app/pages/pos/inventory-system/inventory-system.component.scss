@@ -5,71 +5,32 @@
 h2{
     font-weight: 500;
 }
-
-.body-head{
-    height: 7.5%;
+.padding-0{
+    padding: 0px 0px 0px 1rem !important;
 }
 
-.body-stats{
-    height: 7.5%;
-    background: rgba(16,126,255,1);
-    border-radius: 10px;
-    overflow: hidden; 
+.tab-switcher button{
+    padding: 5px 0px 5px 0px;
+    width: 70px;
+    background-color: #D4E8FF;
+    color: #077fff;
+    border-radius: 5px;
+    border: 0px;
+    outline: 0px;
+    font-size: 12px;
 }
 
-.body-options{
-    height: 7.5%;
+.tab-switcher button{
+    border-radius: 0px;
 }
 
-.body-table{
-    height: 70%;
-    padding: 0;
+.tabs{
+    width: 100%;
+    max-height: 200px;  
+    padding: 20px;
 }
 
-.body-footer{
-    height: 7.5%;
+.applied{
+    background-color: #9ACDFF !important;
+    color: #061947 !important;
 }
-
-.btn-wrap2{
-    height: 100%;
-    overflow: hidden;
-}
-
-.btn-white{
-    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
-}
-
-.form-check{
-    padding: 0.5rem 1rem 0.5rem 2rem !important;
-}
-
-.ml-1{
-    margin-left: 0.5rem;
-}
-
-.ml--1{
-    margin-left: -1rem;
-}
-
-@keyframes scroll {
-    0% {
-      transform: translateX(100%);
-    }
-    100% {
-      transform: translateX(-100%);
-    }
-  }
-  
-  .animate-scroll {
-    animation: scroll 20s linear infinite;
-    width: max-content;
-  }
-
-input, select{
-    font-size: 0.8rem;
-}
-
-label{
-    font-size: 0.75rem;
-}
-

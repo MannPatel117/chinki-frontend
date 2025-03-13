@@ -5,7 +5,8 @@ import { Router } from '@angular/router';
 import { HttpClientModule } from '@angular/common/http';
 import { ApiService } from '../../services/api/api.service';
 import { ToastrService } from 'ngx-toastr';
-import { CustomToast } from '../../custom-toast/toast';
+import { SuccessToast } from '../../toast/success-toast/toast';
+import { ErrorToast } from '../../toast/error-toast/toast';
 import { SharedService } from '../../services/shared/shared.service';
 import { StoreBillService } from '../../services/store-bill/store-bill.service';
 
@@ -34,18 +35,11 @@ export class LoginComponent {
   }
 
   async checkUserLoggedIn(){
-    const session = await this.shared.checkUserLoggedIn();
+    let role = localStorage.getItem('role');
+    const session = await this.shared.checkUserLoggedIn(role);
     if(session){
-      let role = localStorage.getItem('role');
-      if(role == 'factory'){
-        this.route.navigateByUrl('/pos/inventory-system')
-      } else {
-        this.route.navigateByUrl('/pos/billing-system')
+      this.route.navigateByUrl('/pos/main')
       }
-      
-    } else{
-
-    }
   }
   
   // set formBuilder
@@ -59,30 +53,34 @@ export class LoginComponent {
 
   submit(){
     if(this.loginForm.invalid){
-      this.toastr.show('error','Enter valid credentials',{ 
-        toastComponent: CustomToast,
+      this.toastr.show('error','Enter Valid Credentials',{ 
+        toastComponent: ErrorToast,
         toastClass: "ngx-toastr",
       })
     }
     else{
       this.loading = true;
-      this.api.loginAPI('/admin/user', this.loginForm.value).subscribe((res:any)=>{
-        if(res){
-          localStorage.setItem('location', res.data.location);
-          localStorage.setItem('token', res.data.accessToken);
-          localStorage.setItem('role',res.data.role)
+      this.api.loginAPI('/adminUser/login', this.loginForm.value).subscribe((res:any)=>{
+        if(res.success==true){
+          localStorage.setItem('location', JSON.stringify(res.data.user.inventory));
+          localStorage.setItem('token', res.data.token);
+          localStorage.setItem('role',res.data.user.role);
+          localStorage.setItem('firstName',res.data.user.firstName);
+          localStorage.setItem('lastName',res.data.user.lastName)
           this.api.setToken();
           this.loading = false;
-          this.route.navigateByUrl('/pos/billing-system')
-          this.toastr.show('success','Successfully Logged In',{ 
-            toastComponent: CustomToast,
+          this.route.navigateByUrl('/pos/main')
+          this.toastr.show('success','Login Successful',{ 
+            toastComponent: SuccessToast,
             toastClass: "ngx-toastr",
           })
+        } else{
+          console.log(res)
         }
       }, (error)=>{
         this.loading = false;
-        this.toastr.show('error','Invalid credentials',{ 
-          toastComponent: CustomToast,
+        this.toastr.show('error','Invalid Credentials',{ 
+          toastComponent: ErrorToast,
           toastClass: "ngx-toastr"
         })
       });

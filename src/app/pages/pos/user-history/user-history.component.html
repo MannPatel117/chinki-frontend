@@ -1,115 +1,774 @@
-<div class="body flex-center">
-    <div class="sidebar">
-        <div class="sidebar-head flex-center">
-            <img src="../../../../assets/img/chinki-header/sidebar-logo.png" alt="">
-        </div>
-        <div class="sidebar-body flex-center flex-col flex-space-between">
-            <div class="sidebar-navigation d-flex flex-col gap1">
-                <a *ngIf="role !='factory'" class="sidebar-nav-option" routerLink="/pos/billing-system">
-                    <div class="sidebar-nav-option-wrap flex-start gap1-5" routerLinkActive="sidebar-active">
-                        <svg width="270" height="300" viewBox="0 0 270 300" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path fill-rule="evenodd" clip-rule="evenodd" d="M225 15C233.284 15 240 8.28427 240 0H250C261.046 0 270 8.95431 270 20V280C270 291.046 261.046 300 250 300H20C8.95431 300 0 291.046 0 280V20C0 8.9543 8.95431 0 20 0H30C30 8.28427 36.7157 15 45 15C53.2843 15 60 8.28427 60 0H90C90 8.28427 96.7157 15 105 15C113.284 15 120 8.28427 120 0H150C150 8.28427 156.716 15 165 15C173.284 15 180 8.28427 180 0H210C210 8.28427 216.716 15 225 15Z" [attr.fill]="'var(--primary)'"/>
-                            <rect x="60" y="60" width="150" height="29" rx="10" [attr.fill]="'var(--secondary)'"/>
-                            <rect x="60" y="119" width="100" height="30" rx="10" [attr.fill]="'var(--secondary)'"/>
-                            <rect x="180" y="119" width="30" height="30" rx="5" [attr.fill]="'var(--secondary)'"/>
-                            <rect x="180" y="169" width="30" height="30" rx="10" [attr.fill]="'var(--secondary)'"/>
-                            <rect x="180" y="218" width="30" height="30" rx="10" [attr.fill]="'var(--secondary)'"/>
-                            <rect x="60" y="169" width="100" height="30" rx="10" [attr.fill]="'var(--secondary)'"/>
-                            <rect x="60" y="218" width="100" height="30" rx="10" [attr.fill]="'var(--secondary)'"/>
-                        </svg>
-                        <p>Billing System</p>
-                    </div>
-                </a>
-                <a *ngIf="role !='crm'" class="sidebar-nav-option" routerLink="/pos/inventory-system" routerLinkActive="sidebar-active">
-                    <div class="sidebar-nav-option-wrap flex-start gap1-5" routerLinkActive="sidebar-active">
-                        <svg width="250" height="276" viewBox="0 0 250 276" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M244.679 101.506L134.218 8.20778C128.611 3.4726 120.402 3.48881 114.815 8.24607L5.27596 101.508C1.9286 104.358 0 108.533 0 112.929V261C0 269.284 6.71573 276 15 276H235C243.284 276 250 269.284 250 261V112.965C250 108.548 248.053 104.356 244.679 101.506Z" [attr.fill]="'var(--primary)'"/>
-                            <rect x="95" y="93" width="60" height="60" rx="10" [attr.fill]="'var(--secondary)'"/>
-                            <rect x="55" y="173" width="60" height="60" rx="10" [attr.fill]="'var(--secondary)'"/>
-                            <rect x="135" y="173" width="60" height="60" rx="10" [attr.fill]="'var(--secondary)'"/>
-                            </svg>
-                        <p>Inventory System</p>
-                    </div>
-                </a>
-                <a *ngIf="role !='crm' || role != 'store' || role!='factory'" class="sidebar-nav-option" routerLink="/pos/dashboard" routerLinkActive="sidebar-active">
-                    <div class="sidebar-nav-option-wrap flex-start gap1-5" routerLinkActive="sidebar-active">
-                        <svg width="250" height="270" viewBox="0 0 250 270" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <rect width="250" height="270" rx="10" [attr.fill]="'var(--primary)'"/>
-                            <rect x="57" y="152" width="35" height="75" rx="2" [attr.fill]="'var(--secondary)'"/>
-                            <rect x="107" y="107" width="35" height="120" rx="2" [attr.fill]="'var(--secondary)'"/>
-                            <rect x="157" y="62" width="35" height="165" rx="2" [attr.fill]="'var(--secondary)'"/>
-                        </svg> 
-                        <p>Dashboard</p>
-                    </div>
-                </a>
-                <a  class="sidebar-nav-option" routerLink="/pos/products-master" routerLinkActive="sidebar-active">
-                    <div class="sidebar-nav-option-wrap flex-start gap1-5" routerLinkActive="sidebar-active">
-                        <svg width="250" height="276" viewBox="0 0 250 276" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M244.679 101.506L134.218 8.20778C128.611 3.4726 120.402 3.48881 114.815 8.24607L5.27596 101.508C1.9286 104.358 0 108.533 0 112.929V261C0 269.284 6.71573 276 15 276H235C243.284 276 250 269.284 250 261V112.965C250 108.548 248.053 104.356 244.679 101.506Z" [attr.fill]="'var(--primary)'"/>
-                            <rect x="95" y="93" width="60" height="60" rx="10" [attr.fill]="'var(--secondary)'"/>
-                            <rect x="55" y="173" width="60" height="60" rx="10" [attr.fill]="'var(--secondary)'"/>
-                            <rect x="135" y="173" width="60" height="60" rx="10" [attr.fill]="'var(--secondary)'"/>
-                            </svg>
-                        <p>Products Master</p>
-                    </div>
-                </a>
-                <a *ngIf="role !='crm' || role != 'store' || role!='factory'" class="sidebar-nav-option" routerLink="/pos/accounts-master" routerLinkActive="sidebar-active">
-                    <div class="sidebar-nav-option-wrap flex-start gap1-5" routerLinkActive="sidebar-active">
-                        <svg width="250" height="276" viewBox="0 0 250 276" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M244.679 101.506L134.218 8.20778C128.611 3.4726 120.402 3.48881 114.815 8.24607L5.27596 101.508C1.9286 104.358 0 108.533 0 112.929V261C0 269.284 6.71573 276 15 276H235C243.284 276 250 269.284 250 261V112.965C250 108.548 248.053 104.356 244.679 101.506Z" [attr.fill]="'var(--primary)'"/>
-                            <rect x="95" y="93" width="60" height="60" rx="10" [attr.fill]="'var(--secondary)'"/>
-                            <rect x="55" y="173" width="60" height="60" rx="10" [attr.fill]="'var(--secondary)'"/>
-                            <rect x="135" y="173" width="60" height="60" rx="10" [attr.fill]="'var(--secondary)'"/>
-                            </svg>
-                        <p>Accounts Master</p>
-                    </div>
-                </a>
-                <a *ngIf="role !='factory'" class="sidebar-nav-option" routerLink="/pos/user-history" routerLinkActive="sidebar-active">
-                    <div class="sidebar-nav-option-wrap flex-start gap1-5" routerLinkActive="sidebar-active">
-                        <svg width="250" height="270" viewBox="0 0 250 270" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <rect width="250" height="270" rx="10" [attr.fill]="'var(--primary)'"/>
-                            <path fill-rule="evenodd" clip-rule="evenodd" d="M64.1307 150.303C58.375 150.303 53 154.084 53 159.839C53 186.174 85.4183 207.523 125.408 207.523C165.398 207.523 197.817 186.174 197.817 159.839C197.817 154.084 192.441 150.303 186.686 150.303H64.1307Z" [attr.fill]="'var(--secondary)'"/>
-                            <circle cx="125.762" cy="97.3211" r="35.3211" [attr.fill]="'var(--secondary)'"/>
-                        </svg>  
-                        <p>User History</p>
-                    </div>
-                </a>
-                <a *ngIf="role !='factory' || role!= 'crm'" class="sidebar-nav-option" routerLink="/pos/bill-history" routerLinkActive="sidebar-active">
-                    <div class="sidebar-nav-option-wrap flex-start gap1-5" routerLinkActive="sidebar-active">
-                        <svg width="270" height="300" viewBox="0 0 270 300" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path fill-rule="evenodd" clip-rule="evenodd" d="M225 15C233.284 15 240 8.28427 240 0H250C261.046 0 270 8.95431 270 20V280C270 291.046 261.046 300 250 300H20C8.95431 300 0 291.046 0 280V20C0 8.9543 8.95431 0 20 0H30C30 8.28427 36.7157 15 45 15C53.2843 15 60 8.28427 60 0H90C90 8.28427 96.7157 15 105 15C113.284 15 120 8.28427 120 0H150C150 8.28427 156.716 15 165 15C173.284 15 180 8.28427 180 0H210C210 8.28427 216.716 15 225 15Z" [attr.fill]="'var(--primary)'"/>
-                            <circle cx="134.5" cy="162.5" r="74.5" [attr.fill]="'var(--secondary)'"/>
-                            <path d="M135.121 115.317V163.742L110.287 184.229" [attr.fill]="'var(--primary)'" stroke-width="4"/>
-                        </svg>
-                        <p>Bill History</p>
-                    </div>
-                </a>
+<div class="loader flex-col gap1-5" *ngIf="loading">
+    <div class="cube-loader">
+        <div class="cube cube1"></div>
+        <div class="cube cube2"></div>
+        <div class="cube cube3"></div>
+        <div class="cube cube4"></div>
+    </div>
+</div>
+
+<div class="main-body flex-start">
+    <div class="body-content flex flex-col gap1-5 mobile-off">
+        <div class="body-head w-full flex flex-center flex-space-between">
+            <div></div>
+            <div class="btn-wrap flex gap2">
+                <button class="rounded-md bg-blue-600 px-2.5 py-1.5 text-sm font-semibold text-white shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-blue-600" (click)="openModal('searchAddUser')" >Add User</button>
             </div>
-            <div class="sidebar-options d-flex flex-col flex-center gap2">
-                <a *ngIf="role !='crm' || role != 'store' || role!='factory'" class="setting-btn-wrap">
-                    <div class="setting-btn flex-center gap1">
-                        <svg width="250" height="250" viewBox="0 0 250 250" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M109.907 0.799991C108.627 0.800669 107.389 1.25595 106.414 2.08464C105.438 2.91334 104.789 4.06157 104.581 5.3246L99.3289 37.482C93.0132 39.3193 86.9907 41.7983 81.3149 44.8859L54.7789 25.9332C53.74 25.1913 52.4718 24.8415 51.1995 24.9457C49.9271 25.05 48.7328 25.6016 47.8285 26.5027L26.8191 47.491C25.9213 48.3894 25.3689 49.5756 25.259 50.8409C25.149 52.1063 25.4886 53.3699 26.218 54.4098L44.8859 81.1144C41.7507 86.8235 39.2167 92.8798 37.3344 99.2551L5.31407 104.581C4.05491 104.793 2.91162 105.445 2.08716 106.42C1.2627 107.395 0.810402 108.631 0.810556 109.907V139.607C0.808253 140.877 1.25309 142.106 2.06699 143.08C2.88089 144.054 4.01184 144.71 5.26134 144.934L37.3027 150.608C39.1749 156.972 41.6927 163.033 44.8332 168.748L25.9332 195.189C25.1913 196.228 24.8415 197.497 24.9457 198.769C25.05 200.041 25.6016 201.236 26.5027 202.14L47.5016 223.149C48.3981 224.046 49.5815 224.599 50.8445 224.71C52.1076 224.822 53.3697 224.486 54.4098 223.761L81.1672 205.03C86.8598 208.136 92.897 210.633 99.234 212.486L104.581 244.686C104.791 245.947 105.442 247.093 106.417 247.919C107.392 248.746 108.629 249.2 109.907 249.2H139.607C140.878 249.202 142.109 248.756 143.083 247.94C144.057 247.124 144.713 245.99 144.934 244.739L150.661 212.412C156.971 210.531 162.98 207.996 168.643 204.871L195.58 223.771C196.62 224.501 197.883 224.84 199.149 224.73C200.414 224.621 201.6 224.068 202.498 223.17L223.497 202.15C224.402 201.243 224.955 200.044 225.058 198.767C225.16 197.49 224.805 196.218 224.056 195.179L204.85 168.516C207.921 162.881 210.395 156.908 212.233 150.639L244.728 144.944C245.98 144.723 247.113 144.068 247.929 143.094C248.745 142.12 249.191 140.889 249.189 139.618V109.918C249.189 108.638 248.733 107.4 247.905 106.424C247.076 105.449 245.928 104.799 244.665 104.592L212.223 99.2867C210.372 93.0257 207.892 87.0635 204.819 81.4309L223.761 54.4414C224.49 53.4016 224.83 52.1379 224.72 50.8726C224.61 49.6072 224.058 48.4211 223.16 47.5227L202.15 26.5238C201.243 25.6189 200.044 25.0658 198.767 24.9634C197.49 24.861 196.218 25.2159 195.179 25.9648L168.59 45.0863C162.925 41.974 156.912 39.4531 150.587 37.5875L144.934 5.27187C144.715 4.0185 144.061 2.88262 143.086 2.0645C142.112 1.24638 140.88 0.79856 139.607 0.799991H109.907ZM114.506 11.6H135.072L140.451 42.3019C140.63 43.3317 141.104 44.2873 141.816 45.053C142.527 45.8187 143.445 46.3615 144.459 46.6156C152.357 48.5837 159.774 51.7034 166.544 55.8019C167.449 56.3504 168.496 56.6208 169.553 56.5795C170.611 56.5383 171.633 56.1872 172.493 55.5699L197.763 37.4082L212.307 51.9523L194.314 77.5918C193.713 78.4471 193.373 79.4584 193.336 80.5031C193.298 81.5477 193.565 82.5808 194.103 83.4769C198.161 90.2319 201.239 97.6024 203.205 105.457C203.461 106.48 204.011 107.405 204.787 108.119C205.563 108.833 206.531 109.305 207.571 109.475L238.389 114.516V135.083L207.508 140.504C206.478 140.686 205.522 141.164 204.758 141.879C203.995 142.595 203.455 143.517 203.205 144.533C201.262 152.377 198.182 159.747 194.124 166.502C193.58 167.407 193.312 168.452 193.355 169.507C193.398 170.563 193.75 171.582 194.367 172.44L212.613 197.763L198.069 212.318L172.471 194.356C171.612 193.754 170.596 193.416 169.547 193.382C168.498 193.348 167.462 193.621 166.565 194.166C159.829 198.265 152.404 201.399 144.533 203.395C143.524 203.649 142.61 204.19 141.901 204.951C141.191 205.713 140.717 206.663 140.536 207.687L135.083 238.4H114.485L109.401 207.825C109.228 206.785 108.754 205.818 108.039 205.044C107.323 204.27 106.396 203.722 105.372 203.469C97.47 201.521 90.0193 198.406 83.2027 194.314C82.3078 193.778 81.2767 193.513 80.2342 193.55C79.1917 193.588 78.1824 193.926 77.3281 194.525L51.9313 212.318L37.3766 197.742L55.3274 172.651C55.9408 171.791 56.2888 170.77 56.3281 169.715C56.3675 168.66 56.0966 167.616 55.5488 166.713C51.4123 159.878 48.2839 152.428 46.3098 144.491C46.0572 143.48 45.5175 142.563 44.7559 141.852C43.9942 141.141 43.0431 140.666 42.0172 140.483L11.6106 135.083V114.485L41.9961 109.433C43.0348 109.261 44.0005 108.788 44.7744 108.074C45.5484 107.361 46.0967 106.436 46.352 105.414C48.3431 97.45 51.47 90.0011 55.591 83.1816C56.1345 82.2863 56.4058 81.2523 56.3721 80.2056C56.3384 79.1588 56.0011 78.1444 55.4012 77.2859L37.6613 51.9312L52.2266 37.3766L77.402 55.3695C78.2584 55.9802 79.2746 56.3275 80.3257 56.3687C81.3768 56.41 82.4171 56.1433 83.3188 55.6016C90.0993 51.5292 97.5673 48.4392 105.478 46.4996C106.506 46.2464 107.437 45.6966 108.155 44.9183C108.874 44.1401 109.347 43.1679 109.517 42.1226L114.506 11.6ZM125 81.8C101.205 81.8 81.8 101.205 81.8 125C81.8 148.795 101.205 168.2 125 168.2C148.795 168.2 168.2 148.795 168.2 125C168.2 101.205 148.795 81.8 125 81.8ZM125 92.6C142.958 92.6 157.4 107.042 157.4 125C157.4 142.958 142.958 157.4 125 157.4C107.042 157.4 92.6 142.958 92.6 125C92.6 107.042 107.042 92.6 125 92.6Z" fill="white"/>
-                        </svg>    
-                        <p>Settings</p>   
+        </div>
+        <div class="body-stats w-full flex flex-center gap2 px-5 relative">
+            <div class="w-full justify-content-center flex gap1 whitespace-nowrap">
+                <h2 class="text-neutral-100">Total Users &nbsp; :</h2>
+                <h2 class="text-neutral-100">{{totalUsers}}</h2>
+            </div>
+        </div>
+        <div class="body-options w-full flex align-items-center flex-space-between">
+            <input id="search-bar" [formControl]="search" (change)="this.getUsers(true, false)" placeholder="Search" class="ml-1 block w-25 h-75 px-4 py-1 text-base placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg text-neutral-600 bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300 ng-untouched ng-pristine ng-invalid" ng-reflect-name="phnNumber">
+            <div class="btn-wrap flex flex-center gap1-5">
+                <div class="btn-wrap2">
+                    <button (click)="printPdf()" [disabled]="displayData.length ==0" class="rounded-md bg-red-500 px-2.5 py-1.5 text-sm font-semibold text-white shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-red-600"><i class="bi bi-file-earmark-arrow-down"></i> &nbsp; PDF</button>
+                </div>
+                <div class="btn-wrap2">
+                    <button (click)="printExcel()" [disabled]="displayData.length ==0" class="rounded-md bg-emerald-500 px-2.5 py-1.5 text-sm font-semibold text-white shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-emerald-600"><i class="bi bi-file-earmark-arrow-down"></i> &nbsp; Excel</button>
+                </div>
+                <div ngbDropdown class="btn-wrap2 flex flex-center" placement="bottom-end" container="body" #prodfilter="ngbDropdown">
+                    <button ngbDropdownToggle class="rounded-md px-2.5 py-1.5 text-sm font-semibold text-gray-900 bg-slate-100 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50" > <i class="bi bi-filter"></i> &nbsp; Filter</button>
+                    <div ngbDropdownMenu class="custom-dropdown mt-2 divide-y divide-gray-100 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                        <div class="form-check px-3 py-2">
+                            <p class="text-sm text-gray-700 font-medium mb-1 ml--1">Customer Type</p>
+                            <input type="checkbox" class="form-check-input" value="new" [checked]="customerType.value === 'new'"  (change)="onCheckboxChange('new', $event)" id="filter-new" />
+                            <label class="ml-1 block text-sm text-gray-700" for="filter-new">New</label>
+                            <input type="checkbox" class="form-check-input" value="existing" [checked]="customerType.value === 'existing'"  (change)="onCheckboxChange('existing', $event)" id="filter-existing" />
+                            <label class="ml-1 block text-sm text-gray-700" for="filter-existing">Existing</label>
+                        </div>
+                        <div class="form-check px-3 py-2">
+                            <p class="text-sm text-gray-700 font-medium mb-1 ml--1">Sort By</p>
+                            <input type="checkbox" class="form-check-input" value="rewardPoint" [checked]="type.value === 'rewardPoint'"  (change)="onCheckboxChange('rewardPoint', $event)" id="filter-rewardPoint" />
+                            <label class="ml-1 block text-sm text-gray-700" for="filter-rewardPoint">Reward Points</label>
+                            <input type="checkbox" class="form-check-input" value="createdAt" [checked]="type.value === 'createdAt'"  (change)="onCheckboxChange('createdAt', $event)" id="filter-createdAt" />
+                            <label class="ml-1 block text-sm text-gray-700" for="filter-createdAt">Created At</label>
+                        </div>
+                        <div class="form-check px-3 py-2">
+                            <p class="text-sm text-gray-700 font-medium mb-1 ml--1">Order</p>
+                            <input type="checkbox" class="form-check-input" value="asc" [checked]="order.value === 'asc'"  (change)="onCheckboxChange('asc', $event)" id="filter-asc" />
+                            <label class="ml-1 block text-sm text-gray-700" for="filter-asc">ASC</label>
+                            <input type="checkbox" class="form-check-input" value="desc" [checked]="order.value === 'desc'"  (change)="onCheckboxChange('desc', $event)" id="filter-desc" />
+                            <label class="ml-1 block text-sm text-gray-700" for="filter-desc">DESC</label>
+                        </div>
+                        <div class="py-2 px-3">
+                            <button class="btn btn-primary text-sm" (click)="getUsers(true, false); prodfilter.close()" >Apply</button>
+                        </div>
                     </div>
-                </a>
-                <a class="logout-btn-wrap" (click)="logout()">
-                    <div class="logout-btn flex-center gap1">
-                        <svg width="248" height="274" viewBox="0 0 248 274" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path fill-rule="evenodd" clip-rule="evenodd" d="M227.75 254V20H87.9375V45.6664H67.9375V15C67.9375 6.71573 74.6532 0 82.9375 0H232.75C241.034 0 247.75 6.71573 247.75 15V259C247.75 267.284 241.034 274 232.75 274H82.9375C74.6532 274 67.9375 267.284 67.9375 259V228.333H87.9375V254H227.75Z" fill="#FF4D4D"/>
-                            <path d="M2.6967 142.303C-0.232239 139.374 -0.232239 134.626 2.6967 131.697L50.4264 83.967C53.3553 81.0381 58.1041 81.0381 61.033 83.967C63.9619 86.8959 63.9619 91.6447 61.033 94.5736L18.6066 137L61.033 179.426C63.9619 182.355 63.9619 187.104 61.033 190.033C58.1041 192.962 53.3553 192.962 50.4264 190.033L2.6967 142.303ZM162.125 144.5H8V129.5H162.125V144.5Z" fill="#FF4D4D"/>
-                        </svg>
-                        <p>Logout</p>   
+                </div>
+            </div>
+        </div>
+        <div class="body-table w-full table-responsive">
+            <table *ngIf="displayData?.length > 0" class="w-full text-left table-auto min-w-max overflow-auto">
+                <thead>
+                    <tr>
+                        <th class="py-3 px-2 transition-colors cursor-pointer border-y border-slate-200 bg-slate-50 hover:bg-slate-100 font-sans text-sm font-normal leading-none text-slate-700">
+                            Name of Customer
+                        </th>
+                        <th class="py-3 px-2 transition-colors cursor-pointer border-y border-slate-200 bg-slate-50 hover:bg-slate-100 font-sans text-sm font-normal leading-none text-slate-700">
+                            Phone Number
+                        </th>
+                        <th class="py-3 px-2 transition-colors cursor-pointer border-y border-slate-200 bg-slate-50 hover:bg-slate-100 font-sans text-sm font-normal leading-none text-slate-700">
+                            City
+                        </th>
+                        <th class="py-3 px-2 transition-colors cursor-pointer border-y border-slate-200 bg-slate-50 hover:bg-slate-100 font-sans text-sm font-normal leading-none text-slate-700">
+                            Reward Points
+                        </th>
+                        <th class="py-3 px-2 transition-colors cursor-pointer border-y border-slate-200 bg-slate-50 hover:bg-slate-100 font-sans text-sm font-normal leading-none text-slate-700">
+                            Customer Type
+                        </th>
+                        <th class="py-3 px-2 transition-colors cursor-pointer border-y border-slate-200 bg-slate-50 hover:bg-slate-100 font-sans text-sm font-normal leading-none text-slate-700">
+                            Created At
+                        </th>
+                        <th class="py-3 px-5 transition-colors cursor-pointer border-y border-slate-200 bg-slate-50 hover:bg-slate-100 font-sans text-sm font-normal leading-none text-slate-700">
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let display of displayData">
+                    <td class="py-2 px-2 border-b border-slate-200">
+                        <div class="flex flex-col">
+                            <p class="text-sm font-semibold text-slate-700">
+                                {{display.name}}
+                            </p>
+                        </div>
+                    </td>
+                    <td class="py-2 px-2 border-b border-slate-200">
+                        <p class="text-xs text-slate-500">
+                            {{display.phoneNumber}}
+                        </p>
+                    </td>
+                    <td class="py-2 px-2 border-b border-slate-200">
+                        <p class="text-xs text-slate-500">
+                            {{display.city}}
+                        </p>
+                    </td>
+                    <td class="py-2 px-2 border-b border-slate-200">
+                        <p class="text-xs text-slate-500">
+                            {{display.rewardPoint}}
+                        </p>
+                    </td>
+                    <td class="py-2 px-2 border-b border-slate-200">
+                        <div class="w-max">
+                            <div *ngIf="display.customerType == 'new'" class="relative grid items-center px-2 py-1 font-sans text-xs font-bold text-rose-700 uppercase rounded-md select-none whitespace-nowrap bg-rose-500/20">
+                                <span class="">New</span>
+                            </div>
+                            <div *ngIf="display.customerType == 'existing'" class="relative grid items-center px-2 py-1 font-sans text-xs font-bold text-cyan-700 uppercase rounded-md select-none whitespace-nowrap bg-cyan-500/20">
+                                <span class="">Existing</span>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="py-2 px-2 border-b border-slate-200">
+                        <p class="text-xs text-slate-500">
+                            {{display.createdAt | date: 'mediumDate'}}
+                        </p>
+                    </td>
+                    <td class="py-2 px-2 border-b border-slate-200">
+                        <a (click)="openViewModal(display)" class="ml-2.5 text-blue-700 text-xs font-semibold">View</a>
+                        <a *ngIf="role == 'admin' || role == 'superadmin'" (click)="openEditModal(display)" class="text-amber-500 text-xs font-semibold ml-2.5">Edit</a>
+                        <a (click)="openViewHistoryModal(display)" class="ml-2.5 text-violet-700 text-xs font-semibold">View Bills</a>
+                        <a (click)="openViewRewardsModal(display)" class="ml-2.5 text-rose-700 text-xs font-semibold">Rewards Points</a>
+                    </td>
+                    </tr>
+                </tbody>
+                </table>
+
+            <div *ngIf="displayData?.length == 0" class="not-found w-full h-full">
+                <div class="container flex items-center px-6 py-12 mx-auto">
+                    <div class="flex flex-col items-center max-w-sm mx-auto text-center">
+                        <h1 class="mt-3 text-xl font-semibold text-gray-800 md:text-3xl">No Users data found</h1>
+                        <p class="mt-4 text-gray-500 dark:text-gray-400">The filters or search applied could not find any data.</p>
+            
+                        <div class="flex items-center w-full mt-6 gap-x-3 shrink-0 sm:w-auto">
+                            <button (click)="getUsers(true, true)" class="w-1/2 px-5 py-2 text-sm tracking-wide text-white transition-colors duration-200 bg-blue-500 rounded-lg shrink-0 sm:w-auto hover:bg-blue-600 dark:hover:bg-blue-500 dark:bg-blue-600">
+                                Remove Filters
+                            </button>
+                        </div>
                     </div>
-                </a>
+                </div>
+            </div>
+        </div>
+        <div class="body-footer w-full">
+            <ngb-pagination class="flex flex-center paginator" *ngIf="displayData?.length != 0" [(page)]="page" [pageSize]="limit"
+                [collectionSize]="collectionSize" (pageChange)="getUsers(false, false)"/>
+        </div>
+    </div>
+    <div class="body-content flex flex-col gap1-5 mobile-on">
+        <div class="body-head w-full flex flex-center">
+            <input id="search-bar" [formControl]="search" (change)="this.getUsers(true, false)" placeholder="Search" class="ml-1 block w-100 h-75 px-4 py-1 text-base placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg text-neutral-600 bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300 ng-untouched ng-pristine ng-invalid">
+        </div>
+        <div class="body-options w-full flex align-items-center flex-space-between">
+            <div class="btn-wrap flex flex-center gap1-5">
+                <div class="btn-wraps">
+                    <div class="btn-wrap2">
+                        <button (click)="printPdf()" [disabled]="displayData.length ==0" class="rounded-md bg-red-500 px-2.5 py-1.5 text-sm font-semibold text-white shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-red-600"><i class="bi bi-file-earmark-arrow-down"></i> &nbsp; PDF</button>
+                    </div>
+                    <div class="btn-wrap2">
+                        <button (click)="printExcel()" [disabled]="displayData.length ==0" class="rounded-md bg-emerald-500 px-2.5 py-1.5 text-sm font-semibold text-white shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-emerald-600"><i class="bi bi-file-earmark-arrow-down"></i> &nbsp; Excel</button>
+                    </div>
+                </div>
+                
+                <div ngbDropdown class="btn-wrap2 flex flex-center" placement="bottom-end" container="body" #prodfilter="ngbDropdown">
+                    <button ngbDropdownToggle class="rounded-md px-2.5 py-1.5 text-sm font-semibold text-gray-900 bg-slate-100 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50" > <i class="bi bi-filter"></i> &nbsp; Filter</button>
+                    <div ngbDropdownMenu class="custom-dropdown mt-2 divide-y divide-gray-100 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                        <div class="form-check px-3 py-2">
+                            <p class="text-sm text-gray-700 font-medium mb-1 ml--1">Customer Type</p>
+                            <input type="checkbox" class="form-check-input" value="new" [checked]="customerType.value === 'new'"  (change)="onCheckboxChange('new', $event)" id="filter-new" />
+                            <label class="ml-1 block text-sm text-gray-700" for="filter-new">New</label>
+                            <input type="checkbox" class="form-check-input" value="existing" [checked]="customerType.value === 'existing'"  (change)="onCheckboxChange('existing', $event)" id="filter-existing" />
+                            <label class="ml-1 block text-sm text-gray-700" for="filter-existing">Existing</label>
+                        </div>
+                        <div class="form-check px-3 py-2">
+                            <p class="text-sm text-gray-700 font-medium mb-1 ml--1">Sort By</p>
+                            <input type="checkbox" class="form-check-input" value="rewardPoint" [checked]="type.value === 'rewardPoint'"  (change)="onCheckboxChange('rewardPoint', $event)" id="filter-rewardPoint" />
+                            <label class="ml-1 block text-sm text-gray-700" for="filter-rewardPoint">Reward Points</label>
+                            <input type="checkbox" class="form-check-input" value="createdAt" [checked]="type.value === 'createdAt'"  (change)="onCheckboxChange('createdAt', $event)" id="filter-createdAt" />
+                            <label class="ml-1 block text-sm text-gray-700" for="filter-createdAt">Created At</label>
+                        </div>
+                        <div class="form-check px-3 py-2">
+                            <p class="text-sm text-gray-700 font-medium mb-1 ml--1">Order</p>
+                            <input type="checkbox" class="form-check-input" value="asc" [checked]="order.value === 'asc'"  (change)="onCheckboxChange('asc', $event)" id="filter-asc" />
+                            <label class="ml-1 block text-sm text-gray-700" for="filter-asc">ASC</label>
+                            <input type="checkbox" class="form-check-input" value="desc" [checked]="order.value === 'desc'"  (change)="onCheckboxChange('desc', $event)" id="filter-desc" />
+                            <label class="ml-1 block text-sm text-gray-700" for="filter-desc">DESC</label>
+                        </div>
+                        <div class="py-2 px-3">
+                            <button class="btn btn-primary text-sm" (click)="getUsers(true, false); prodfilter.close()" >Apply</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="body-table w-full table-responsive">
+            <table *ngIf="displayData?.length > 0" class="w-full text-left table-auto min-w-max overflow-auto">
+                <thead>
+                    <tr>
+                        <th class="py-3 px-2 transition-colors cursor-pointer border-y border-slate-200 bg-slate-50 hover:bg-slate-100 font-sans text-sm font-normal leading-none text-slate-700">
+                            Name of Customer
+                        </th>
+                        <th class="py-3 px-2 transition-colors cursor-pointer border-y border-slate-200 bg-slate-50 hover:bg-slate-100 font-sans text-sm font-normal leading-none text-slate-700">
+                            Phone Number
+                        </th>
+                        <th class="py-3 px-2 transition-colors cursor-pointer border-y border-slate-200 bg-slate-50 hover:bg-slate-100 font-sans text-sm font-normal leading-none text-slate-700">
+                            City
+                        </th>
+                        <th class="py-3 px-2 transition-colors cursor-pointer border-y border-slate-200 bg-slate-50 hover:bg-slate-100 font-sans text-sm font-normal leading-none text-slate-700">
+                            Reward Points
+                        </th>
+                        <th class="py-3 px-2 transition-colors cursor-pointer border-y border-slate-200 bg-slate-50 hover:bg-slate-100 font-sans text-sm font-normal leading-none text-slate-700">
+                            Customer Type
+                        </th>
+                        <th class="py-3 px-2 transition-colors cursor-pointer border-y border-slate-200 bg-slate-50 hover:bg-slate-100 font-sans text-sm font-normal leading-none text-slate-700">
+                            Created At
+                        </th>
+                        <th class="py-3 px-5 transition-colors cursor-pointer border-y border-slate-200 bg-slate-50 hover:bg-slate-100 font-sans text-sm font-normal leading-none text-slate-700">
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let display of displayData">
+                    <td class="py-2 px-2 border-b border-slate-200">
+                        <div class="flex flex-col">
+                            <p class="text-sm font-semibold text-slate-700">
+                                {{display.name}}
+                            </p>
+                        </div>
+                    </td>
+                    <td class="py-2 px-2 border-b border-slate-200">
+                        <p class="text-xs text-slate-500">
+                            {{display.phoneNumber}}
+                        </p>
+                    </td>
+                    <td class="py-2 px-2 border-b border-slate-200">
+                        <p class="text-xs text-slate-500">
+                            {{display.city}}
+                        </p>
+                    </td>
+                    <td class="py-2 px-2 border-b border-slate-200">
+                        <p class="text-xs text-slate-500">
+                            {{display.rewardPoint}}
+                        </p>
+                    </td>
+                    <td class="py-2 px-2 border-b border-slate-200">
+                        <div class="w-max">
+                            <div *ngIf="display.customerType == 'new'" class="relative grid items-center px-2 py-1 font-sans text-xs font-bold text-rose-700 uppercase rounded-md select-none whitespace-nowrap bg-rose-500/20">
+                                <span class="">New</span>
+                            </div>
+                            <div *ngIf="display.customerType == 'existing'" class="relative grid items-center px-2 py-1 font-sans text-xs font-bold text-cyan-700 uppercase rounded-md select-none whitespace-nowrap bg-cyan-500/20">
+                                <span class="">Existing</span>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="py-2 px-2 border-b border-slate-200">
+                        <p class="text-xs text-slate-500">
+                            {{display.createdAt | date: 'mediumDate'}}
+                        </p>
+                    </td>
+                    <td class="py-2 px-2 border-b border-slate-200">
+                        <a (click)="openViewModal(display)" class="ml-2.5 text-blue-700 text-xs font-semibold">View</a>
+                        <a *ngIf="role == 'admin' || role == 'superadmin'" (click)="openEditModal(display)" class="text-amber-500 text-xs font-semibold ml-2.5">Edit</a>
+                        <a (click)="openViewHistoryModal(display)" class="ml-2.5 text-violet-700 text-xs font-semibold">View Bills</a>
+                    </td>
+                    </tr>
+                </tbody>
+                </table>
+
+            <div *ngIf="displayData?.length == 0" class="not-found w-full h-full">
+                <div class="container flex items-center px-6 py-12 mx-auto">
+                    <div class="flex flex-col items-center max-w-sm mx-auto text-center">
+                        <h1 class="mt-3 text-xl font-semibold text-gray-800 md:text-3xl">No Users data found</h1>
+                        <p class="mt-4 text-gray-500 dark:text-gray-400">The filters or search applied could not find any data.</p>
+            
+                        <div class="flex items-center w-full mt-6 gap-x-3 shrink-0 sm:w-auto">
+                            <button (click)="getUsers(true, true)" class="w-1/2 px-5 py-2 text-sm tracking-wide text-white transition-colors duration-200 bg-blue-500 rounded-lg shrink-0 sm:w-auto hover:bg-blue-600 dark:hover:bg-blue-500 dark:bg-blue-600">
+                                Remove Filters
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="body-footer w-full">
+            <ngb-pagination class="flex flex-center paginator" *ngIf="displayData?.length != 0" [(page)]="page" [pageSize]="limit"
+                [collectionSize]="collectionSize" (pageChange)="getUsers(false, false)"/>
+        </div>
+    </div>
+</div>
+
+
+ <div class="modal fade" id="addUser" tabindex="-1" aria-labelledby="addUser" aria-hidden="true">
+    <div class="modal-dialog dialog700 modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header d-flex align-items-center flex-space-between">
+                <h1>Add User</h1>
+                <img src="../../../../assets/img/icons/cross.svg" (click)="closeModal('addUser')" class="cross-btn" height="15px" width="15px" alt="">
+            </div>
+            <div class="modal-body">
+                <form [formGroup]="userForm">
+                    <div class="form-row flex-center flex-space-between gap1-5 margin-top p-2">
+                        <div class="form-wrap w-100">
+                            <label for="name" class="block text-sm font-medium text-neutral-600">Enter Name
+                            </label>
+                            <div class="mt-1">
+                                <input id="name" formControlName="name" placeholder="Name" class="block w-full text-sm px-4 py-1 text-base placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg text-neutral-600 bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300 ">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-row flex-center flex-space-between gap1-5 margin-top p-2">
+                        <div class="form-wrap w-100">
+                            <label for="phoneNumber" class="block text-sm font-medium text-neutral-600">Enter Phone Number
+                            </label>
+                            <div class="mt-1">
+                                <input id="phoneNumber" formControlName="phoneNumber" placeholder="Phone Number" class="block w-full text-sm px-4 py-1 text-base placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg text-neutral-600 bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300 ">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-row flex-center flex-space-between gap1-5 margin-top p-2">
+                        <div class="form-wrap w-100">
+                            <label for="addressLine1" class="block text-sm font-medium text-neutral-600">Enter Address Line 1
+                            </label>
+                            <div class="mt-1">
+                                <input id="addressLine1" formControlName="addressLine1" placeholder="Address Line 1" class="block w-full text-sm px-4 py-1 text-base placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg text-neutral-600 bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300 ">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-row flex-center flex-space-between gap1-5 margin-top p-2">
+                        <div class="form-wrap w-100">
+                            <label for="addressLine2" class="block text-sm font-medium text-neutral-600">Enter Address Line 2
+                            </label>
+                            <div class="mt-1">
+                                <input id="addressLine2" formControlName="addressLine2" placeholder="Address Line 2" class="block w-full text-sm px-4 py-1 text-base placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg text-neutral-600 bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300 ">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-row flex-center flex-space-between gap1-5 margin-top p-2">
+                        <div class="form-wrap w-100">
+                            <label for="addressLine3" class="block text-sm font-medium text-neutral-600">Enter Address Line 3
+                            </label>
+                            <div class="mt-1">
+                                <input id="addressLine3" formControlName="addressLine3" placeholder="Address Line 3" class="block w-full text-sm px-4 py-1 text-base placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg text-neutral-600 bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300 ">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-row flex-center flex-space-between gap1-5 margin-top p-2">
+                        <div class="form-wrap">
+                            <label for="city" class="block text-sm font-medium text-neutral-600">Enter City
+                            </label>
+                            <div class="mt-1">
+                                <input id="city" formControlName="city" placeholder="City" class="block w-full text-sm px-4 py-1 text-base placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg text-neutral-600 bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300 ">
+                            </div>
+                        </div>
+                        <div class="form-wrap">
+                            <label for="state" class="block text-sm font-medium text-neutral-600">Enter State
+                            </label>
+                            <div class="mt-1">
+                                <input id="state" formControlName="state" placeholder="State" class="block w-full text-sm px-4  py-1 text-base placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg text-neutral-600 bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300 ">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-row flex-center flex-space-between gap3 margin-top p-2">
+                        <div class="form-wrap">
+                            <label for="pincode" class="block text-sm font-medium text-neutral-600">Enter PinCode
+                            </label>
+                            <div class="mt-1">
+                                <input id="pincode" formControlName="pincode" placeholder="PinCode" type="number" class="block w-full text-sm px-4  py-1 text-base placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg text-neutral-600 bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300 ">
+                            </div>
+                        </div>
+                        <div class="form-wrap w-100">
+                            <label for="customerType" class="block text-sm font-medium text-neutral-600">Select Customer Type
+                            </label>
+                            <div class="mt-1">
+                                <select id="customerType" formControlName="customerType" placeholder="Customer Type" class="block w-full text-sm px-4 py-2 text-base placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg text-neutral-600 bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300 ">
+                                    <option class="form-check-label block px-4 py-2 text-sm text-gray-700" value="new">New</option>
+                                    <option class="form-check-label block px-4 py-2 text-sm text-gray-700" value="existing">Existing</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer d-flex flex-end">
+                <div class="btn btn-success primary-button" [class.disabled]="userForm.invalid" (click)="addUser()">
+                    Add User
+                </div>
             </div>
         </div>
     </div>
-    <div class="main-body flex-start">
-        <div class="body-content">
-            <div class="body-head">
+</div>
 
+ <div class="modal fade" id="searchAddUser" tabindex="-1" aria-labelledby="searchAddUser" aria-hidden="true">
+    <div class="modal-dialog dialog700 modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header d-flex align-items-center flex-space-between">
+                <h1>Add Phone Number</h1>
+                <img src="../../../../assets/img/icons/cross.svg" (click)="closeModal('searchAddUser')" class="cross-btn" height="15px" width="15px" alt="">
+            </div>
+            <div class="modal-body">
+                <form [formGroup]="userForm">
+                    <div class="form-row flex-center flex-space-between gap1-5 margin-top p-2">
+                        <div class="form-wrap w-100">
+                            <label for="phoneNumber" class="block text-sm font-medium text-neutral-600">Enter Phone Number
+                            </label>
+                            <div class="mt-1">
+                                <input id="phoneNumber" formControlName="phoneNumber" (keydown.enter)="confirmUser()" placeholder="Phone Number" class="block w-full text-sm px-4 py-1 text-base placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg text-neutral-600 bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300 ">
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer d-flex flex-end">
+                <button class="btn btn-primary primary-button" (click)="confirmUser()">
+                    Search
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="viewUser" tabindex="-1" aria-labelledby="viewUser" aria-hidden="true">
+    <div class="modal-dialog dialog700 modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header d-flex align-items-center flex-space-between">
+                <h1>View User</h1>
+                <img src="../../../../assets/img/icons/cross.svg" (click)="closeModal('viewUser')" class="cross-btn" height="15px" width="15px" alt="">
+            </div>
+            <div class="modal-body">
+                <form [formGroup]="userForm">
+                    <div class="form-row flex-center flex-space-between gap1-5 margin-top p-2">
+                        <div class="form-wrap w-100">
+                            <label for="name" class="block text-sm font-medium text-neutral-600">Name
+                            </label>
+                            <div class="mt-1">
+                                <input id="name" readonly formControlName="name" placeholder="Name" class="block w-full text-sm px-4 py-1 text-base placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg text-neutral-600 bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300 ">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-row flex-center flex-space-between gap1-5 margin-top p-2">
+                        <div class="form-wrap w-100">
+                            <label for="phoneNumber" readonly class="block text-sm font-medium text-neutral-600">Phone Number
+                            </label>
+                            <div class="mt-1">
+                                <input id="phoneNumber" readonly formControlName="phoneNumber" placeholder="Phone Number" class="block w-full text-sm px-4 py-1 text-base placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg text-neutral-600 bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300 ">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-row flex-center flex-space-between gap1-5 margin-top p-2">
+                        <div class="form-wrap w-100">
+                            <label for="addressLine1" class="block text-sm font-medium text-neutral-600">Address Line 1
+                            </label>
+                            <div class="mt-1">
+                                <input id="addressLine1" readonly formControlName="addressLine1" placeholder="Address Line 1" class="block w-full text-sm px-4 py-1 text-base placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg text-neutral-600 bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300 ">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-row flex-center flex-space-between gap1-5 margin-top p-2">
+                        <div class="form-wrap w-100">
+                            <label for="addressLine2" class="block text-sm font-medium text-neutral-600">Address Line 2
+                            </label>
+                            <div class="mt-1">
+                                <input id="addressLine2" readonly formControlName="addressLine2" placeholder="Address Line 2" class="block w-full text-sm px-4 py-1 text-base placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg text-neutral-600 bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300 ">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-row flex-center flex-space-between gap1-5 margin-top p-2">
+                        <div class="form-wrap w-100">
+                            <label for="addressLine3" class="block text-sm font-medium text-neutral-600">Address Line 3
+                            </label>
+                            <div class="mt-1">
+                                <input id="addressLine3" readonly formControlName="addressLine3" placeholder="Address Line 3" class="block w-full text-sm px-4 py-1 text-base placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg text-neutral-600 bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300 ">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-row flex-center flex-space-between gap1-5 margin-top p-2">
+                        <div class="form-wrap">
+                            <label for="city" class="block text-sm font-medium text-neutral-600">City
+                            </label>
+                            <div class="mt-1">
+                                <input id="city" readonly formControlName="city" placeholder="City" class="block w-full text-sm px-4 py-1 text-base placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg text-neutral-600 bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300 ">
+                            </div>
+                        </div>
+                        <div class="form-wrap">
+                            <label for="state" class="block text-sm font-medium text-neutral-600">State
+                            </label>
+                            <div class="mt-1">
+                                <input id="state" readonly formControlName="state" placeholder="State" class="block w-full text-sm px-4  py-1 text-base placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg text-neutral-600 bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300 ">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-row flex-center flex-space-between gap3 margin-top p-2">
+                        <div class="form-wrap">
+                            <label for="pincode" class="block text-sm font-medium text-neutral-600">PinCode
+                            </label>
+                            <div class="mt-1">
+                                <input id="pincode" readonly formControlName="pincode" placeholder="PinCode" type="number" class="block w-full text-sm px-4  py-1 text-base placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg text-neutral-600 bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300 ">
+                            </div>
+                        </div>
+                        <div class="form-wrap w-100">
+                            <label for="customerType" class="block text-sm font-medium text-neutral-600">Customer Type
+                            </label>
+                            <div class="mt-1">
+                                <select id="customerType" readonly formControlName="customerType" placeholder="Customer Type" class="block w-full text-sm px-4 py-2 text-base placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg text-neutral-600 bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300 ">
+                                    <option class="form-check-label block px-4 py-2 text-sm text-gray-700" value="new">New</option>
+                                    <option class="form-check-label block px-4 py-2 text-sm text-gray-700" value="existing">Existing</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-row flex-center flex-space-between gap1-5 margin-top p-2">
+                        <div class="form-wrap w-100">
+                            <label for="rewardPoint" class="block text-sm font-medium text-neutral-600">Reward Points
+                            </label>
+                            <div class="mt-1">
+                                <input id="rewardPoint" readonly formControlName="rewardPoint" placeholder="Reward Point" class="block w-full text-sm px-4 py-1 text-base placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg text-neutral-600 bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300 ">
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer d-flex flex-end">
+                <div class="btn btn-primary primary-button" (click)="closeModal('viewUser')">
+                    Close
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="editUser" tabindex="-1" aria-labelledby="editUser" aria-hidden="true">
+    <div class="modal-dialog dialog700 modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header d-flex align-items-center flex-space-between">
+                <h1>Edit User</h1>
+                <img src="../../../../assets/img/icons/cross.svg" (click)="closeModal('editUser')" class="cross-btn" height="15px" width="15px" alt="">
+            </div>
+            <div class="modal-body">
+                <form [formGroup]="userForm">
+                    <div class="form-row flex-center flex-space-between gap1-5 margin-top p-2">
+                        <div class="form-wrap w-100">
+                            <label for="name" class="block text-sm font-medium text-neutral-600">Enter Name
+                            </label>
+                            <div class="mt-1">
+                                <input id="name" formControlName="name" placeholder="Name" class="block w-full text-sm px-4 py-1 text-base placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg text-neutral-600 bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300 ">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-row flex-center flex-space-between gap1-5 margin-top p-2">
+                        <div class="form-wrap w-100">
+                            <label for="phoneNumber" class="block text-sm font-medium text-neutral-600">Enter Phone Number
+                            </label>
+                            <div class="mt-1">
+                                <input id="phoneNumber" formControlName="phoneNumber" placeholder="Phone Number" class="block w-full text-sm px-4 py-1 text-base placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg text-neutral-600 bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300 ">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-row flex-center flex-space-between gap1-5 margin-top p-2">
+                        <div class="form-wrap w-100">
+                            <label for="addressLine1" class="block text-sm font-medium text-neutral-600">Enter Address Line 1
+                            </label>
+                            <div class="mt-1">
+                                <input id="addressLine1" formControlName="addressLine1" placeholder="Address Line 1" class="block w-full text-sm px-4 py-1 text-base placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg text-neutral-600 bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300 ">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-row flex-center flex-space-between gap1-5 margin-top p-2">
+                        <div class="form-wrap w-100">
+                            <label for="addressLine2" class="block text-sm font-medium text-neutral-600">Enter Address Line 2
+                            </label>
+                            <div class="mt-1">
+                                <input id="addressLine2" formControlName="addressLine2" placeholder="Address Line 2" class="block w-full text-sm px-4 py-1 text-base placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg text-neutral-600 bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300 ">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-row flex-center flex-space-between gap1-5 margin-top p-2">
+                        <div class="form-wrap w-100">
+                            <label for="addressLine3" class="block text-sm font-medium text-neutral-600">Enter Address Line 3
+                            </label>
+                            <div class="mt-1">
+                                <input id="addressLine3" formControlName="addressLine3" placeholder="Address Line 3" class="block w-full text-sm px-4 py-1 text-base placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg text-neutral-600 bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300 ">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-row flex-center flex-space-between gap1-5 margin-top p-2">
+                        <div class="form-wrap">
+                            <label for="city" class="block text-sm font-medium text-neutral-600">Enter City
+                            </label>
+                            <div class="mt-1">
+                                <input id="city" formControlName="city" placeholder="City" class="block w-full text-sm px-4 py-1 text-base placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg text-neutral-600 bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300 ">
+                            </div>
+                        </div>
+                        <div class="form-wrap">
+                            <label for="state" class="block text-sm font-medium text-neutral-600">Enter State
+                            </label>
+                            <div class="mt-1">
+                                <input id="state" formControlName="state" placeholder="State" class="block w-full text-sm px-4  py-1 text-base placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg text-neutral-600 bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300 ">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-row flex-center flex-space-between gap3 margin-top p-2">
+                        <div class="form-wrap">
+                            <label for="pincode" class="block text-sm font-medium text-neutral-600">Enter PinCode
+                            </label>
+                            <div class="mt-1">
+                                <input id="pincode" formControlName="pincode" placeholder="PinCode" type="number" class="block w-full text-sm px-4  py-1 text-base placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg text-neutral-600 bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300 ">
+                            </div>
+                        </div>
+                        <div class="form-wrap w-100">
+                            <label for="customerType" class="block text-sm font-medium text-neutral-600">Select Customer Type
+                            </label>
+                            <div class="mt-1">
+                                <select id="customerType" formControlName="customerType" placeholder="Customer Type" class="block w-full text-sm px-4 py-2 text-base placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg text-neutral-600 bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300 ">
+                                    <option class="form-check-label block px-4 py-2 text-sm text-gray-700" value="new">New</option>
+                                    <option class="form-check-label block px-4 py-2 text-sm text-gray-700" value="existing">Existing</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer d-flex flex-end">
+                <div class="btn btn-success primary-button" [class.disabled]="userForm.invalid" (click)="editUser()">
+                    Edit User
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="userHistory" tabindex="-1" aria-labelledby="userHistory" aria-hidden="true">
+    <div class="modal-dialog dialog700 modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header d-flex align-items-center flex-space-between">
+                <h1>Transaction History of {{historyName}} </h1>
+                <img src="../../../../assets/img/icons/cross.svg" (click)="closeModal('userHistory')" class="cross-btn" height="15px" width="15px" alt="">
+            </div>
+            <div class="modal-body">
+                <div class="mt-2 px-2 flex flex-space-between gap1-5">
+                    <h3>Life Time Sales: {{historySales}}</h3>
+                    <h3>Points Redeemed: {{historyPointsRedeemed}}</h3>
+                </div>
+                <div class="mt-2 w-full table-responsive">
+                    <table *ngIf="historyData?.length > 0" class="w-full text-left table-auto min-w-max overflow-auto">
+                        <thead>
+                            <tr>
+                                <th class="py-3 px-2 transition-colors cursor-pointer border-y border-slate-200 bg-slate-50 hover:bg-slate-100 font-sans text-sm font-normal leading-none text-slate-700">
+                                    Bill Number
+                                </th>
+                                <th class="py-3 px-2 transition-colors cursor-pointer border-y border-slate-200 bg-slate-50 hover:bg-slate-100 font-sans text-sm font-normal leading-none text-slate-700">
+                                    Final Amount
+                                </th>
+                                <th class="py-3 px-2 transition-colors cursor-pointer border-y border-slate-200 bg-slate-50 hover:bg-slate-100 font-sans text-sm font-normal leading-none text-slate-700">
+                                    Reward Points Used
+                                </th>
+                                <th class="py-3 px-2 transition-colors cursor-pointer border-y border-slate-200 bg-slate-50 hover:bg-slate-100 font-sans text-sm font-normal leading-none text-slate-700">
+                                    Created At
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let display of historyData">
+                            <td class="py-2 px-2 border-b border-slate-200">
+                                <div class="flex flex-col">
+                                    <p class="text-sm font-semibold text-slate-700">
+                                        {{display.billNumber}}
+                                    </p>
+                                </div>
+                            </td>
+                            <td class="py-2 px-2 border-b border-slate-200">
+                                <p class="text-xs text-slate-500">
+                                    {{display.finalAmount}}
+                                </p>
+                            </td>
+                            <td class="py-2 px-2 border-b border-slate-200">
+                                <p class="text-xs text-slate-500">
+                                    {{display.rewardPointsUsed}}
+                                </p>
+                            </td>
+                            <td class="py-2 px-2 border-b border-slate-200">
+                                <p class="text-xs text-slate-500">
+                                    {{display.createdAt | date: 'mediumDate'}}
+                                </p>
+                            </td>
+                            </tr>
+                        </tbody>
+                        </table>
+        
+                    <div *ngIf="historyData?.length == 0" class="not-found w-full h-full">
+                        <div class="container flex items-center px-6 py-12 mx-auto">
+                            <div class="flex flex-col items-center max-w-sm mx-auto text-center">
+                                <h2 class="mt-3 text-xl font-semibold text-gray-800 md:text-md">No Bill History found</h2>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="userRewards" tabindex="-1" aria-labelledby="userRewards" aria-hidden="true">
+    <div class="modal-dialog dialog700 modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header d-flex align-items-center flex-space-between">
+                <h1>Rewards History of {{historyName}} </h1>
+                <img src="../../../../assets/img/icons/cross.svg" (click)="closeModal('userRewards')" class="cross-btn" height="15px" width="15px" alt="">
+            </div>
+            <div class="modal-body">
+                <div class="mt-2 px-2 flex flex-space-between gap1-5">
+                    <h3>Points Earned: {{rewardsEarned}}</h3>
+                    <h3>Points Redeemed: {{rewardsRedeemed}}</h3>
+                </div>
+                <div class="mt-2 w-full table-responsive">
+                    <table *ngIf="rewardsData?.length > 0" class="w-full text-left table-auto min-w-max overflow-auto">
+                        <thead>
+                            <tr>
+                                <th class="py-3 px-2 transition-colors cursor-pointer border-y border-slate-200 bg-slate-50 hover:bg-slate-100 font-sans text-sm font-normal leading-none text-slate-700">
+                                    Bill Number
+                                </th>
+                                <th class="py-3 px-2 transition-colors cursor-pointer border-y border-slate-200 bg-slate-50 hover:bg-slate-100 font-sans text-sm font-normal leading-none text-slate-700">
+                                    Reward Points Used
+                                </th>
+                                <th class="py-3 px-2 transition-colors cursor-pointer border-y border-slate-200 bg-slate-50 hover:bg-slate-100 font-sans text-sm font-normal leading-none text-slate-700">
+                                    Created At
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let display of rewardsData">
+                            <td class="py-2 px-2 border-b border-slate-200">
+                                <div class="flex flex-col">
+                                    <p class="text-sm font-semibold text-slate-700">
+                                        {{display.billID}}
+                                    </p>
+                                </div>
+                            </td>
+                            <td class="py-2 px-2 border-b border-slate-200">
+                                <p class="text-xs text-slate-500">
+                                    {{display.pointsAmount}}
+                                </p>
+                            </td>
+                            <td class="py-2 px-2 border-b border-slate-200">
+                                <p class="text-xs text-slate-500">
+                                    {{display.createdAt | date: 'mediumDate'}}
+                                </p>
+                            </td>
+                            </tr>
+                        </tbody>
+                        </table>
+        
+                    <div *ngIf="rewardsData?.length == 0" class="not-found w-full h-full">
+                        <div class="container flex items-center px-6 py-12 mx-auto">
+                            <div class="flex flex-col items-center max-w-sm mx-auto text-center">
+                                <h2 class="mt-3 text-xl font-semibold text-gray-800 md:text-md">No Rewards History found</h2>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

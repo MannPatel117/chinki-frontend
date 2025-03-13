@@ -40,6 +40,11 @@ export class ApiService {
     return this.http.patch(`${environment.apiUrl}`+`${route}`, body, { params:param, headers:this.header.headers })
   }
 
+  putAPI(route:any, params:any, body:any){
+    const param = this.setParamms(params)
+    return this.http.put(`${environment.apiUrl}`+`${route}`, body, { params:param, headers:this.header.headers })
+  }
+
   postAPI(route:any, params:any, body:any){
     const param = this.setParamms(params)
     return this.http.post(`${environment.apiUrl}`+`${route}`, body, { params:param, headers:this.header.headers })
