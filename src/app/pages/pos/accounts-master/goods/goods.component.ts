@@ -1,5 +1,5 @@
 import { DatePipe, NgClass, NgFor, NgIf } from '@angular/common';
-import { Component, ElementRef, HostListener, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, HostListener, ViewChild } from '@angular/core';
 import {
   FormArray,
   FormBuilder,
@@ -60,7 +60,8 @@ export class GoodsComponent {
     private api: ApiService,
     private toastr: ToastrService,
     private shared: SharedService,
-    private router: ActivatedRoute
+    private router: ActivatedRoute,
+    private cdr: ChangeDetectorRef
   ) {
     this.role = localStorage.getItem('role');
   }
@@ -96,6 +97,7 @@ export class GoodsComponent {
     this.getInventoryDetail();
     this.getProducts();
     this.fetchFilterInfo();
+    this.focusBarcode();
   }
 
   fetchFilterInfo() {
@@ -510,10 +512,9 @@ export class GoodsComponent {
   get filteredProduct() {
     return this.searchTerm === ''
       ? this.products // Show all products when search is empty
-      : this.products.filter((product: { productName: string }) =>
-          product.productName
-            .toLowerCase()
-            .includes(this.searchTerm.toLowerCase())
+      : this.products.filter((product: { productName: string; barcode: string; aliasName: string }) =>
+          [product.productName, product.barcode, product.aliasName]
+            .some(field => field?.toLowerCase().includes(this.searchTerm.toLowerCase()))
         );
   }
 
@@ -589,4 +590,38 @@ export class GoodsComponent {
       });
     }
   }
+  selectedIndex = -1; // Track the currently highlighted item
+
+  onKeydown(event: KeyboardEvent) {
+    if (!this.dropdownOpen || this.filteredProduct.length === 0) return;
+  
+    if (event.key === 'ArrowDown') {
+      event.preventDefault();
+      this.selectedIndex = (this.selectedIndex + 1) % this.filteredProduct.length;
+    } 
+    else if (event.key === 'ArrowUp') {
+      event.preventDefault();
+      this.selectedIndex = (this.selectedIndex - 1 + this.filteredProduct.length) % this.filteredProduct.length;
+    } 
+    else if (event.key === 'Enter') {
+      event.preventDefault();
+      if (this.selectedIndex >= 0) {
+        this.selectProduct(this.filteredProduct[this.selectedIndex].barcode);
+      }
+    } 
+    else if (event.key === 'Escape') {
+      this.dropdownOpen = false;
+    }
+  
+    this.cdr.detectChanges();  // ✅ Ensure UI updates instantly
+  
+    // ✅ Auto-scroll to the selected item
+    setTimeout(() => {
+      const selectedItem = document.querySelector('.selected-item');
+      if (selectedItem) {
+        selectedItem.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+    }, 10);
+  }
+  
 }

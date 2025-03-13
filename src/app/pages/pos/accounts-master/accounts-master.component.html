@@ -6,7 +6,7 @@
         <div class="cube cube4"></div>
     </div>
 </div>
-<div class="main-body flex-start">
+<div *ngIf="showLedgerScreen == false" class="main-body flex-start">
     <div class="body-content flex flex-col gap1-5 mobile-off">
         <div class="body-head w-full flex flex-center flex-space-between">
             <div></div>
@@ -58,9 +58,6 @@
                             Account Name
                         </th>
                         <th class="py-3 px-2 transition-colors cursor-pointer border-y border-slate-200 bg-slate-50 hover:bg-slate-100 font-sans text-sm font-normal leading-none text-slate-700">
-                            Alias Name
-                        </th>
-                        <th class="py-3 px-2 transition-colors cursor-pointer border-y border-slate-200 bg-slate-50 hover:bg-slate-100 font-sans text-sm font-normal leading-none text-slate-700">
                             Phone Number
                         </th>
                         <th class="py-3 px-2 transition-colors cursor-pointer border-y border-slate-200 bg-slate-50 hover:bg-slate-100 font-sans text-sm font-normal leading-none text-slate-700">
@@ -70,7 +67,10 @@
                             UnderGroup
                         </th>
                         <th class="py-3 px-2 transition-colors cursor-pointer border-y border-slate-200 bg-slate-50 hover:bg-slate-100 font-sans text-sm font-normal leading-none text-slate-700">
-                        Payment Terms
+                        GST Number
+                        </th>
+                        <th class="py-3 px-2 transition-colors cursor-pointer border-y border-slate-200 bg-slate-50 hover:bg-slate-100 font-sans text-sm font-normal leading-none text-slate-700">
+                            Ledger
                         </th>
                         <th class="py-3 px-5 transition-colors cursor-pointer border-y border-slate-200 bg-slate-50 hover:bg-slate-100 font-sans text-sm font-normal leading-none text-slate-700">
                         </th>
@@ -84,11 +84,6 @@
                                 {{display.accountName}}
                             </p>
                         </div>
-                    </td>
-                    <td class="py-2 px-2 border-b border-slate-200">
-                        <p class="text-xs text-slate-500">
-                            {{display.aliasName}}
-                        </p>
                     </td>
                     <td class="py-2 px-2 border-b border-slate-200">
                         <p class="text-xs text-slate-500">
@@ -112,12 +107,16 @@
                     </td>
                     <td class="py-2 px-2 border-b border-slate-200">
                         <p class="text-xs text-slate-500">
-                            &nbsp;{{display.paymentTerm}}
+                            &nbsp;{{display.gstNumber}}
                        </p>
                     </td>
                     <td class="py-2 px-2 border-b border-slate-200">
-                        <a (click)="goToAccountDetails(display?.supplierID)" class="ml-2.5 text-blue-700 text-xs font-semibold">View Details</a>
+                        <button class="rounded-md bg-indigo-600 px-2 py-1 text-xs font-semibold text-white shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-indigo-600" (click)="openLedger(display.supplierID)">Ledger</button>
+                    </td>
+                    <td class="py-2 px-2 border-b border-slate-200">
+                        <a (click)="openModalViewEditAccount(display, 'view')" class="ml-2.5 text-blue-700 text-xs font-semibold">View Details</a>
                         <a *ngIf="role == 'admin' || role == 'superadmin'" (click)="openDeleteModal(display)" class="ml-2.5 text-red-700 text-xs font-semibold">Delete</a>     
+                        <a *ngIf="role != 'crm' || role == 'factory' || role == 'store'" (click)="openModalViewEditAccount(display, 'edit')" class="ml-2.5 text-amber-500 text-xs font-semibold">Edit</a>
                     </td>
                     </tr>
                 </tbody>
@@ -236,12 +235,13 @@
                     </td>
                     <td class="py-2 px-2 border-b border-slate-200">
                         <p class="text-xs text-slate-500">
-                            &nbsp;{{display.paymentTerm}}
+                            &nbsp;{{display.gstNumber}}
                        </p>
                     </td>
                     <td class="py-2 px-2 border-b border-slate-200">
-                        <a (click)="goToAccountDetails(display?.supplierID)" class="ml-2.5 text-blue-700 text-xs font-semibold">View Details</a>
-                        <a *ngIf="role == 'admin' || role == 'superadmin'" (click)="openDeleteModal(display)" class="ml-2.5 text-red-700 text-xs font-semibold">Delete</a>     
+                        <a (click)="openModalViewEditAccount(display, 'view')" class="ml-2.5 text-blue-700 text-xs font-semibold">View Details</a>
+                        <a *ngIf="role == 'admin' || role == 'superadmin'" (click)="openDeleteModal(display)" class="ml-2.5 text-red-700 text-xs font-semibold">Delete</a>   
+                        <a *ngIf="role != 'crm' || role == 'factory' || role == 'store'" (click)="openModalViewEditAccount(display, 'edit')" class="ml-2.5 text-amber-500 text-xs font-semibold">Edit</a>  
                     </td>
                     </tr>
                 </tbody>
@@ -265,6 +265,81 @@
         <div class="body-footer w-full">
             <ngb-pagination class="flex flex-center paginator" *ngIf="displayData?.length != 0" [(page)]="page" [pageSize]="limit"
                 [collectionSize]="collectionSize" (pageChange)="getAccounts(false, false)"/>
+        </div>
+    </div>
+</div>
+
+<div *ngIf="showLedgerScreen == true" class="main-body flex-start">
+    <div class="body-content flex flex-col gap1-5 mobile-off">
+        <div class="body-head w-full flex flex-center flex-space-between">
+            <div><button class="rounded-md bg-slate-700 px-2.5 py-1.5 text-sm font-semibold text-white shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-slate-700" (click)="back()">Back</button></div>
+            <div class="btn-wrap flex gap2">
+                <button class="rounded-md bg-red-500 px-2.5 py-1.5 text-sm font-semibold text-white shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-red-600"  (click)="generatePDF()"><i class="bi bi-file-earmark-arrow-down"></i> &nbsp; PDF</button>
+            </div>
+        </div>
+        <div class="body-table-ledger px-5" id="printable-area">
+            <div class="heading w-100 flex flex-center flex-col gap2">
+                <h1>{{ledgerData?.inventory?.name}}</h1>
+                <h3>
+                    {{ 
+                      getFormattedAddress()
+                    }}
+                </h3>
+                <h3>
+                    Mobile Number : {{ledgerData?.inventory?.phoneNumber}}
+                </h3>
+                <hr style="width: 100%; border: 1px solid black;" />
+            </div>
+            <div class="body-head w-full flex flex-center flex-space-between">
+                <h3>{{ledgerData?.supplier?.name}}</h3>
+                <h3>From :{{ledgerData?.supplier?.fromDate| date: 'mediumDate'}} &nbsp; To : {{ledgerData?.supplier?.toDate | date: 'mediumDate'}}</h3>
+            </div>
+            <table class="w-full text-center table-auto min-w-max overflow-auto table-bordered">
+                <thead>
+                    <tr>
+                        <th>Sr No.</th>
+                        <th>Date</th>
+                        <th>Particular</th>
+                        <th>Document No</th>
+                        <th>Remark</th>
+                        <th>Debit</th>
+                        <th>Credit</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let tx of ledgerData.ledger; let i = index;">
+                        <td>{{i+1}}</td>
+                        <td>{{tx.date | date: 'dd/MM/yyyy'}}</td>
+                        <td>{{tx?.particulars}}</td>
+                        <td *ngIf="tx.documentNo != '-'">{{tx.documentNo}}</td>
+                        <td *ngIf="tx.documentNo == '-'"></td>
+                        <td>{{tx?.remark || ""}}</td>
+                        <td *ngIf="tx.debit != 0">{{tx?.debit}}</td>
+                        <td *ngIf="tx.debit == 0"></td>
+                        <td *ngIf="tx.credit != 0">{{tx?.credit}}</td>
+                        <td *ngIf="tx.credit == 0"></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td class="font-semibold">{{ledgerData.totals.totalDebit}}</td>
+                        <td class="font-semibold">{{ledgerData.totals.totalCredit}}</td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td class="font-bold">Balance</td>
+                        <td class="font-bold" *ngIf="ledgerData.totals.balanceType == 'Debit'">{{ledgerData.totals.balance}}</td>
+                        <td></td>
+                        <td class="font-bold" *ngIf="ledgerData.totals.balanceType == 'Credit'">{{ledgerData.totals.balance}}</td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
     </div>
 </div>
@@ -397,10 +472,10 @@
                             </div>
                         </div>
                         <div class="form-wrap">
-                            <label for="openingBalanceDebit" class="block text-sm font-medium text-neutral-600">Enter Opening Balance - Debit
+                            <label for="openingBalanceDebit" (change)="changeOpeningBalance()"  class="block text-sm font-medium text-neutral-600">Enter Opening Balance - Debit
                             </label>
                             <div class="mt-1">
-                                <input id="openingBalanceDebit" formControlName="openingBalanceDebit" type="number" placeholder="Opening Balance - Debit" class="block w-full text-sm px-4 py-1 text-base placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg text-neutral-600 bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300 ">
+                                <input id="openingBalanceDebit" (change)="changeOpeningBalance()"  formControlName="openingBalanceDebit" type="number" placeholder="Opening Balance - Debit" class="block w-full text-sm px-4 py-1 text-base placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg text-neutral-600 bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300 ">
                             </div>
                         </div>
                     </div>
@@ -409,6 +484,155 @@
             <div class="modal-footer d-flex flex-end">
                 <div class="btn btn-success primary-button" [class.disabled]="accountForm.invalid" (click)="addAccount()">
                     Add Account
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="viewAccountDetail" tabindex="-1" aria-labelledby="viewAccountDetail" aria-hidden="true">
+    <div class="modal-dialog dialog700 modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header d-flex align-items-center flex-space-between">
+                <h1>View Account Detail</h1>
+                <img src="../../../../assets/img/icons/cross.svg" (click)="closeModal('viewAccountDetail')" class="cross-btn" height="15px" width="15px" alt="">
+            </div>
+            <div class="modal-body">
+                <form [formGroup]="accountForm">
+                    <div class="form-row flex-center flex-space-between gap1-5 margin-top p-2">
+                        <div class="form-wrap w-100">
+                            <label for="accountName" class="block text-sm font-medium text-neutral-600">Enter Account Name
+                            </label>
+                            <div class="mt-1">
+                                <input id="accountName" formControlName="accountName" placeholder="Account Name" class="block w-full text-sm px-4 py-1 text-base placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg text-neutral-600 bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300 ">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-row flex-center flex-space-between gap1-5 margin-top p-2">
+                        <div class="form-wrap">
+                            <label for="aliasName" class="block text-sm font-medium text-neutral-600">Enter Alias Name
+                            </label>
+                            <div class="mt-1">
+                                <input id="aliasName" formControlName="aliasName" placeholder="Alias Name" class="block w-full text-sm px-4 py-1 text-base placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg text-neutral-600 bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300 ">
+                            </div>
+                        </div>
+                        <div class="form-wrap">
+                            <label for="phone_Number" class="block text-sm font-medium text-neutral-600">Enter Phone Number
+                            </label>
+                            <div class="mt-1">
+                                <input id="phone_Number" formControlName="phone_Number" placeholder="Phone Number" class="block w-full text-sm px-4  py-1 text-base placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg text-neutral-600 bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300 ">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-row flex-center flex-space-between gap1-5 margin-top p-2">
+                        <div class="form-wrap w-100">
+                            <label for="addressLine1" class="block text-sm font-medium text-neutral-600">Enter Address Line 1
+                            </label>
+                            <div class="mt-1">
+                                <input id="addressLine1" formControlName="addressLine1" placeholder="Address Line 1" class="block w-full text-sm px-4 py-1 text-base placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg text-neutral-600 bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300 ">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-row flex-center flex-space-between gap1-5 margin-top p-2">
+                        <div class="form-wrap w-100">
+                            <label for="addressLine2" class="block text-sm font-medium text-neutral-600">Enter Address Line 2
+                            </label>
+                            <div class="mt-1">
+                                <input id="addressLine2" formControlName="addressLine2" placeholder="Address Line 2" class="block w-full text-sm px-4 py-1 text-base placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg text-neutral-600 bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300 ">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-row flex-center flex-space-between gap1-5 margin-top p-2">
+                        <div class="form-wrap">
+                            <label for="city" class="block text-sm font-medium text-neutral-600">Enter City
+                            </label>
+                            <div class="mt-1">
+                                <input id="city" formControlName="city" placeholder="City" class="block w-full text-sm px-4 py-1 text-base placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg text-neutral-600 bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300 ">
+                            </div>
+                        </div>
+                        <div class="form-wrap">
+                            <label for="state" class="block text-sm font-medium text-neutral-600">Enter State
+                            </label>
+                            <div class="mt-1">
+                                <input id="state" formControlName="state" placeholder="State" class="block w-full text-sm px-4  py-1 text-base placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg text-neutral-600 bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300 ">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-row flex-center flex-space-between gap1-5 margin-top p-2">
+                        <div class="form-wrap">
+                            <label for="pincode" class="block text-sm font-medium text-neutral-600">Enter Pincode
+                            </label>
+                            <div class="mt-1">
+                                <input id="pincode" formControlName="pincode" type="number" placeholder="Pincode" class="block w-full text-sm px-4 py-1 text-base placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg text-neutral-600 bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300 ">
+                            </div>
+                        </div>
+                        <div class="form-wrap">
+                            <label for="email" class="block text-sm font-medium text-neutral-600">Enter Email
+                            </label>
+                            <div class="mt-1">
+                                <input id="email" formControlName="email" placeholder="Email" class="block w-full px-4 py-1 text-sm text-base placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg text-neutral-600 bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300 ">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-row flex-center flex-space-between gap3 margin-top p-2">
+                        <div class="form-wrap w-100">
+                            <label for="subGroup" class="block text-sm font-medium text-neutral-600">Enter Sub Group
+                            </label>
+                            <div class="mt-1">
+                                <select id="subGroup" formControlName="subGroup" placeholder="Sub Group" class="block w-full text-sm px-4 py-2 text-base placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg text-neutral-600 bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300 ">
+                                    <option class="form-check-label block px-4 py-3 text-sm text-gray-700" value='Sundry Creditors'>Sundry Creditors</option>
+                                    <option class="form-check-label block px-4 py-3 text-sm text-gray-700" value='Sundry Debtors'>'Sundry Debtors'</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-wrap w-100">
+                            <label for="underGroup" class="block text-sm font-medium text-neutral-600">Enter Under Group
+                            </label>
+                            <div class="mt-1">
+                                <input id="underGroup" formControlName="underGroup" placeholder="Under Group" class="block w-full px-4 py-1 text-sm text-base placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg text-neutral-600 bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300 ">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-row flex-center flex-space-between gap1-5 margin-top p-2">
+                        <div class="form-wrap">
+                            <label for="paymentTerm" class="block text-sm font-medium text-neutral-600">Enter Payment Term
+                            </label>
+                            <div class="mt-1">
+                                <input id="paymentTerm" formControlName="paymentTerm" type="number" placeholder="Payment Term" class="block w-full text-sm px-4 py-1 text-base placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg text-neutral-600 bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300 ">
+                            </div>
+                        </div>
+                        <div class="form-wrap">
+                            <label for="gstNumber" class="block text-sm font-medium text-neutral-600">Enter GST Number
+                            </label>
+                            <div class="mt-1">
+                                <input id="gstNumber" formControlName="gstNumber" placeholder="GST Number" class="block w-full px-4 py-1 text-sm text-base placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg text-neutral-600 bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300 ">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-row flex-center flex-space-between gap1-5 margin-top p-2">
+                        <div class="form-wrap">
+                            <label for="openingBalanceCredit" class="block text-sm font-medium text-neutral-600">Enter Opening Balance - Credit
+                            </label>
+                            <div class="mt-1">
+                                <input id="openingBalanceCredit" (change)="changeOpeningBalance()" formControlName="openingBalanceCredit" type="number" placeholder="Opening Balance - Credit" class="block w-full text-sm px-4 py-1 text-base placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg text-neutral-600 bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300 ">
+                            </div>
+                        </div>
+                        <div class="form-wrap">
+                            <label for="openingBalanceDebit" class="block text-sm font-medium text-neutral-600">Enter Opening Balance - Debit
+                            </label>
+                            <div class="mt-1">
+                                <input id="openingBalanceDebit" (change)="changeOpeningBalance()"  formControlName="openingBalanceDebit" type="number" placeholder="Opening Balance - Debit" class="block w-full text-sm px-4 py-1 text-base placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg text-neutral-600 bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300 ">
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer d-flex flex-end">
+                <div class="btn btn-success primary-button" *ngIf="this.currentAction=='edit'" [class.disabled]="accountForm.invalid" (click)="editAccount()">
+                    Edit Account
+                </div>
+                <div class="btn btn-success primary-button" *ngIf="this.currentAction=='view'" [class.disabled]="accountForm.invalid" (click)="closeModal('viewAccountDetail')">
+                    Close
                 </div>
             </div>
         </div>
@@ -435,3 +659,102 @@
     </div>
 </div>
 
+<div class="modal fade" id="noInventory" tabindex="-1" aria-labelledby="noInventory" aria-hidden="true">
+    <div class="modal-dialog dialog700 modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header d-flex align-items-center flex-space-between">
+                <h1>No Inventory Detected</h1>
+                <img src="../../../../assets/img/icons/cross.svg" (click)="closeModal('noInventory')" class="cross-btn" height="15px" width="15px" alt="">
+            </div>
+            <div class="modal-body">
+                <h5>You have no inventory permissions. Please connect with support for same.</h5>
+            </div>
+            <div class="modal-footer d-flex flex-end">
+                <button class="btn btn-primary primary-button" (click)="closeModal('noInventory')">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="selectInventory" tabindex="-1" aria-labelledby="selectInventory" aria-hidden="true">
+    <div class="modal-dialog dialog700 modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header d-flex align-items-center flex-space-between">
+                <h1>Select the Inventory for transaction</h1>
+                <img src="../../../../assets/img/icons/cross.svg" (click)="closeModal('selectInventory')" class="cross-btn" height="15px" width="15px" alt="">
+            </div>
+            <div class="modal-body">
+                <form [formGroup]="accountForm">
+                    <div class="form-row flex-center flex-space-between gap1-5 margin-top p-2">
+                        <div class="form-wrap w-100">
+                            <label for="inventory" class="block text-sm font-medium text-neutral-600">Inventory
+                            </label>
+                            <div class="mt-1">
+                                <select id="inventory" formControlName="inventory" placeholder="Inventory" class="block w-full text-sm px-4 py-2 text-base placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg text-neutral-600 bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300 ">
+                                    <option *ngFor="let inventory of inventoryName" class="form-check-label block px-4 py-3 text-sm text-gray-700" [ngValue]="inventory?.inventoryID">{{inventory?.inventoryName}}</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>       
+                </form>
+            </div>
+            <div class="modal-footer d-flex flex-end">
+                <div class="btn btn-success primary-button" [class.disabled]="accountForm.get('inventory')?.value <= 0" (click)="inventorySelected()">
+                    Confirm
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="selectInventoryLedger" tabindex="-1" aria-labelledby="selectInventoryLedger" aria-hidden="true">
+    <div class="modal-dialog dialog700 modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header d-flex align-items-center flex-space-between">
+                <h1>Select the Inventory for Ledger</h1>
+                <img src="../../../../assets/img/icons/cross.svg" (click)="closeModal('selectInventoryLedger')" class="cross-btn" height="15px" width="15px" alt="">
+            </div>
+            <div class="modal-body">
+                <form [formGroup]="ledgerForm">
+                    <div class="form-row flex-center flex-space-between gap1-5 margin-top p-2">
+                        <div class="form-wrap w-100">
+                            <label for="inventoryID" class="block text-sm font-medium text-neutral-600">Inventory
+                            </label>
+                            <div class="mt-1">
+                                <select id="inventoryID" formControlName="inventoryID" placeholder="Inventory" class="block w-full text-sm px-4 py-2 text-base placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg text-neutral-600 bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300 ">
+                                    <option *ngFor="let inventory of inventoryName" class="form-check-label block px-4 py-3 text-sm text-gray-700" [ngValue]="inventory?.inventoryID">{{inventory?.inventoryName}}</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-row flex-center flex-space-between gap1-5 margin-top p-2">
+                        <div class="form-check px-3 py-2">
+                            <p class="text-sm text-gray-700 font-medium mb-1 ml--1">From Date</p>
+                            <input formControlName="fromDate" 
+                                type="date" 
+                                id="date" 
+                                class="block w-full px-3 py-2 text-sm border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white"
+                            />
+                        </div>
+                        <div class="form-check px-3 py-2" *ngIf="this.ledgerForm.get('fromDate')?.value != ''">
+                            <p class="text-sm text-gray-700 font-medium mb-1 ml--1">To Date</p>
+                            <input formControlName="toDate" 
+                                type="date" 
+                                id="date" 
+                                class="block w-full px-3 py-2 text-sm border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white"
+                            />
+                        </div>
+                    </div>       
+                </form>
+            </div>
+            <div class="modal-footer d-flex flex-end">  
+                <button [disabled]="!ledgerForm.get('inventoryID')?.value || !ledgerForm.get('fromDate')?.value" class="btn btn-success primary-button" [class.disabled]="ledgerForm.get('inventoryID')?.value <= 0 && this.ledgerForm.get('fromDate')?.value == null" (click)="showLedger()">
+                    Confirm
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

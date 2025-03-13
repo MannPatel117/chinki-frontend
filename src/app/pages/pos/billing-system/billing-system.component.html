@@ -9,8 +9,8 @@
 </div>
 
 <div class="main-body flex-start">
-    <div class="body-content">
-        <div class="body-head flex-center flex-space-between">
+    <div class="body-content flex flex-col gap1-5">
+        <div class="bill-head flex-center flex-space-between">
             <div class="invoice-switcher flex-start gap3">
                 <div class="invoice-btn flex-center" (click)="invoiceSwitcher('A')" [class.invoiceActive]="currentActiveInvoice == 'A'">
                     <p>Invoice 1</p>
@@ -22,10 +22,8 @@
                     <p>Invoice 3</p>
                 </div>
             </div>
-            <div class="invoice-total flex-end">
-                <div class="save-btn flex-center" (click)="saveBill()">
-                    <p>Save</p>
-                </div>
+            <div class="invoice-total flex-end gap1-5">
+                <button class="rounded-md bg-green-600 px-4 py-1.5 text-sm font-semibold text-white shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-green-600"  (click)="saveBill()" >Save</button>
                 <div class="total-amount flex-center flex-space-between">
                     <h1>₹</h1>
                     <h1>{{currentActiveInvoiceData.totalAmount}}</h1>
@@ -37,17 +35,18 @@
                 <div class="body-menu-container flex-center gap1">
                     <div class="col-wrap flex-center flex-col gap1">
                         <div class="row-wrap flex-center gap1">
+                            <label class="flex-center flex-start" for="invoiceNumber">Inventory</label>
+                            <input formControlName="inventoryName" id="invoiceNumber" readonly>
+                        </div>
+                        <div class="row-wrap flex-center gap1">
                             <label class="flex-center flex-start" for="invoiceNumber">Invoice No.</label>
                             <input formControlName="invoiceNumber" id="invoiceNumber" readonly>
                         </div>
                         <div class="row-wrap flex-center gap1">
-                            <div class="flex-center check-users" (click)="openModal('getUserModal')">Search User</div>
-                            <div class="flex-center add-users" (click)="openModal('addUserModal')">Add User</div>
+                            <div class="flex-center bill-btn bg-cyan-500" (click)="openModal('bill-searchAddUserModal')">Search User</div>
+                            <div class="flex-center bill-btn delete-bill bg-rose-600" (click)="openModal('bill-clearModal')">Clear bill</div>
                         </div>
-                        <div class="row-wrap flex-center gap1">
-                            <label class="flex-center flex-start" for="barcode">Barcode</label>
-                            <input id="barcode" #barcode [formControl]="barcodeScan" (change)="scanBarcode()">
-                        </div>
+                       
                     </div>
                     <div class="col-wrap flex-center flex-col gap1">
                         <div class="row-wrap flex-center gap1">
@@ -65,11 +64,11 @@
                     </div>
                     <div class="col-wrap flex-center flex-col gap1">
                         <div class="row-wrap flex-center gap1">
-                            <label class="flex-center flex-center reward-points" (click)="openModal('rewardsModal')">Reward Points</label>
+                            <div class="flex-center flex-center bill-btn bg-indigo-500"  (click)="openModal('rewardsModal')">Reward Points</div>
                             <input id="rewardPoints" formControlName="rewardPoints" readonly>
                         </div>
                         <div class="row-wrap flex-center gap1">
-                            <div class="flex-center check-offers" (click)="openModal('offersModal')">Check offers</div>
+                            <div class="flex-center bill-btn  bg-orange-500" (click)="openModal('offersModal')">Check offers</div>
                             <div style="height: 100%; width: 60%;" class="flex-center">
                                 <select (change)="customerTypeChanged() "
                                 name="customer-type"
@@ -78,14 +77,14 @@
                                 formControlName="customerType" 
                             >
                                 <option value="">Customer Type</option>
-                                <option value="New">New Customer</option>
-                                <option value="Existing">Existing Customer</option>
+                                <option value="new">New Customer</option>
+                                <option value="existing">Existing Customer</option>
                             </select>
                             </div>
                         </div>
                         <div class="row-wrapp flex-center gap1">
-                            <div class="flex-center delete-bill" (click)="openModal('deleteModal')">Cancel bill</div>
-                            <div style="height: 100%; width: 60%;" class="flex-center gap2">
+                            
+                            <div style="height: 100%; width: 100%;" class="flex-center gap2">
                                 <div style="margin-bottom: 0;" class="form-check flex-center gap1-5">
                                     <input class="form-check-input" type="radio" formControlName="paymentType" value="cash" id="cash" (click)="paymentType()">
                                     <label class="form-check-label" for="cash">
@@ -104,7 +103,47 @@
                 </div>
             </form>
         </div>
-        <div #tablebody class="body-table"> 
+        <div class="bill-search flex flex-center flex-space-between">
+            <div class="btn-wrap flex flex-center gap2" style="height: 100%; width: 100%;">            
+                <div class="absolute w-64 combobox-container overflow-visible">
+                    <!-- Input Box -->
+                    <input 
+                      type="text"
+                      [(ngModel)]="searchTerm"
+                      (click)="toggleDropdown()"
+                      placeholder="Search Products"
+                      (keydown)="onKeydown($event)"
+                      class="w-full px-3 py-1.5 text-sm placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg text-neutral-600 bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300 ng-untouched ng-pristine ng-invalid"
+                    />
+                  
+                    <!-- Dropdown -->
+                    <ul
+                        *ngIf="dropdownOpen && filteredProduct.length"
+                        class="absolute w-full bg-white border border-gray-300 rounded-md mt-1 max-h-40 overflow-y-auto shadow-md z-50"
+                        style="top: 100%; left: 0;"
+                        >
+                        <li
+                            *ngFor="let product of filteredProduct; let i = index"
+                            (click)="selectProduct(product.MasterProduct.barcode)"
+                            class="px-4 py-1 cursor-pointer hover:bg-blue-100"
+                            [ngClass]="{
+                            'font-bold text-blue-600': hoverselectedProduct === product.MasterProduct.barcode,
+                            'bg-blue-200 selected-item': hoverselectedIndex === i
+                            }"
+                        >
+                            {{ product.MasterProduct.barcode }} - {{ product.MasterProduct.productName }}
+                        </li>
+                        </ul>
+                  </div>
+                  
+            </div>
+            <div class="btn-wrap flex flex-center gap2" style="height: 100%; width: 100%;">            
+                <input  id="barcode" #barcode [formControl]="barcodeScan" (change)="scanBarcode()" class="ml-1 block w-100 h-75 px-4 py-2 text-sm placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg text-neutral-600 bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300 ng-untouched ng-pristine ng-invalid" ng-reflect-name="phnNumber">
+            </div>
+
+            
+        </div>
+        <div #tablebody class="body-table-bill"> 
             <form [formGroup]="billDataForm">
                 <table class="table table-striped table-bordered table-primary chinki-table">
                     <thead>
@@ -123,17 +162,17 @@
                     </thead>
                     <tbody formArrayName="rows" [style.max-height]="maxHeight" style="overflow-y: scroll;">
                         <tr *ngFor="let row of rows.controls; let i = index" [formGroupName]="i" [ngClass]="(i % 2 === 0) ? 'chinki-table-even' : 'chinki-table-odd'">
-                            <td *ngIf="row.value.itemName == '' || row.value.itemName == null"></td>
-                            <td class="flex flex-center deleteRow" (click)="openItemModal('deleteItemModal', i)" *ngIf="row.value.itemName != '' && row.value.itemName != null"><img src="../../../../assets/img/icons/delete.svg" class="hover" style="cursor: pointer;" height="18px" width="18px" alt=""></td>
-                            <td><input type="text" formControlName="itemName"></td>
-                            <td><input type="number" min="1" (change)="itemChanged('quantity', i)" *ngIf="row.value.itemName != ''" formControlName="quantity"></td>
-                            <td><input type="number" (change)="itemChanged('mrp', i)" *ngIf="row.value.itemName != ''" formControlName="mrp"></td>
-                            <td><input type="number" *ngIf="row.value.itemName != ''" formControlName="discount" readonly></td>
-                            <td><input type="number" (change)="itemChanged('rate', i)" *ngIf="row.value.itemName != ''" formControlName="rate"></td>
-                            <td><input type="number" *ngIf="row.value.itemName != ''" formControlName="amount" readonly></td>
-                            <td><input type="number" *ngIf="row.value.itemName != ''" formControlName="gst" readonly></td>
-                            <td><input type="number" *ngIf="row.value.itemName != ''" formControlName="gstAmount" readonly></td>
-                            <td><input type="number" *ngIf="row.value.itemName != ''" formControlName="finalAmount" readonly></td>
+                            <td *ngIf="row.value.productName == '' || row.value.productName == null"></td>
+                            <td class="flex flex-center deleteRow" (click)="openItemModal('deleteItemModal', i)" *ngIf="row.value.productName != '' && row.value.productName != null"><img src="../../../../assets/img/icons/delete.svg" class="hover" style="cursor: pointer;" height="18px" width="18px" alt=""></td>
+                            <td><input type="text" formControlName="productName"></td>
+                            <td><input type="number" min="1" (change)="itemChanged('quantity', i)" *ngIf="row.value.productName != ''" formControlName="quantity"></td>
+                            <td><input type="number" (change)="itemChanged('mrp', i)" *ngIf="row.value.productName != ''" formControlName="mrp"></td>
+                            <td><input type="number" *ngIf="row.value.productName != ''" formControlName="discount" readonly></td>
+                            <td><input type="number" (change)="itemChanged('rate', i)" *ngIf="row.value.productName != ''" formControlName="rate"></td>
+                            <td><input type="number" *ngIf="row.value.productName != ''" formControlName="amount" readonly></td>
+                            <td><input type="number" *ngIf="row.value.productName != ''" formControlName="gst" readonly></td>
+                            <td><input type="number" *ngIf="row.value.productName != ''" formControlName="gstAmount" readonly></td>
+                            <td><input type="number" *ngIf="row.value.productName != ''" formControlName="finalAmount" readonly></td>
                         </tr>
                     </tbody>
                     <div style="height: 20px; width: 100%;"></div>
@@ -141,14 +180,22 @@
                         <tr *ngIf="currentActiveInvoiceData.currentOffer.offerName != ''">
                             <td></td>
                             <td class="bottom-cell">{{currentActiveInvoiceData.currentOffer.offerName}}</td>
-                            <td class="bottom-cell">1</td>
-                            <td class="bottom-cell">{{currentActiveInvoiceData.currentOffer.mrp}}</td>
-                            <td class="bottom-cell">100%</td>
-                            <td class="bottom-cell">0</td>
-                            <td class="bottom-cell">0</td>
-                            <td class="bottom-cell">18%</td>
-                            <td class="bottom-cell">0</td>
-                            <td class="bottom-cell">0</td>
+                            <td class="bottom-cell" *ngIf="currentActiveInvoiceData.currentOffer.offerType == 'free_product'">1</td>
+                            <td class="bottom-cell" *ngIf="currentActiveInvoiceData.currentOffer.offerType == 'flat_discount'"></td>
+                            <td class="bottom-cell" *ngIf="currentActiveInvoiceData.currentOffer.offerType == 'free_product'">{{currentActiveInvoiceData.currentOffer.FreeProduct.mrp}}</td>
+                            <td class="bottom-cell" *ngIf="currentActiveInvoiceData.currentOffer.offerType == 'flat_discount'"></td>
+                            <td class="bottom-cell" *ngIf="currentActiveInvoiceData.currentOffer.offerType == 'free_product'">100%</td>
+                            <td class="bottom-cell" *ngIf="currentActiveInvoiceData.currentOffer.offerType == 'flat_discount'">{{currentActiveInvoiceData.currentOffer.discountPerc}}</td>
+                            <td class="bottom-cell" *ngIf="currentActiveInvoiceData.currentOffer.offerType == 'free_product'">0</td>
+                            <td class="bottom-cell" *ngIf="currentActiveInvoiceData.currentOffer.offerType == 'flat_discount'">-</td>
+                            <td class="bottom-cell" *ngIf="currentActiveInvoiceData.currentOffer.offerType == 'free_product'">0</td>
+                            <td class="bottom-cell" *ngIf="currentActiveInvoiceData.currentOffer.offerType == 'flat_discount'">{{currentActiveInvoiceData.currentOffer.actualDiscountAmount}}</td>
+                            <td class="bottom-cell" *ngIf="currentActiveInvoiceData.currentOffer.offerType == 'free_product'">18%</td>
+                            <td class="bottom-cell" *ngIf="currentActiveInvoiceData.currentOffer.offerType == 'flat_discount'">-</td>
+                            <td class="bottom-cell" *ngIf="currentActiveInvoiceData.currentOffer.offerType == 'free_product'">0</td>
+                            <td class="bottom-cell" *ngIf="currentActiveInvoiceData.currentOffer.offerType == 'flat_discount'">-</td>
+                            <td class="bottom-cell" *ngIf="currentActiveInvoiceData.currentOffer.offerType == 'free_product'">0</td>
+                            <td class="bottom-cell" *ngIf="currentActiveInvoiceData.currentOffer.offerType == 'flat_discount'">-{{currentActiveInvoiceData.currentOffer.actualDiscountAmount}}</td>
                         </tr>
                         <tr *ngIf="currentActiveInvoiceData.currentOffer.offerName == ''">
                             <td></td>
@@ -183,25 +230,27 @@
     </div>
 </div>
 
-<div class="modal fade" id="getUserModal" tabindex="-1" aria-labelledby="getUserModal" aria-hidden="true">
+<div class="modal fade" id="bill-searchAddUserModal" tabindex="-1" aria-labelledby="bill-searchAddUserModal" aria-hidden="true">
     <div class="modal-dialog dialog700 modal-dialog-centered modal-dialog-scrollable">
         <div class="modal-content">
             <div class="modal-header d-flex align-items-center flex-space-between">
                 <h1>Get User Details</h1>
-                <img src="../../../../assets/img/icons/cross.svg" (click)="closeModal('getUserModal')" class="cross-btn" height="15px" width="15px" alt="">
+                <img src="../../../../assets/img/icons/cross.svg" (click)="closeModal('bill-searchAddUserModal')" class="cross-btn" height="15px" width="15px" alt="">
             </div>
             <div class="modal-body">
-                <label for="userName" class="block text-sm font-medium text-neutral-600">Enter phone number
-                </label>
-                <div class="mt-1">
-                    <input id="phnNumber" [formControl]="phnNumber" placeholder="Phone Number" class="block w-full px-4 py-3 text-base placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg text-neutral-600 bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300 ">
-                </div>
-                <div class="mt-1" *ngIf="phnNumber.errors && (phnNumber.dirty || phnNumber.touched)">
-                    <small style="color: red;">Phonenumber is invalid</small>
-                </div>
+                <form [formGroup]="userForm">
+                    <label for="userName" class="block text-sm font-medium text-neutral-600">Enter phone number
+                    </label>
+                    <div class="mt-1">
+                        <input id="phnNumber" formControlName="phnNumber" (keydown.enter)="confirmUser()" placeholder="Phone Number" class="block w-full px-4 py-3 text-base placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg text-neutral-600 bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300 ">
+                    </div>
+                    <div class="mt-1" *ngIf="userForm.get('phnNumber')?.errors && (userForm.get('phnNumber')?.dirty || userForm.get('phnNumber')?.touched)">
+                        <small style="color: red;">Phonenumber is invalid</small>
+                    </div>
+                </form>
             </div>
             <div class="modal-footer d-flex flex-end">
-                <div class="btn btn-primary primary-button" [class.disabled]="phnNumber.invalid" (click)="searchUser()">
+                <div class="btn btn-primary primary-button" [class.disabled]="userForm.get('phnNumber')?.invalid" (click)="confirmUser()">
                     Search
                 </div>
             </div>
@@ -209,80 +258,96 @@
     </div>
 </div>
 
-<div class="modal fade" id="addUserModal" tabindex="-1" aria-labelledby="addUserModal" aria-hidden="true">
+<div class="modal fade" id="bill-addUserModal" tabindex="-1" aria-labelledby="bill-addUserModal" aria-hidden="true">
     <div class="modal-dialog dialog700 modal-dialog-centered modal-dialog-scrollable">
         <div class="modal-content">
             <div class="modal-header d-flex align-items-center flex-space-between">
                 <h1>Add User</h1>
-                <img src="../../../../assets/img/icons/cross.svg" (click)="closeModal('addUserModal')" class="cross-btn" height="15px" width="15px" alt="">
+                <img src="../../../../assets/img/icons/cross.svg" (click)="closeModal('bill-addUserModal')" class="cross-btn" height="15px" width="15px" alt="">
             </div>
             <div class="modal-body">
                 <form [formGroup]="addUserForm">
-                    <label for="phnNumber" class="block text-sm font-medium text-neutral-600">Enter phone number
-                    </label>
-                    <div class="mt-1">
-                        <input id="phnNumber" formControlName="phnNumber" placeholder="Phone Number" class="block w-full px-4 py-3 text-base placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg text-neutral-600 bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300 ">
-                    </div>
-                    <div class="mt-1" *ngIf="addUserForm.controls['phnNumber'].errors && (addUserForm.controls['phnNumber'].dirty || addUserForm.controls['phnNumber'].touched)">
-                        <small style="color: red;">Phonenumber is invalid</small>
-                    </div>
-                    <label for="Name" class="block text-sm font-medium text-neutral-600 margin-top">Enter Name
-                    </label>
-                    <div class="mt-1">
-                        <input id="Name" formControlName="name" placeholder="Name" class="block w-full px-4 py-3 text-base placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg text-neutral-600 bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300 ">
-                    </div>
-                    <div class="form-row flex-center gap1-5 margin-top">
-                        <div class="form-wrap">
-                            <label for="AddressLine1" class="block text-sm font-medium text-neutral-600">Enter Address Line 1
+                    <div class="form-row flex-center flex-space-between gap1-5 margin-top p-2">
+                        <div class="form-wrap w-100">
+                            <label for="name" class="block text-sm font-medium text-neutral-600">Enter Name
                             </label>
                             <div class="mt-1">
-                                <input id="AddressLine1" formControlName="addressL1" placeholder="Address Line 1" class="block w-full px-4 py-3 text-base placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg text-neutral-600 bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300 ">
-                            </div>
-                        </div>
-                        <div class="form-wrap">
-                            <label for="AddressLine2" class="block text-sm font-medium text-neutral-600">Enter Address Line 2
-                            </label>
-                            <div class="mt-1">
-                                <input id="AddressLine2" formControlName="addressL2" placeholder="Address Line 2" class="block w-full px-4 py-3 text-base placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg text-neutral-600 bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300 ">
+                                <input id="name" formControlName="name" placeholder="Name" class="block w-full text-sm px-4 py-1 text-base placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg text-neutral-600 bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300 ">
                             </div>
                         </div>
                     </div>
-                    <div class="form-row flex-center gap1-5 margin-top">
-                        <div class="form-wrap">
-                            <label for="AddressLine3" class="block text-sm font-medium text-neutral-600">Enter Address Line 3
+                    <div class="form-row flex-center flex-space-between gap1-5 margin-top p-2">
+                        <div class="form-wrap w-100">
+                            <label for="phoneNumber" class="block text-sm font-medium text-neutral-600">Enter Phone Number
                             </label>
                             <div class="mt-1">
-                                <input id="AddressLine3" formControlName="addressL3" placeholder="Address Line 3" class="block w-full px-4 py-3 text-base placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg text-neutral-600 bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300 ">
+                                <input id="phoneNumber" formControlName="phoneNumber" placeholder="Phone Number" class="block w-full text-sm px-4 py-1 text-base placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg text-neutral-600 bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300 ">
                             </div>
                         </div>
+                    </div>
+                    <div class="form-row flex-center flex-space-between gap1-5 margin-top p-2">
+                        <div class="form-wrap w-100">
+                            <label for="addressLine1" class="block text-sm font-medium text-neutral-600">Enter Address Line 1
+                            </label>
+                            <div class="mt-1">
+                                <input id="addressLine1" formControlName="addressLine1" placeholder="Address Line 1" class="block w-full text-sm px-4 py-1 text-base placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg text-neutral-600 bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300 ">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-row flex-center flex-space-between gap1-5 margin-top p-2">
+                        <div class="form-wrap w-100">
+                            <label for="addressLine2" class="block text-sm font-medium text-neutral-600">Enter Address Line 2
+                            </label>
+                            <div class="mt-1">
+                                <input id="addressLine2" formControlName="addressLine2" placeholder="Address Line 2" class="block w-full text-sm px-4 py-1 text-base placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg text-neutral-600 bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300 ">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-row flex-center flex-space-between gap1-5 margin-top p-2">
+                        <div class="form-wrap w-100">
+                            <label for="addressLine3" class="block text-sm font-medium text-neutral-600">Enter Address Line 3
+                            </label>
+                            <div class="mt-1">
+                                <input id="addressLine3" formControlName="addressLine3" placeholder="Address Line 3" class="block w-full text-sm px-4 py-1 text-base placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg text-neutral-600 bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300 ">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-row flex-center flex-space-between gap1-5 margin-top p-2">
                         <div class="form-wrap">
                             <label for="city" class="block text-sm font-medium text-neutral-600">Enter City
                             </label>
                             <div class="mt-1">
-                                <input id="city" formControlName="city" placeholder="City" class="block w-full px-4 py-3 text-base placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg text-neutral-600 bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300 ">
+                                <input id="city" formControlName="city" placeholder="City" class="block w-full text-sm px-4 py-1 text-base placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg text-neutral-600 bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300 ">
                             </div>
                         </div>
-                    </div>
-                    <div class="form-row flex-center gap1-5 margin-top">
                         <div class="form-wrap">
                             <label for="state" class="block text-sm font-medium text-neutral-600">Enter State
                             </label>
                             <div class="mt-1">
-                                <input id="state" formControlName="state" placeholder="State" class="block w-full px-4 py-3 text-base placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg text-neutral-600 bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300 ">
-                            </div>
-                        </div>
-                        <div class="form-wrap">
-                            <label for="pincode" class="block text-sm font-medium text-neutral-600">Enter Pincode
-                            </label>
-                            <div class="mt-1">
-                                <input id="pincode" formControlName="pincode" placeholder="pincode" class="block w-full px-4 py-3 text-base placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg text-neutral-600 bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300 ">
+                                <input id="state" formControlName="state" placeholder="State" class="block w-full text-sm px-4  py-1 text-base placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg text-neutral-600 bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300 ">
                             </div>
                         </div>
                     </div>
-                    
-                    
+                    <div class="form-row flex-center flex-space-between gap3 margin-top p-2">
+                        <div class="form-wrap">
+                            <label for="pincode" class="block text-sm font-medium text-neutral-600">Enter PinCode
+                            </label>
+                            <div class="mt-1">
+                                <input id="pincode" formControlName="pincode" placeholder="PinCode" type="number" class="block w-full text-sm px-4  py-1 text-base placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg text-neutral-600 bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300 ">
+                            </div>
+                        </div>
+                        <div class="form-wrap w-100">
+                            <label for="customerType" class="block text-sm font-medium text-neutral-600">Select Customer Type
+                            </label>
+                            <div class="mt-1">
+                                <select id="customerType" formControlName="customerType" placeholder="Customer Type" class="block w-full text-sm px-4 py-2 text-base placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg text-neutral-600 bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300 ">
+                                    <option class="form-check-label block px-4 py-2 text-sm text-gray-700" value="new">New</option>
+                                    <option class="form-check-label block px-4 py-2 text-sm text-gray-700" value="existing">Existing</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
                 </form>
-                
             </div>
             <div class="modal-footer d-flex flex-end">
                 <div class="btn btn-success primary-button" [class.disabled]="addUserForm.invalid" (click)="addUser()">
@@ -319,15 +384,51 @@
                         </div>
                     </div>
                     <div *ngIf="currentRewardsTab == 'History'" class="history">
-                        @for(history of currentRewardsHistory; track history){
-                            <div class="history-wrap flex flex-center flex-space-between">
-                                <h5>{{formatDate(history.createdAt)}}</h5>
-                                <h5 [style.color]="getColor(history.pointsUsed)">{{history.pointsUsed}}</h5>
+                        <div class="mt-2 w-full table-responsive">
+                            <table *ngIf="rewardsData?.length > 0" class="w-full text-left table-auto min-w-max overflow-auto">
+                                <thead>
+                                    <tr>
+                                        <th class="py-3 px-2 transition-colors cursor-pointer border-y border-slate-200 bg-slate-50 hover:bg-slate-100 font-sans text-sm font-normal leading-none text-slate-700">
+                                            Bill Number
+                                        </th>
+                                        <th class="py-3 px-2 transition-colors cursor-pointer border-y border-slate-200 bg-slate-50 hover:bg-slate-100 font-sans text-sm font-normal leading-none text-slate-700">
+                                            Reward Points Used
+                                        </th>
+                                        <th class="py-3 px-2 transition-colors cursor-pointer border-y border-slate-200 bg-slate-50 hover:bg-slate-100 font-sans text-sm font-normal leading-none text-slate-700">
+                                            Created At
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let display of rewardsData">
+                                    <td class="py-2 px-2 border-b border-slate-200">
+                                        <div class="flex flex-col">
+                                            <p class="text-sm font-semibold text-slate-700">
+                                                {{display.billID}}
+                                            </p>
+                                        </div>
+                                    </td>
+                                    <td class="py-2 px-2 border-b border-slate-200">
+                                        <p class="text-xs text-slate-500">
+                                            {{display.pointsAmount}}
+                                        </p>
+                                    </td>
+                                    <td class="py-2 px-2 border-b border-slate-200">
+                                        <p class="text-xs text-slate-500">
+                                            {{display.createdAt | date: 'mediumDate'}}
+                                        </p>
+                                    </td>
+                                    </tr>
+                                </tbody>
+                                </table>
+                
+                            <div *ngIf="rewardsData?.length == 0" class="not-found w-full h-full">
+                                <div class="container flex items-center px-6 py-12 mx-auto">
+                                    <div class="flex flex-col items-center max-w-sm mx-auto text-center">
+                                        <h2 class="mt-3 text-xl font-semibold text-gray-800 md:text-md">No Rewards History found</h2>
+                                    </div>
+                                </div>
                             </div>
-                        }
-                        <div class="mt-5 history-wrap flex flex-space-between">
-                            <h5 style="color: #19c016;">Money Earned so far: {{pointsEarned}}</h5>
-                            <h5 style="color: #ef1010;">Money Saved so far : {{pointsUsed}}</h5>
                         </div>
                     </div>
                 </div>
@@ -355,11 +456,21 @@
                 <img src="../../../../assets/img/icons/cross.svg" (click)="closeModal('offersModal')" class="cross-btn" height="15px" width="15px" alt="">
             </div>
             <div class="modal-body">
+                <div class="form-rw">
+                    <div class="form-wrap">
+                        <label for="couponSearch" class="block text-sm font-medium text-neutral-600">Enter Coupon Code
+                        </label>
+                        <div class="mt-1 flex">
+                            <input id="couponSearch" [formControl]="couponSearch" (keydown.enter)="applyCoupon()" placeholder="Coupon Code" class="block w-full text-sm px-4 py-2 text-base placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg text-neutral-600 bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300">
+                            <button class="btn btn-primary text-xs" [disabled]="couponSearch.value == ''" (click)="applyCoupon()">Apply</button>
+                        </div>
+                    </div>
+                </div>
                 @for(offer of offers; track offer){
                     <div *ngIf="checkOfferLocation(offer)" class="offer-wrap flex flex-center flex-space-between">
                         <h5>{{offer.offerName}}</h5>
-                        <button *ngIf="offer._id != selectedOffer?._id" [disabled]="offer.minimumPrice > currentActiveInvoiceData.totalAmount" (click)="offerApplied(offer)">Apply</button>
-                        <button class="applied" *ngIf="offer._id == selectedOffer?._id" (click)="offerUnApply()">Applied</button>
+                        <button *ngIf="offer.offerID != selectedOffer?.offerID" [disabled]="offer.minOrderValue > currentActiveInvoiceData.totalAmount" (click)="offerApplied(offer, false)">Apply</button>
+                        <button class="applied" *ngIf="offer.offerID == selectedOffer?.offerID" (click)="offerUnApply()">Applied</button>
                     </div>
                 }
             </div>
@@ -372,18 +483,18 @@
     </div>
 </div>
 
-<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModal" aria-hidden="true">
+<div class="modal fade" id="bill-clearModal" tabindex="-1" aria-labelledby="bill-clearModal" aria-hidden="true">
     <div class="modal-dialog dialog700 modal-dialog-centered modal-dialog-scrollable">
         <div class="modal-content">
             <div class="modal-header d-flex align-items-center flex-space-between">
-                <h1>Delete Bill</h1>
-                <img src="../../../../assets/img/icons/cross.svg" (click)="closeModal('deleteModal')" class="cross-btn" height="15px" width="15px" alt="">
+                <h1>Clear Bill</h1>
+                <img src="../../../../assets/img/icons/cross.svg" (click)="closeModal('bill-clearModal')" class="cross-btn" height="15px" width="15px" alt="">
             </div>
             <div class="modal-body">
-                <h5>Are you sure you want to delete bill?</h5>
+                <h5>Are you sure you want to clear bill?</h5>
             </div>
             <div class="modal-footer d-flex flex-end">
-                <button class="btn btn-primary primary-button" (click)="deleteBill()">
+                <button class="btn btn-primary primary-button" (click)="clearBill()">
                     Confirm
                 </button>
             </div>
@@ -410,6 +521,35 @@
     </div>
 </div>
 
+<div class="modal fade" id="selectInventoryBill" tabindex="-1" aria-labelledby="selectInventoryBill" aria-hidden="true">
+    <div class="modal-dialog dialog700 modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header d-flex align-items-center flex-space-between">
+                <h1>Select the Inventory</h1>
+            </div>
+            <div class="modal-body">
+                <div class="form-row flex-center flex-space-between gap1-5 margin-top p-2">
+                    <div class="form-wrap w-100">
+                        <label for="inventory" class="block text-sm font-medium text-neutral-600">Inventory
+                        </label>
+                        <div class="mt-1">
+                            <select id="inventory" [formControl]="inventorySelected" placeholder="Inventory" class="block w-full text-sm px-4 py-2 text-base placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg text-neutral-600 bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300 ">
+                                <option *ngFor="let inventory of inventoryName" class="form-check-label block px-4 py-3 text-sm text-gray-700" [ngValue]="inventory?.inventoryID">{{inventory?.inventoryName}}</option>
+                            </select>
+                        </div>
+                    </div>
+                </div> 
+            </div>
+            <div class="modal-footer d-flex flex-end">
+                <button class="btn btn-success primary-button" [disabled]="this.inventorySelected.value==''" (click)="confirmInventory()">
+                    Confirm
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 <div style="display: none;" id="bill-content">
     <h3>Retail Invoice</h3>
     <h3>|| Shree Ganeshay Namah ||</h3>
@@ -430,7 +570,7 @@
       </thead>
       <tbody>
         <tr *ngFor="let item of currentActiveInvoiceData.BillDetails">
-          <td>{{item.itemName}}</td>
+          <td>{{item.productName}}</td>
           <td>{{item.mrp}}</td>
           <td>{{item.quantity}}</td>
           <td>{{item.rate}}</td>

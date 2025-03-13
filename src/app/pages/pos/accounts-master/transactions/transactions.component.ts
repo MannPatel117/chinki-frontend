@@ -185,6 +185,11 @@ export class TransactionsComponent {
             if(reset == true){
               this.search.setValue("");
               this.transactionType.setValue("");
+              this.inventoryFilter.setValue(this.inventory);
+              this.accountsFilter.setValue("");
+              this.paymentFilter.setValue("");
+              this.dateFilterFrom.setValue("");
+              this.dateFilterTo.setValue("");
             }
             this.api.getAPI('/accountTransaction/', [["pagination", true],["search",  this.search.value],["transactionType", JSON.stringify(this.transactionType.value)],["limit", this.limit],["page", this.page], ["inventory", JSON.stringify(this.inventoryFilter.value)], ["supplierID", JSON.stringify(this.accountsFilter.value)], ["paymentType", JSON.stringify(this.paymentFilter.value)], ["fromDate", this.dateFilterFrom.value], ["toDate", this.dateFilterTo.value]]).subscribe((res:any) => {
               this.loading = true;

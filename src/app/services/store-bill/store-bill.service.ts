@@ -4,28 +4,39 @@ import { Injectable } from '@angular/core';
   providedIn: 'root'
 })
 export class StoreBillService {
-  invoiceData = {
+  invoiceData ={
     "totalAmount": 0,
+    "totalAmountF": 0,
     "UserName": "",
     "UserPhnNumber": "",
     "UserAddress": "",
     "RewardPoints": 0,
     "RedeemPoints": 0,
+    "confirmRedeem": false,
     "RewardsHistory": [],
     "CustomerType": "",
     "PaymentType": "cash",
     "currentOffer":{ 
-      "_id": "",
+      "couponID": "",
+      "isCoupon": false,
+      "offerID": "",
       "offerName": "",
-      "minimumPrice": 0,
-      "product": "",
-      "location": [],
-      "__v": 0,
-      "mrp": 0 
+      "minOrderValue": 0,
+      "discountPerc": 0,
+      "discountAmount": 0,
+      "actualDiscountAmount": 0,
+      "offerType": "",
+      "FreeProduct": {
+        "productName":"",
+        "productID":"",
+        "barcode":"",
+        "mrp":0
+      },
+      "inventory": [],
     },
     "BillDetails": [
       {
-        "itemName": "",
+        "productName": "",
         "quantity": 0,
         "mrp": 0,
         "discount": 0,
@@ -34,35 +45,62 @@ export class StoreBillService {
         "gst": 0,
         "gstAmount": 0,
         "finalAmount":0,
-        "_id": "",
+        "productID":"",
         "productType": ""
       }
     ],
-    "currentRow": 0
+    "BillFinished": [
+      {
+        "productName": "",
+        "quantity": 0,
+        "mrp": 0,
+        "discount": 0,
+        "rate": 0,
+        "amount": 0,
+        "gst": 0,
+        "gstAmount": 0,
+        "finalAmount":0,
+        "productID":"",
+        "productType": ""
+      }
+    ],
+    "currentRow": 0,
+    "currentRowFinished": 0
   }
 
   invoiceDataEmpty = {
     "totalAmount": 0,
+    "totalAmountF": 0,
     "UserName": "",
     "UserPhnNumber": "",
     "UserAddress": "",
     "RewardPoints": 0,
     "RedeemPoints": 0,
+    "confirmRedeem": false,
     "RewardsHistory": [],
     "CustomerType": "",
     "PaymentType": "cash",
-    "currentOffer": { 
-      "_id": "",
+    "currentOffer":{ 
+      "couponID": "",
+      "isCoupon": false,
+      "offerID": "",
       "offerName": "",
-      "minimumPrice": 0,
-      "product": "",
-      "location": [],
-      "__v": 0,
-      "mrp": 0 
+      "minOrderValue": 0,
+      "discountPerc": 0,
+      "discountAmount": 0,
+      "actualDiscountAmount": 0,
+      "offerType": "",
+      "FreeProduct": {
+        "productName":"",
+        "productID":"",
+        "barcode":"",
+        "mrp":0
+      },
+      "inventory": [],
     },
     "BillDetails": [
       {
-        "itemName": "",
+        "productName": "",
         "quantity": 0,
         "mrp": 0,
         "discount": 0,
@@ -71,11 +109,27 @@ export class StoreBillService {
         "gst": 0,
         "gstAmount": 0,
         "finalAmount":0,
-        "_id": "",
+        "productID":"",
         "productType": ""
       }
     ],
-    "currentRow": 0
+    "BillFinished": [
+      {
+        "productName": "",
+        "quantity": 0,
+        "mrp": 0,
+        "discount": 0,
+        "rate": 0,
+        "amount": 0,
+        "gst": 0,
+        "gstAmount": 0,
+        "finalAmount":0,
+        "productID":"",
+        "productType": ""
+      }
+    ],
+    "currentRow": 0,
+    "currentRowFinished": 0
   }
 
   constructor() { 

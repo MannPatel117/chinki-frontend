@@ -13,6 +13,8 @@ import { AccountDetailsComponent } from './account-details/account-details.compo
 import { GoodsComponent } from './accounts-master/goods/goods.component';
 import { TransactionsComponent } from './accounts-master/transactions/transactions.component';
 import { ViewEditGoodsComponent } from './accounts-master/view-edit-goods/view-edit-goods.component';
+import { ReconsilationComponent } from './inventory-system/reconsilation/reconsilation.component';
+import { OffersMasterComponent } from './offers-master/offers-master.component';
 
 
 const routes: Routes = [
@@ -58,6 +60,12 @@ const routes: Routes = [
       },
       {
         path: 'accounts/transactions/goodsAction/:transactionID/:type', component: ViewEditGoodsComponent
+      },
+      {
+        path: 'inventory-system/reconsilation/:inventory', component: ReconsilationComponent
+      },
+      {
+        path: 'offers-master', component: OffersMasterComponent
       },
     ],
   },

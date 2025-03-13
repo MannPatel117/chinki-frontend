@@ -38,13 +38,8 @@ export class LoginComponent {
     let role = localStorage.getItem('role');
     const session = await this.shared.checkUserLoggedIn(role);
     if(session){
-      if(role == 'factory'){
-        this.route.navigateByUrl('/pos/inventory-system')
-      } else {
-        this.route.navigateByUrl('/pos/billing-system')
+      this.route.navigateByUrl('/pos/main')
       }
-      
-    }
   }
   
   // set formBuilder

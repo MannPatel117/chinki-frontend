@@ -10,38 +10,34 @@
     <div class="body-content flex flex-col gap1-5 mobile-off">
         <div class="body-head w-full flex flex-center flex-space-between">
            <div class="btn-wrap flex gap2">
-                <button class="rounded-md bg-slate-700 px-2.5 py-1.5 text-sm font-semibold text-white shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-slate-700" routerLink="/pos/accounts/transactions">Back</button>
+                <button class="rounded-md bg-slate-700 px-2.5 py-1.5 text-sm font-semibold text-white shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-slate-700" routerLink="/pos/inventory-system">Back</button>
             </div>
             <div class="btn-wrap flex flex-center gap2" style="height: 100%;">            
                 <div class="absolute w-64 combobox-container overflow-visible">
                     <!-- Input Box -->
-                    <input 
+                    <input
                       type="text"
                       [(ngModel)]="searchTerm"
                       (click)="toggleDropdown()"
                       placeholder="Search Products"
-                      (keydown)="onKeydown($event)"
                       class="w-full px-3 py-1.5 text-sm placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg text-neutral-600 bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300 ng-untouched ng-pristine ng-invalid"
                     />
                   
                     <!-- Dropdown -->
                     <ul
-                        *ngIf="dropdownOpen && filteredProduct.length"
-                        class="absolute w-full bg-white border border-gray-300 rounded-md mt-1 max-h-40 overflow-y-auto shadow-md z-50"
-                        style="top: 100%; left: 0;"
-                        >
-                        <li
-                            *ngFor="let product of filteredProduct; let i = index"
-                            (click)="selectProduct(product.barcode)"
-                            class="px-4 py-1 cursor-pointer hover:bg-blue-100"
-                            [ngClass]="{
-                            'font-bold text-blue-600': selectedProduct === product.barcode,
-                            'bg-blue-200 selected-item': selectedIndex === i
-                            }"
-                        >
-                            {{ product.barcode }} - {{ product.productName }}
-                        </li>
-                        </ul>
+                      *ngIf="dropdownOpen && filteredProduct.length"
+                      class="absolute w-full bg-white border border-gray-300 rounded-md mt-1 max-h-40 overflow-y-auto shadow-md z-50"
+  style="top: 100%; left: 0;"
+                    >
+                      <li
+                        *ngFor="let product of filteredProduct"
+                        (click)="selectProduct(product.barcode)"
+                        class="px-4 py-1 cursor-pointer hover:bg-blue-100"
+                        [ngClass]="{'font-bold text-blue-600': selectedProduct === product.barcode}"
+                      >
+                        {{ product.productName }}
+                      </li>
+                    </ul>
                   </div>
                 </div>
             <div class="btn-wrap flex gap2">  
@@ -49,137 +45,51 @@
                 <button class="w-25 rounded-md bg-rose-600 px-2.5 py-1.5 text-sm font-semibold text-white shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-rose-600" (click)="openModal('clearItemModal')" >Clear</button>
             </div>
         </div>
-        <div class="body-main-form">
-            <form [formGroup]="transactionForm">
-                <div class="form-row flex-center flex-space-between gap3 margin-top">
-                    <div class="form-wrap flex flex-start gap1-5 w-100">
-                        <label for="documentNumber" class="block text-sm font-medium text-neutral-600 w-50">Document Number
-                        </label>
-                        <div class="mt-1 w-100">
-                            <input id="documentNumber" readonly formControlName="documentNumber" placeholder="Document Number" class="block w-100 text-sm px-4 py-1 text-sm placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg text-neutral-600 bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300 ">
-                        </div>
-                    </div>
-                    <div class="form-wrap flex flex-start gap1-5 w-100">
-                        <label for="supplier" class="block text-sm font-medium text-neutral-600 w-50">From
-                        </label>
-                        <div class="mt-1 w-100">
-                            <select id="supplier" formControlName="supplier" placeholder="To" class="block w-full text-sm px-4 py-2  placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg text-neutral-600 bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300 ">
-                                <option *ngFor="let account of accountsName" [ngValue]="account?.supplierID" class="form-check-label block px-4 py-3 text-sm text-gray-700">{{account?.accountName}}</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-                <div class="form-row flex-center flex-space-between gap3 margin-top">
-                    <div class="form-wrap flex flex-start gap1-5 w-100">
-                        <label for="challanNumber" class="block text-sm font-medium text-neutral-600 w-50">Enter Challan
-                        </label>
-                        <div class="mt-1 w-100">
-                            <input id="challanNumber" formControlName="challanNumber" placeholder="Challan Number" class="block w-full px-4 py-1 text-sm placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg text-neutral-600 bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300 ">
-                        </div>
-                    </div>
-                    <div class="form-wrap flex flex-start gap1-5 w-100">
-                        <label for="challanDate" class="block text-sm font-medium text-neutral-600 w-50">Enter Challan Date
-                        </label>
-                        <div class="mt-1 w-100">
-                            <input formControlName="challanDate" type="date" id="date"  class="block w-full px-3 py-2 text-sm border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white"/>
-                        </div>
-                    </div>
-                </div>
-                <div class="form-row flex-center flex-space-between gap3 margin-top">
-                    <div class="form-wrap flex flex-start gap1-5 w-100">
-                        <label for="billNumber" class="block text-sm font-medium text-neutral-600 w-50">Enter Bill No
-                        </label>
-                        <div class="mt-1 w-100">
-                            <input id="billNumber" formControlName="billNumber" placeholder="Bill Number" class="block w-full px-4 py-1 text-sm placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg text-neutral-600 bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300 ">
-                        </div>
-                    </div>
-                    <div class="form-wrap flex flex-start gap1-5 w-100">
-                        <label for="billDate" class="block text-sm font-medium text-neutral-600 w-50">Enter Bill Date
-                        </label>
-                        <div class="mt-1 w-100">
-                            <input formControlName="billDate" type="date" id="date"  class="block w-full px-3 py-2 text-sm border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white"/>
-                        </div>
-                    </div>
-                </div>
-            </form>
-        </div>
         <div #tablebody class="body-table w-full table-responsive p-2">
             <form [formGroup]="transactionDetailForm">
                 <table class="w-full text-center table-auto min-w-max overflow-auto table-bordered">
                     <thead>
                         <tr>
-                            <th class="py-3 px-2 transition-colors cursor-pointer border-y border-slate-200 bg-slate-50 hover:bg-slate-100 font-sans text-sm font-normal leading-none text-slate-700">
+                            <th class="py-1 px-2 transition-colors cursor-pointer border-y border-slate-200 bg-slate-50 hover:bg-slate-100 font-sans text-sm font-normal leading-none text-slate-700">
                                 Det
                             </th>
-                            <th class="py-3 px-20 transition-colors cursor-pointer border-y border-slate-200 bg-slate-50 hover:bg-slate-100 font-sans text-sm font-normal leading-none text-slate-700">
+                            <th class="py-3 px-40 transition-colors cursor-pointer border-y border-slate-200 bg-slate-50 hover:bg-slate-100 font-sans text-sm font-normal leading-none text-slate-700">
                                 Item Name
                             </th>
                             <th class="py-3 px-2 transition-colors cursor-pointer border-y border-slate-200 bg-slate-50 hover:bg-slate-100 font-sans text-sm font-normal leading-none text-slate-700">
-                                Challan Qty
+                                Lost Qty
                             </th>
                             <th class="py-3 px-4 transition-colors cursor-pointer border-y border-slate-200 bg-slate-50 hover:bg-slate-100 font-sans text-sm font-normal leading-none text-slate-700">
-                                Rate
-                            </th>
-                            <th class="py-3 px-2 transition-colors cursor-pointer border-y border-slate-200 bg-slate-50 hover:bg-slate-100 font-sans text-sm font-normal leading-none text-slate-700">
-                                Dis %
-                            </th>
-                            <th class="py-3 px-2 transition-colors cursor-pointer border-y border-slate-200 bg-slate-50 hover:bg-slate-100 font-sans text-sm font-normal leading-none text-slate-700">
-                                Dis Amt
-                            </th>
-                            <th class="py-3 px-4 transition-colors cursor-pointer border-y border-slate-200 bg-slate-50 hover:bg-slate-100 font-sans text-sm font-normal leading-none text-slate-700">
-                            Amount
-                            </th>
-                            <th class="py-3 px-2 transition-colors cursor-pointer border-y border-slate-200 bg-slate-50 hover:bg-slate-100 font-sans text-sm font-normal leading-none text-slate-700">
-                            GST %
-                            </th>
-                            <th class="py-3 px-2 transition-colors cursor-pointer border-y border-slate-200 bg-slate-50 hover:bg-slate-100 font-sans text-sm font-normal leading-none text-slate-700">
-                            GST Amt
-                            </th>
-                            <th class="py-3 px-5 transition-colors cursor-pointer border-y border-slate-200 bg-slate-50 hover:bg-slate-100 font-sans text-sm font-normal leading-none text-slate-700">
-                            Final Amt
+                                Found Qty
                             </th>
                         </tr>
                     </thead>
                     <tbody formArrayName="rows" [style.max-height]="maxHeight">
                         <tr *ngFor="let row of rows.controls; let i = index" [formGroupName]="i" [ngClass]="(i % 2 === 0) ? 'bg-blue-200' : 'bg-blue-100'">
                             <td class="border-b border-slate-200" *ngIf="row.value.productName == '' || row.value.productName == null"></td>
-                            <td class="flex flex-center deleteRow" *ngIf="row.value.productName != '' && row.value.productName != null" (click)="openItemModal('deleteItemModal', i)"><img src="../../../../assets/img/icons/delete.svg" class="hover" style="cursor: pointer;" height="18px" width="18px" alt=""></td>
+                            <td class="w-100 flex flex-center deleteRow" *ngIf="row.value.productName != '' && row.value.productName != null" (click)="openItemModal('deleteItemModal', i)"><img src="../../../../assets/img/icons/delete.svg" class="hover" style="cursor: pointer;" height="18px" width="18px" alt=""></td>
                             <td class="border-b border-slate-200"><input class="w-100 px-2" type="text" formControlName="productName" ></td>
-                            <td class="border-b border-slate-200"><input (change)="changedCalculation(i)" class="px-2" type="number" min="1"  *ngIf="row.value.productName != ''" formControlName="quantity"></td>
-                            <td class="border-b border-slate-200"><input (change)="changedCalculation(i)" class="px-2" type="number" *ngIf="row.value.productName != ''" formControlName="wholeSalePrice"></td>
-                            <td class="border-b border-slate-200"><input class="px-2" type="number" *ngIf="row.value.productName != ''" formControlName="discountPerc" readonly></td>
-                            <td class="border-b border-slate-200"><input (change)="changedCalculation(i)" class="px-2" type="number" *ngIf="row.value.productName != ''" formControlName="discountAmt"></td>
-                            <td class="border-b border-slate-200"><input class="px-2" type="number" *ngIf="row.value.productName != ''" formControlName="amount" readonly></td>
-                            <td class="border-b border-slate-200"><input (change)="changedCalculation(i)" class="px-2" type="number" *ngIf="row.value.productName != ''" formControlName="gstPerc"></td>
-                            <td class="border-b border-slate-200"><input class="px-2" type="number" *ngIf="row.value.productName != ''" formControlName="gstAmount" readonly></td>
-                            <td class="border-b border-slate-200"><input class="px-2" type="number" *ngIf="row.value.productName != ''" formControlName="netAmount" readonly></td>
+                            <td class="border-b border-slate-200"><input class="px-2" type="number" min="1"  *ngIf="row.value.productName != ''" (change)="changedQuantity(true, false, i)" formControlName="quantityLost"></td>
+                            <td class="border-b border-slate-200"><input class="px-2" type="number" *ngIf="row.value.productName != ''" (change)="changedQuantity(false, true, i)" formControlName="quantityFound"></td>
                         </tr>
                     </tbody>
                 </table>
             </form>
-            
         </div>
         <div class="body-footer w-full">
             <div class="form-row flex-center flex-space-between gap3 margin-top p-2">
                 <form [formGroup]="transactionForm" class="w-80 flex gap3">
-                    <div class="form-wrap flex flex-start gap1-5 w-50">
-                        <label for="finalAmt" class="block text-sm font-medium text-neutral-600 w-100">Final Amount
-                        </label>
-                        <div class="mt-1 w-100">
-                            <input id="finalAmt" formControlName="finalAmt" placeholder="Final Amount" class="block w-full px-4 py-1 text-sm placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg text-neutral-600 bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300 ">
-                        </div>
-                    </div>
                     <div class="form-wrap flex flex-start gap1-5 w-100">
                         <label for="remark" class="block text-sm font-medium text-neutral-600 w-20">Remark
                         </label>
                         <div class="mt-1 w-100">
-                            <input id="remark" formControlName="remark" placeholder="Remark" class="block w-full px-4 py-1 text-sm  placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg text-neutral-600 bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300 ">
+                            <input id="remark" formControlName="remark" (change)="changeRemark()" placeholder="Remark" class="block w-full px-4 py-1 text-sm  placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg text-neutral-600 bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300 ">
                         </div>
                     </div>
                 </form>
                 <div class="w-20 flex flex-end">
                     <div class="btn btn-success primary-button" [class.disabled]="transactionForm.get('supplier')?.value=='' || rows.at(0)?.get('productName')?.value == ''" (click)="addTransaction()">
-                        Add Goods
+                        Add Entry
                     </div>
                 </div>    
             </div>

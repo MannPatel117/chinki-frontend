@@ -326,19 +326,15 @@ app-sidebar{
     border-radius: 20px;
 }
 
-.body-head{
-    height: 15%;
-    width: 100%;
-}
-
 .body-menu{
     height: 20%;
     width: 100%;
     padding: 5px 40px 5px 40px;
+    min-height: 160px;
 }
 
-.body-table{
-    height: 65%;
+.body-table-bill{
+    height: 62.5%;
     width: 100%;
     padding: 5px 40px 10px 40px;
 }
@@ -461,6 +457,7 @@ app-sidebar{
 
 .body-head{
     height: 7.5%;
+    width: 100%;
 }
 
 .body-stats{
