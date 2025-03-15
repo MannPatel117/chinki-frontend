@@ -99,6 +99,8 @@ export class BillingSystemComponent {
   currentRow = 0;
   currentRowFinished = 0;
 
+  inventoryData :any;
+
   currentRewardsTab = 'Redeem';
   currentRewardsHistory:any;
   confirmRedeemFlag = false;
@@ -129,6 +131,7 @@ export class BillingSystemComponent {
   role:any = 'store';
 
   inventory:any =[];
+  selectedInventoryValue = ''
   inventorySelected: FormControl = new FormControl ('');
 
   inventoryName: any = [];
@@ -152,25 +155,36 @@ export class BillingSystemComponent {
     private cdr: ChangeDetectorRef) {
       this.role = localStorage.getItem('role');
       this.inventory = JSON.parse(localStorage.getItem('location') || '[]');
-      this.shared.multiInventory()
-      .then((multi) => {
-        if(multi == true){
-          this.fetchFilterInfo();
-          $('#selectInventoryBill').modal({
-            backdrop: 'static', // Prevent closing when clicking outside
-            keyboard: false     // (Optional) Prevent closing with ESC key
-          });
-          $('#selectInventoryBill').modal('show');
-        } else {
-          this.inventorySelected.setValue(this.inventory[0])
-          this.init();
-        }
-      } ) // Will log true or false
-      .catch(error => console.error("Error checking multiInventory:", error));
+      const storedValue = localStorage.getItem('selectedLocation');
+      this.selectedInventoryValue = storedValue ? JSON.parse(storedValue) : "";
+      if(this.selectedInventoryValue!= ''){
+        this.inventorySelected.setValue(this.selectedInventoryValue);
+        console.log(this.inventorySelected.value)
+        this.init();
+      } else{
+        this.shared.multiInventory()
+        .then((multi) => {
+          if(multi == true){
+            this.fetchFilterInfo();
+            $('#selectInventoryBill').modal({
+              backdrop: 'static', // Prevent closing when clicking outside
+              keyboard: false     // (Optional) Prevent closing with ESC key
+            });
+            $('#selectInventoryBill').modal('show');
+          } else {
+            this.inventorySelected.setValue(this.inventory[0]);
+            localStorage.setItem('selectedLocation', this.inventorySelected.value)
+            this.init();
+          }
+        } ) // Will log true or false
+        .catch(error => console.error("Error checking multiInventory:", error));
+      }
+     
   }
 
   confirmInventory(){
     $('#selectInventoryBill').modal('hide');
+    localStorage.setItem('selectedLocation', this.inventorySelected.value)
     this.init();
   }
   
@@ -240,10 +254,12 @@ export class BillingSystemComponent {
 
     this.loading = true;
     try{
-      this.api.getAPI('/inventorys/inventory/2', []).subscribe((res:any) => {
+      this.api.getAPI('/inventorys/inventory/2', [["details", true]]).subscribe((res:any) => {
         if(res.data.length == 0){
         
         }else{
+          this.inventoryData = res.data;
+          console.log(res.data)
           let invoiceNumber = res.data.invoiceNumber+1;
           let inventoryName = res.data.inventoryName;
           this.userForm.get('invoiceNumber')?.setValue(invoiceNumber);
@@ -717,9 +733,10 @@ export class BillingSystemComponent {
     });
 }
 
-  async saveBill(){
 
-    
+
+  async saveBill(print:boolean){
+    this.closeModal('bill-saveModal');
     await this.filterFinished();
     const body = this.currentActiveInvoiceData;
     delete (body as any).RewardPoints;
@@ -762,74 +779,77 @@ export class BillingSystemComponent {
         toastClass: 'ngx-toastr',
       });
     }
-    const printContents = document.getElementById('bill-content');
-    if (printContents) {
-      // Create a new iframe
-      const iframe = document.createElement('iframe');
-      iframe.style.position = 'absolute';
-      iframe.style.width = '0';
-      iframe.style.height = '0';
-      iframe.style.border = 'none';
-      iframe.style.visibility = 'hidden';
+    if(print == true){
+      const printContents = document.getElementById('bill-content');
+      if (printContents) {
+        // Create a new iframe
+        const iframe = document.createElement('iframe');
+        iframe.style.position = 'absolute';
+        iframe.style.width = '0';
+        iframe.style.height = '0';
+        iframe.style.border = 'none';
+        iframe.style.visibility = 'hidden';
 
-      document.body.appendChild(iframe);
+        document.body.appendChild(iframe);
 
-      const iframeDoc = iframe.contentDocument || iframe.contentWindow?.document;
-      if (iframeDoc) {
-        iframeDoc.open();
-        iframeDoc.write(`
-          <html>
-            <head>
-              <title>Print</title>
-              <style>
-                /* Add any styles you want for printing here */
-                body {
-                  font-family: Arial, sans-serif;
-                  width:300px;
-                  display: flex;
-                  gap: 5px;
-                  flex-direction:column;
-                  justify-content:center;
-                  align-items:center;
-                }
-                table {
-                  width: 100%;
-                  border-collapse: collapse;
-                }
-                table, th, td {
-                  border: 1px solid black;
-                }
-                h2, p{
-                  text-align: center;
-                  margin: 0px
-                }
-              </style>
-            </head>
-            <body>${printContents.innerHTML}</body>
-          </html>
-        `);
-        iframeDoc.close();
+        const iframeDoc = iframe.contentDocument || iframe.contentWindow?.document;
+        if (iframeDoc) {
+          iframeDoc.open();
+          iframeDoc.write(`
+            <html>
+              <head>
+                <title>Print</title>
+                <style>
+                  /* Add any styles you want for printing here */
+                  body {
+                    font-family: Arial, sans-serif;
+                    width:300px;
+                    display: flex;
+                    gap: 5px;
+                    flex-direction:column;
+                    justify-content:center;
+                    align-items:center;
+                  }
+                  table {
+                    width: 100%;
+                    border-collapse: collapse;
+                  }
+                  table, th, td {
+                    border: 1px solid black;
+                  }
+                  h2, p{
+                    text-align: center;
+                    margin: 0px
+                  }
+                </style>
+              </head>
+              <body>${printContents.innerHTML}</body>
+            </html>
+          `);
+          iframeDoc.close();
 
-        const iframeWin = iframe.contentWindow;
-        if (iframeWin) {
-          iframeWin.focus();
-          iframeWin.print();
+          const iframeWin = iframe.contentWindow;
+          if (iframeWin) {
+            iframeWin.focus();
+            iframeWin.print();
 
-          // Delay the removal to ensure the print dialog is not disrupted
-          setTimeout(() => {
-            if (document.body.contains(iframe)) {
-              document.body.removeChild(iframe);
-            }
-          }, 1000);
+            // Delay the removal to ensure the print dialog is not disrupted
+            setTimeout(() => {
+              if (document.body.contains(iframe)) {
+                document.body.removeChild(iframe);
+              }
+            }, 1000);
+          } else {
+            console.error('Iframe window is null');
+          }
         } else {
-          console.error('Iframe window is null');
+          console.error('Iframe document is null');
         }
       } else {
-        console.error('Iframe document is null');
+        console.error('Bill content element not found');
       }
-    } else {
-      console.error('Bill content element not found');
     }
+    
   }
 
   
@@ -977,6 +997,18 @@ export class BillingSystemComponent {
     }
   }
 
+  openModalSave(){
+    console.log(this.currentActiveInvoiceData)
+    if(this.currentActiveInvoiceData.currentRow == 0){
+      this.toastr.show('error','Add items to bill',{ 
+        toastComponent: ErrorToast,
+        toastClass: "ngx-toastr"
+      })
+    } else{
+      $('#bill-saveModal').modal('show');
+    }
+  }
+
   openItemModal(id:any, index:number){
     this.deleteIndex = index;
     $("#"+id).modal('show');
@@ -996,7 +1028,7 @@ export class BillingSystemComponent {
   onKeyDown(event: KeyboardEvent) {
     if (event.ctrlKey && event.key.toLowerCase() === 'b') {
       event.preventDefault(); // Prevent default browser behavior (if needed)
-      this.saveBill();
+      this.openModalSave();
     }
   }
 

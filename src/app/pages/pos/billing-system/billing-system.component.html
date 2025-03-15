@@ -23,7 +23,7 @@
                 </div>
             </div>
             <div class="invoice-total flex-end gap1-5">
-                <button class="rounded-md bg-green-600 px-4 py-1.5 text-sm font-semibold text-white shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-green-600"  (click)="saveBill()" >Save</button>
+                <button class="rounded-md bg-green-600 px-4 py-1.5 text-sm font-semibold text-white shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-green-600"  (click)="openModalSave()" >Save</button>
                 <div class="total-amount flex-center flex-space-between">
                     <h1>₹</h1>
                     <h1>{{currentActiveInvoiceData.totalAmount}}</h1>
@@ -502,6 +502,22 @@
     </div>
 </div>
 
+<div class="modal fade" id="bill-saveModal" tabindex="-1" aria-labelledby="bill-saveModal" aria-hidden="true">
+    <div class="modal-dialog dialog700 modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header d-flex align-items-center flex-space-between">
+                <h1>Save Bill</h1>
+                <img src="../../../../assets/img/icons/cross.svg" (click)="closeModal('bill-saveModal')" class="cross-btn" height="15px" width="15px" alt="">
+            </div>
+            
+        <div class="modal-body flex flex-center gap1-5">
+                <button class="rounded-md bg-emerald-600 px-4 py-3 text-sm font-semibold text-white shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-emerald-600"  (click)="saveBill(false)" >SAVE BILL</button>
+                <button class="rounded-md bg-rose-600 px-4 py-3 text-sm font-semibold text-white shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-rose-600" (click)="saveBill(true)" >SAVE AND PRINT BILL</button>
+            </div>  
+        </div>
+    </div>
+</div>
+
 <div class="modal fade" id="deleteItemModal" tabindex="-1" aria-labelledby="deleteItemModal" aria-hidden="true">
     <div class="modal-dialog dialog700 modal-dialog-centered modal-dialog-scrollable">
         <div class="modal-content">
@@ -553,7 +569,7 @@
 <div style="display: none;" id="bill-content">
     <h3>Retail Invoice</h3>
     <h3>|| Shree Ganeshay Namah ||</h3>
-    <h2 style="text-align: center;">Shree Charbhuja Sales and Marketing</h2>
+    <h2 style="text-align: center;">{{inventoryData?.inventoryName}}</h2>
     <p>SHOP NO.10, LANE BESIDE MAHALAXMI SEETS,<br> MAIN SABJI MARKET, VAPI TOWN, VAPI <br> Mob: 9316432399 / 8758195335</p>
     <p><strong>GST NO. 24ATWPP3297M1ZN</strong></p>
     <p><strong>Shop timings: 8.00am to 8.00pm</strong></p>
