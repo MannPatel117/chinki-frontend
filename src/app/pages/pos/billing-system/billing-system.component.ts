@@ -292,6 +292,7 @@ export class BillingSystemComponent {
         this.loading = true;
         if(res.data.length == 0){
           this.allProductsList = res.data;
+          console.log(this.allProductsList)
           this.loading = false;
         }else{
           this.allProductsList = res.data;
@@ -1039,6 +1040,7 @@ export class BillingSystemComponent {
 
   // Filter function
   get filteredProduct() {
+    console.log(this.searchTerm)
     return this.searchTerm === ''
       ? this.allProductsList // Show all products when search is empty
       : this.allProductsList.MasterProduct.filter((product: { productName: string; barcode: string; aliasName: string }) =>
