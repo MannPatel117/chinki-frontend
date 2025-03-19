@@ -133,6 +133,10 @@ export class StoreBillService {
   }
 
   constructor() { 
+    
+  }
+
+  setEmpty(){
     let dataString = JSON.stringify(this.invoiceDataEmpty)
     localStorage.setItem('emptyInvoice', dataString)
   }

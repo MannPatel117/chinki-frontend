@@ -32,6 +32,7 @@ export class LoginComponent {
   ngOnInit(){
     this.checkUserLoggedIn();
     this.setFormBuilder();
+    this.storeBill.setEmpty();
   }
 
   async checkUserLoggedIn(){
