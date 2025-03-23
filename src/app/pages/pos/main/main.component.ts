@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { ApiService } from '../../../services/api/api.service';
+import { error } from 'jquery';
 @Component({
   selector: 'app-main',
   standalone: true,
@@ -20,17 +21,13 @@ export class MainComponent {
     this.getStats();
   }
   getStats() {
-    try {
-      this.api.getAPI('/bills/previousStats', [["inventory", JSON.stringify(this.inventory)]]).subscribe((res: any) => {
-        if (res.success == false) {
-          this.loading = false;
-        } else {
-          this.sales = res.data
-          this.loading = false;
-        }
-      });
-    } catch (err) {
+    this.api.getAPI('/bills/previousStats', [["inventory", JSON.stringify(this.inventory)]]).subscribe((res: any) => {
+      if (res.success == true) {
+        this.sales = res.data
+        this.loading = false;
+      }
+    }, (error) =>{
       this.loading = false;
-    }
+    });
   }
 }
