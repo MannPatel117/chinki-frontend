@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { ApiService } from '../../../services/api/api.service';
-import { error } from 'jquery';
 @Component({
   selector: 'app-main',
   standalone: true,
