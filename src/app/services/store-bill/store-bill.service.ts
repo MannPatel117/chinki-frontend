@@ -153,6 +153,9 @@ export class StoreBillService {
       case 'C':
         localStorage.setItem('invoiceData3', dataString )
       break;
+      case 'D':
+        localStorage.setItem('invoiceData4', dataString )
+      break;
     }
   }
 
@@ -166,7 +169,10 @@ export class StoreBillService {
     }
     else if(currentActive == 'C'){
       parseObj = localStorage.getItem('invoiceData3');
-    }
+    } 
+    else if(currentActive == 'D'){
+      parseObj = localStorage.getItem('invoiceData4');
+    } 
     if(parseObj){
       this.invoiceData = JSON.parse(parseObj);
       return this.invoiceData;
@@ -187,6 +193,9 @@ export class StoreBillService {
     }
     if(currentActive == 'C'){
       localStorage.removeItem('invoiceData3');
+    }
+    if(currentActive == 'D'){
+      localStorage.removeItem('invoiceData4');
     }
     let parseObj:any = localStorage.getItem('emptyInvoice');
     this.invoiceDataEmpty = JSON.parse(parseObj)

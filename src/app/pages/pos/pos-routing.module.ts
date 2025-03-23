@@ -15,6 +15,7 @@ import { TransactionsComponent } from './accounts-master/transactions/transactio
 import { ViewEditGoodsComponent } from './accounts-master/view-edit-goods/view-edit-goods.component';
 import { ReconsilationComponent } from './inventory-system/reconsilation/reconsilation.component';
 import { OffersMasterComponent } from './offers-master/offers-master.component';
+import { ViewBillComponent } from './view-bill/view-bill.component';
 
 
 const routes: Routes = [
@@ -66,6 +67,9 @@ const routes: Routes = [
       },
       {
         path: 'offers-master', component: OffersMasterComponent
+      },
+      {
+        path: 'bill-history/bill/:billID/:type', component: ViewBillComponent
       },
     ],
   },

@@ -6,9 +6,7 @@
                 <button class="rounded-md bg-slate-700 px-2.5 py-1.5 text-sm font-semibold text-white shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-slate-700" routerLink="/pos/accounts-master">Back</button>
             </div> -->
             <div class="btn-wrap flex gap2">
-                <button class="rounded-md bg-rose-500 px-2.5 py-1.5 text-sm font-semibold text-white shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-rose-500" (click)="openModalAddTrans('payment')">Add Payments</button>
-                <button class="rounded-md bg-teal-600 px-2.5 py-1.5 text-sm font-semibold text-white shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-teal-600" (click)="openModalAddTrans('receipt')">Add Receipts</button>
-                <button class="rounded-md bg-blue-600 px-2.5 py-1.5 text-sm font-semibold text-white shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-blue-600" (click)="openModalAddTrans('purchase')">Add Goods Entry</button>
+                <button class="rounded-md bg-blue-600 px-2.5 py-1.5 text-sm font-semibold text-white shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-blue-600" (click)="openModalAddTrans('purchase')">Generate Sales Report</button>
             </div>
         </div>
         <div class="body-stats w-full flex flex-center gap2 px-5 relative">
@@ -29,60 +27,12 @@
                 </div> -->
                 <div class="btn-wrap2">
                     <button (click)="printExcel()" [disabled]="displayData.length ==0" class="rounded-md bg-emerald-500 px-2.5 py-1.5 text-sm font-semibold text-white shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-emerald-600"><i class="bi bi-file-earmark-arrow-down"></i> &nbsp; Excel</button>
-                </div>
-                <div ngbDropdown class="btn-wrap2 flex flex-center" placement="bottom-end" container="body" #filter1="ngbDropdown">
-                    <button ngbDropdownToggle class="rounded-md px-2.5 py-1.5 text-sm font-semibold text-gray-900 bg-slate-100 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50" > <i class="bi bi-filter"></i> &nbsp; Transaction Type</button>
-                    <div ngbDropdownMenu class="custom-dropdown mt-2 divide-y divide-gray-100 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-                        <div class="form-check px-3 py-2">
-                            <p class="text-sm text-gray-700 font-medium mb-1 ml--1">Transaction Type</p>
-                            <input type="checkbox" class="form-check-input" value="payment" 
-                            [checked]="transactionType.value.includes('payment')"  
-                            (change)="onCheckboxChange('payment', $event)" id="payment" />
-                            <label class="ml-1 block text-sm text-gray-700" for="payment">Payment</label>
-                        
-                            <input type="checkbox" class="form-check-input" value="receipt" 
-                                    [checked]="transactionType.value.includes('receipt')"  
-                                    (change)="onCheckboxChange('receipt', $event)" id="receipt" />
-                            <label class="ml-1 block text-sm text-gray-700" for="receipt">Receipt</label>
-                        
-                            <input type="checkbox" class="form-check-input" value="purchase" 
-                                    [checked]="transactionType.value.includes('purchase')"  
-                                    (change)="onCheckboxChange('purchase', $event)" id="purchase" />
-                            <label class="ml-1 block text-sm text-gray-700" for="purchase">Purchase</label>
-                        
-                            <input type="checkbox" class="form-check-input" value="sales" 
-                                    [checked]="transactionType.value.includes('sales')"  
-                                    (change)="onCheckboxChange('sales', $event)" id="sales" />
-                            <label class="ml-1 block text-sm text-gray-700" for="sales">Sales</label>
-                        </div>
-                        <div class="py-2 px-3">
-                            <button class="btn btn-primary text-sm" (click)="getAccountsTransaction(true, false); filter1.close()" >Apply</button>
-                        </div>
-                    </div>
-                </div>
-                <div *ngIf="accountsName.length > 0" ngbDropdown class="btn-wrap2 flex flex-center" placement="bottom-end" container="body" #filter2="ngbDropdown">
-                    <button ngbDropdownToggle class="rounded-md px-2.5 py-1.5 text-sm font-semibold text-gray-900 bg-slate-100 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50" > <i class="bi bi-filter"></i> &nbsp; Account</button>
-                    <div ngbDropdownMenu class="custom-dropdown mt-2 divide-y divide-gray-100 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-                        <div class="form-check">
-                            <p class="text-sm text-gray-700 font-medium mb-1 ml--1">Filter Suppliers</p>
-                            <div class="form-check padding-0" *ngFor="let account of accountsName">
-                                <input type="checkbox" class="form-check-input w-4 h-4" [value]="account?.supplierID" 
-                                [checked]="accountsFilter.value.includes(account?.supplierID)"  
-                                (change)="onCheckboxChangeAccount(account?.supplierID, $event)" [id]="account?.supplierID" />
-                                <label class="ml-1 block text-sm text-gray-700" [for]="account?.supplierID">{{account?.accountName}}</label>
-                            </div>
-                        </div>
-                        <div class="py-2 px-3">
-                            <button class="btn btn-primary text-sm" (click)="getAccountsTransaction(true, false); filter2.close()" >Apply</button>
-                        </div>
-                    </div>
-                </div>
-                
+                </div>                
                 <div *ngIf="inventory.length > 1 && inventoryName.length > 0" ngbDropdown class="btn-wrap2 flex flex-center" placement="bottom-end" container="body" #filter3="ngbDropdown">
-                    <button ngbDropdownToggle class="rounded-md px-2.5 py-1.5 text-sm font-semibold text-gray-900 bg-slate-100 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50" > <i class="bi bi-filter"></i> &nbsp; Inventory</button>
+                    <button ngbDropdownToggle class="rounded-md px-2.5 py-1.5 text-sm font-semibold text-gray-900 bg-slate-100 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50" > <i class="bi bi-filter"></i> &nbsp; Store</button>
                     <div ngbDropdownMenu class="custom-dropdown mt-2 divide-y divide-gray-100 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                         <div class="form-check">
-                            <p class="text-sm text-gray-700 font-medium mb-1 ml--1">Filter Inventory</p>
+                            <p class="text-sm text-gray-700 font-medium mb-1 ml--1">Filter Store</p>
                             <div class="form-check padding-0" *ngFor="let inventory of inventoryName">
                                 <input type="checkbox" class="form-check-input w-4 h-4" [value]="inventory?.inventoryID" 
                                 [checked]="inventoryFilter.value.includes(inventory?.inventoryID)"  
@@ -101,25 +51,15 @@
                     <div ngbDropdownMenu class="custom-dropdown mt-2 divide-y divide-gray-100 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                         <div class="form-check px-3 py-2">
                             <p class="text-sm text-gray-700 font-medium mb-1 ml--1">Payment Type</p>
-                            <input type="checkbox" class="form-check-input" value="Cash" 
-                            [checked]="paymentFilter.value.includes('Cash')"  
-                            (change)="onCheckboxChangePayment('Cash', $event)" id="Cash" />
-                            <label class="ml-1 block text-sm text-gray-700" for="Cash">Cash</label>
+                            <input type="checkbox" class="form-check-input" value="cash" 
+                            [checked]="paymentFilter.value.includes('cash')"  
+                            (change)="onCheckboxChangePayment('cash', $event)" id="cash" />
+                            <label class="ml-1 block text-sm text-gray-700" for="cash">Cash</label>
                         
-                            <input type="checkbox" class="form-check-input" value="Online" 
-                                    [checked]="paymentFilter.value.includes('Online')"  
-                                    (change)="onCheckboxChangePayment('Online', $event)" id="Online" />
-                            <label class="ml-1 block text-sm text-gray-700" for="Online">Online</label>
-                        
-                            <input type="checkbox" class="form-check-input" value="Cheque" 
-                                    [checked]="paymentFilter.value.includes('Cheque')"  
-                                    (change)="onCheckboxChangePayment('Cheque', $event)" id="Cheque" />
-                            <label class="ml-1 block text-sm text-gray-700" for="Cheque">Cheque</label>
-                        
-                            <input type="checkbox" class="form-check-input" value="Other" 
-                                    [checked]="paymentFilter.value.includes('Other')"  
-                                    (change)="onCheckboxChangePayment('Other', $event)" id="Other" />
-                            <label class="ml-1 block text-sm text-gray-700" for="Other">Other</label>
+                            <input type="checkbox" class="form-check-input" value="online" 
+                                    [checked]="paymentFilter.value.includes('online')"  
+                                    (change)="onCheckboxChangePayment('online', $event)" id="online" />
+                            <label class="ml-1 block text-sm text-gray-700" for="online">Online</label>
                         </div>
                         <div class="form-check px-3 py-2">
                             <p class="text-sm text-gray-700 font-medium mb-1 ml--1">From Date</p>
@@ -151,16 +91,16 @@
                 <thead>
                     <tr>
                         <th class="py-3 px-2 transition-colors cursor-pointer border-y border-slate-200 bg-slate-50 hover:bg-slate-100 font-sans text-sm font-normal leading-none text-slate-700">
-                            To / From
+                            Store
                         </th>
                         <th class="py-3 px-2 transition-colors cursor-pointer border-y border-slate-200 bg-slate-50 hover:bg-slate-100 font-sans text-sm font-normal leading-none text-slate-700">
-                            Doc No.
+                            Bill Number
                         </th>
                         <th class="py-3 px-2 transition-colors cursor-pointer border-y border-slate-200 bg-slate-50 hover:bg-slate-100 font-sans text-sm font-normal leading-none text-slate-700">
-                            Inventory
+                            Invoice Number
                         </th>
                         <th class="py-3 px-2 transition-colors cursor-pointer border-y border-slate-200 bg-slate-50 hover:bg-slate-100 font-sans text-sm font-normal leading-none text-slate-700">
-                            Transaction Type
+                            Customer Type
                         </th>
                         <th class="py-3 px-2 transition-colors cursor-pointer border-y border-slate-200 bg-slate-50 hover:bg-slate-100 font-sans text-sm font-normal leading-none text-slate-700">
                             Date
@@ -177,50 +117,49 @@
                     <td class="py-2 px-2 border-b border-slate-200">
                         <div class="flex flex-col">
                             <p class="text-sm font-semibold text-slate-700">
-                                {{display?.Supplier?.accountName}}
+                                {{display?.Inventory?.inventoryName}}
                             </p>
                         </div>
                     </td>
                     <td class="py-2 px-2 border-b border-slate-200">
                         <p class="text-xs text-slate-500">
-                            {{display?.documentNumber}}
+                            {{display?.billNumber}}
                         </p>
                     </td>
                     <td class="py-2 px-2 border-b border-slate-200">
                         <p class="text-xs text-slate-500">
-                            {{display?.Inventory?.inventoryName}}
+                            {{display?.invoiceNumber}}
                         </p>
                     </td>
                     <td class="py-2 px-2 border-b border-slate-200">
                         <div class="w-max">
-                            <div *ngIf="display.transactionType == 'purchase'" class="relative grid items-center px-2 py-1 font-sans text-xs font-bold text-indigo-700 uppercase rounded-md select-none whitespace-nowrap bg-indigo-500/20">
-                                <span class="">Purchase</span>
+                            <div *ngIf="display.customerType == 'facebook'" class="relative grid items-center px-2 py-1 font-sans text-xs font-bold text-indigo-700 uppercase rounded-md select-none whitespace-nowrap bg-indigo-500/20">
+                                <span class="">Facebook</span>
                             </div>
-                            <div *ngIf="display.transactionType == 'sales'" class="relative grid items-center px-2 py-1 font-sans text-xs font-bold text-green-700 uppercase rounded-md select-none whitespace-nowrap bg-green-500/20">
-                                <span class="">Sales</span>
+                            <div *ngIf="display.customerType == 'existing'" class="relative grid items-center px-2 py-1 font-sans text-xs font-bold text-green-700 uppercase rounded-md select-none whitespace-nowrap bg-green-500/20">
+                                <span class="">Existing</span>
                             </div>
-                            <div *ngIf="display.transactionType == 'receipt'" class="relative grid items-center px-2 py-1 font-sans text-xs font-bold text-teal-700 uppercase rounded-md select-none whitespace-nowrap bg-teal-500/20">
-                                <span class="">Receipt</span>
+                            <div *ngIf="display.customerType == 'chinki-van'" class="relative grid items-center px-2 py-1 font-sans text-xs font-bold text-teal-700 uppercase rounded-md select-none whitespace-nowrap bg-teal-500/20">
+                                <span class="">Chinki Van</span>
                             </div>
-                            <div *ngIf="display.transactionType == 'payment'" class="relative grid items-center px-2 py-1 font-sans text-xs font-bold text-rose-700 uppercase rounded-md select-none whitespace-nowrap bg-rose-500/20">
-                                <span class="">Payment</span>
+                            <div *ngIf="display.customerType == 'new'" class="relative grid items-center px-2 py-1 font-sans text-xs font-bold text-rose-700 uppercase rounded-md select-none whitespace-nowrap bg-rose-500/20">
+                                <span class="">New</span>
                             </div>
                         </div>
                     </td>
                     <td class="py-2 px-2 border-b border-slate-200">
                         <p class="text-xs text-slate-500">
-                             &nbsp;{{display.createdAt | date: 'mediumDate'}}
+                             &nbsp;{{display.createdAt | date: 'medium'}}
+                        </p>
+                    </td>
+                    <td class="py-2 px-2 border-b border-slate-200 text-green-700" >
+                        <p>
+                            Rs &nbsp;{{display.finalAmount}}/-
                         </p>
                     </td>
                     <td class="py-2 px-2 border-b border-slate-200">
-                        <p [ngClass]="{'text-green-700': display.finalAmt > 0, 'text-red-700': display.finalAmt < 0, 'text-slate-500': display.finalAmt == 0}" class="text-xs">
-                             &nbsp;{{display.finalAmt}}
-                        </p>
-                    </td>
-                    <td class="py-2 px-2 border-b border-slate-200">
-                        <a class="ml-2.5 text-blue-700 text-xs font-semibold" (click)="openViewModal(display)">View Details</a>
-                        <a *ngIf="role != 'crm' || role == 'factory' || role == 'store'" (click)="openDeleteModal(display)" class="ml-2.5 text-red-700 text-xs font-semibold">Delete</a>
-                        <a *ngIf="role != 'crm' || role == 'factory' || role == 'store'" (click)="openEditModal(display)" class="ml-2.5 text-amber-500 text-xs font-semibold">Edit</a> 
+                        <a class="ml-2.5 text-blue-700 text-xs font-semibold" (click)="viewBill(display.billID)">View Details</a>
+                        <a *ngIf="role != 'crm' || role == 'factory' || role == 'store'" (click)="editBill(display.billID)" class="ml-2.5 text-amber-500 text-xs font-semibold">Edit</a> 
                     </td>
                     </tr>
                 </tbody>
@@ -229,7 +168,7 @@
             <div *ngIf="displayData?.length == 0" class="not-found w-full h-full">
                 <div class="container flex items-center px-6 py-12 mx-auto">
                     <div class="flex flex-col items-center max-w-sm mx-auto text-center">
-                        <h1 class="mt-3 text-xl font-semibold text-gray-800 md:text-3xl">No Transaction data found</h1>
+                        <h1 class="mt-3 text-xl font-semibold text-gray-800 md:text-3xl">No Bill data found</h1>
                         <p class="mt-4 text-gray-500 dark:text-gray-400">The filters or search applied could not find any data.</p>
             
                         <div class="flex items-center w-full mt-6 gap-x-3 shrink-0 sm:w-auto">

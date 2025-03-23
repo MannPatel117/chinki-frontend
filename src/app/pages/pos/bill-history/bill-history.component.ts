@@ -101,7 +101,7 @@ export class BillHistoryComponent {
             })
           }
       
-      
+          
           getStats(){
               try{
                 this.api.getAPI('/accounts/stats', []).subscribe((res:any) => {
@@ -189,7 +189,7 @@ export class BillHistoryComponent {
                 this.dateFilterFrom.setValue("");
                 this.dateFilterTo.setValue("");
               }
-              this.api.getAPI('/accountTransaction/', [["pagination", true],["search",  this.search.value],["transactionType", JSON.stringify(this.transactionType.value)],["limit", this.limit],["page", this.page], ["inventory", JSON.stringify(this.inventoryFilter.value)], ["supplierID", JSON.stringify(this.accountsFilter.value)], ["paymentType", JSON.stringify(this.paymentFilter.value)], ["fromDate", this.dateFilterFrom.value], ["toDate", this.dateFilterTo.value]]).subscribe((res:any) => {
+              this.api.getAPI('/bills/', [["pagination", true],["search",  this.search.value],["transactionType", JSON.stringify(this.transactionType.value)],["limit", this.limit],["page", this.page], ["inventory", JSON.stringify(this.inventoryFilter.value)], ["supplierID", JSON.stringify(this.accountsFilter.value)], ["paymentType", JSON.stringify(this.paymentFilter.value)], ["fromDate", this.dateFilterFrom.value], ["toDate", this.dateFilterTo.value]]).subscribe((res:any) => {
                 this.loading = true;
                 if(res.success == false){
                   this.displayData = res.data.data;
@@ -568,5 +568,13 @@ export class BillHistoryComponent {
                 form.get(key)?.setValue(currentItem[key]);
               }
             });
+          }
+
+          viewBill(id:any){
+            this.route.navigate([`/pos/bill-history/bill`, id, 'view']); 
+          }
+
+          editBill(id:any){
+            this.route.navigate([`/pos/bill-history/bill`, id, 'edit']); 
           }
 }
