@@ -1,3 +1,24 @@
 <div class="main-body flex-start">
-    <div class="body-content"></div>
+    <div class="body-content flex flex-col gap1-5">
+        <div class="body-head">
+            <h1 class="text-xl">Welcome {{firstName}}</h1>
+        </div>
+        <div class="body-stats w-full flex flex-center gap2 px-5 relative">
+            <div class="w-full justify-content-center flex gap1 whitespace-nowrap">
+                <h2 class="text-neutral-100">Total Sales Yesterday &nbsp;: &nbsp;</h2>
+                <h2 class="text-neutral-100">Rs. {{sales}}/-</h2>
+            </div>
+        </div>
+        <div class="body-main w-full">
+            <div routerLink="/pos/billing-system" class="icon-tile"><img src="../../../../assets/img/nav/billing-system.png" alt=""></div>
+            <div routerLink="/pos/inventory-system" class="icon-tile"><img src="../../../../assets/img/nav/inventory-system.png" alt=""></div>
+            <div routerLink="/pos/dashboard" class="icon-tile"><img src="../../../../assets/img/nav/dashboard.png" alt=""></div>
+            <div routerLink="/pos/products-master" class="icon-tile"><img src="../../../../assets/img/nav/product-master.png" alt=""></div>
+            <div routerLink="/pos/accounts-master" class="icon-tile"><img src="../../../../assets/img/nav/accounts-master.png" alt=""></div>
+            <div routerLink="/pos/accounts/transactions" class="icon-tile"><img src="../../../../assets/img/nav/transactions.png" alt=""></div>
+            <div routerLink="/pos/user-history" class="icon-tile"><img src="../../../../assets/img/nav/users-history.png" alt=""></div>
+            <div routerLink="/pos/bill-history" class="icon-tile"><img src="../../../../assets/img/nav/bill-history.png" alt=""></div>
+            <div routerLink="/pos/offers-master" class="icon-tile"><img src="../../../../assets/img/nav/offer-master.png" alt=""></div>
+        </div>
+    </div>
 </div>

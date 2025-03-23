@@ -74,32 +74,6 @@ const routes: Routes = [
     ],
   },
 ];
-// const routes: Routes = [
-//   {
-//     path: '', component: HomeComponent
-//   },
-//   {
-//     path: 'billing-system', component: BillingSystemComponent
-//   },
-//   {
-//     path: 'inventory-system', component: InventorySystemComponent
-//   },
-//   {
-//     path: 'dashboard', component: DashboardComponent
-//   },
-//   {
-//     path: 'user-history', component: UserHistoryComponent
-//   },
-//   {
-//     path: 'bill-history', component: BillHistoryComponent
-//   },
-//   {
-//     path: 'products-master', component: ProductsMasterComponent
-//   },
-//   {
-//     path: 'accounts-master', component: AccountsMasterComponent
-//   },
-// ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],

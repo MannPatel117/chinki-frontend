@@ -14,6 +14,7 @@ export class ApiService {
     public http: HttpClient
   ) { 
     this.setToken();
+    console.log('Header after constructor:', this.header);
   }
 
   setToken(){
