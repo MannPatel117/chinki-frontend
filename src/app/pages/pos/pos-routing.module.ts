@@ -15,6 +15,7 @@ import { TransactionsComponent } from './accounts-master/transactions/transactio
 import { ViewEditGoodsComponent } from './accounts-master/view-edit-goods/view-edit-goods.component';
 import { ReconsilationComponent } from './inventory-system/reconsilation/reconsilation.component';
 import { OffersMasterComponent } from './offers-master/offers-master.component';
+import { ViewBillComponent } from './view-bill/view-bill.component';
 
 
 const routes: Routes = [
@@ -67,35 +68,12 @@ const routes: Routes = [
       {
         path: 'offers-master', component: OffersMasterComponent
       },
+      {
+        path: 'bill-history/bill/:billID/:type', component: ViewBillComponent
+      },
     ],
   },
 ];
-// const routes: Routes = [
-//   {
-//     path: '', component: HomeComponent
-//   },
-//   {
-//     path: 'billing-system', component: BillingSystemComponent
-//   },
-//   {
-//     path: 'inventory-system', component: InventorySystemComponent
-//   },
-//   {
-//     path: 'dashboard', component: DashboardComponent
-//   },
-//   {
-//     path: 'user-history', component: UserHistoryComponent
-//   },
-//   {
-//     path: 'bill-history', component: BillHistoryComponent
-//   },
-//   {
-//     path: 'products-master', component: ProductsMasterComponent
-//   },
-//   {
-//     path: 'accounts-master', component: AccountsMasterComponent
-//   },
-// ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],

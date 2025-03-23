@@ -12,18 +12,11 @@
     <div class="body-content flex flex-col gap1-5">
         <div class="bill-head flex-center flex-space-between">
             <div class="invoice-switcher flex-start gap3">
-                <div class="invoice-btn flex-center" (click)="invoiceSwitcher('A')" [class.invoiceActive]="currentActiveInvoice == 'A'">
-                    <p>Invoice 1</p>
-                </div>
-                <div class="invoice-btn flex-center" (click)="invoiceSwitcher('B')" [class.invoiceActive]="currentActiveInvoice == 'B'">
-                    <p>Invoice 2</p>
-                </div>
-                <div class="invoice-btn flex-center" (click)="invoiceSwitcher('C')" [class.invoiceActive]="currentActiveInvoice == 'C'">
-                    <p>Invoice 3</p>
-                </div>
+                <button class="rounded-md bg-slate-700 px-2.5 py-1.5 text-sm font-semibold text-white shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-slate-700" routerLink="/pos/bill-history">Back</button>
             </div>
             <div class="invoice-total flex-end gap1-5">
-                <button class="rounded-md bg-green-600 px-4 py-1.5 text-sm font-semibold text-white shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-green-600"  (click)="openModalSave()" >Save</button>
+                <button class="rounded-md bg-green-600 px-4 py-1.5 text-sm font-semibold text-white shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-green-600" *ngIf="actionType=='edit'"  (click)="openModalSave()" >Save</button>
+                <button class="rounded-md bg-rose-600 px-4 py-1.5 text-sm font-semibold text-white shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-rose-600" (click)="printBill()" *ngIf="actionType=='view'">Print</button>
                 <div class="total-amount flex-center flex-space-between">
                     <h1>₹</h1>
                     <h1>{{currentActiveInvoiceData.totalAmount}}</h1>
@@ -35,16 +28,16 @@
                 <div class="body-menu-container flex-center gap1">
                     <div class="col-wrap flex-center flex-col gap1">
                         <div class="row-wrap flex-center gap1">
-                            <label class="flex-center flex-start" for="invoiceNumber">Inventory</label>
+                            <label class="flex-center flex-start" for="invoiceNumber">Store</label>
                             <input formControlName="inventoryName" id="invoiceNumber" readonly>
                         </div>
                         <div class="row-wrap flex-center gap1">
-                            <label class="flex-center flex-start" for="invoiceNumber">Invoice No.</label>
+                            <label class="flex-center flex-start" for="invoiceNumber">Bill No.</label>
                             <input formControlName="invoiceNumber" id="invoiceNumber" readonly>
                         </div>
                         <div class="row-wrap flex-center gap1">
-                            <div class="flex-center bill-btn bg-cyan-500" (click)="openModal('bill-searchAddUserModal')">Search User</div>
-                            <div class="flex-center bill-btn delete-bill bg-rose-600" (click)="openModal('bill-clearModal')">Clear bill</div>
+                            <div class="flex-center bill-btn bg-cyan-500" *ngIf="actionType=='edit'" (click)="openModal('bill-searchAddUserModal')">Search User</div>
+                            <!-- <div class="flex-center bill-btn delete-bill bg-rose-600" *ngIf="actionType=='edit'" (click)="openModal('bill-clearModal')">Clear bill</div> -->
                         </div>
                        
                     </div>
@@ -64,11 +57,11 @@
                     </div>
                     <div class="col-wrap flex-center flex-col gap1">
                         <div class="row-wrap flex-center gap1">
-                            <div class="flex-center flex-center bill-btn bg-indigo-500"  (click)="openModal('rewardsModal')">Reward Points</div>
+                            <div class="flex-center flex-center bill-btn bg-indigo-500" *ngIf="actionType=='edit'"  (click)="openModal('rewardsModal')">Reward Points</div>
                             <input id="rewardPoints" formControlName="rewardPoints" readonly>
                         </div>
                         <div class="row-wrap flex-center gap1">
-                            <div class="flex-center bill-btn  bg-orange-500" (click)="openModal('offersModal')">Check offers</div>
+                            <div class="flex-center bill-btn  bg-orange-500" *ngIf="actionType=='edit'" (click)="openModal('offersModal')">Check offers</div>
                             <div style="height: 100%; width: 60%;" class="flex-center">
                                 <select (change)="customerTypeChanged() "
                                 name="customer-type"
@@ -105,7 +98,7 @@
                 </div>
             </form>
         </div>
-        <div class="bill-search flex flex-center flex-space-between">
+        <div class="bill-search flex flex-center flex-space-between" *ngIf="actionType=='edit'">
             <div class="btn-wrap flex flex-center gap2" style="height: 100%; width: 100%;">            
                 <div class="absolute w-64 combobox-container overflow-visible">
                     <!-- Input Box -->
@@ -165,7 +158,7 @@
                     <tbody formArrayName="rows" [style.max-height]="maxHeight" style="overflow-y: scroll;">
                         <tr *ngFor="let row of rows.controls; let i = index" [formGroupName]="i" [ngClass]="(i % 2 === 0) ? 'chinki-table-even' : 'chinki-table-odd'">
                             <td *ngIf="row.value.productName == '' || row.value.productName == null"></td>
-                            <td class="flex flex-center deleteRow" (click)="openItemModal('deleteItemModal', i)" *ngIf="row.value.productName != '' && row.value.productName != null"><img src="../../../../assets/img/icons/delete.svg" class="hover" style="cursor: pointer;" height="18px" width="18px" alt=""></td>
+                            <td class="flex flex-center deleteRow"  *ngIf="row.value.productName != '' && row.value.productName != null"><img (click)="openItemModal('deleteItemModal', i)" *ngIf="actionType == 'edit'" src="../../../../assets/img/icons/delete.svg" class="hover" style="cursor: pointer;" height="18px" width="18px" alt=""></td>
                             <td><input type="text" formControlName="productName"></td>
                             <td><input type="number" min="1" (change)="itemChanged('quantity', i)" *ngIf="row.value.productName != ''" formControlName="quantity"></td>
                             <td><input type="number" (change)="itemChanged('mrp', i)" *ngIf="row.value.productName != ''" formControlName="mrp"></td>
@@ -485,25 +478,6 @@
     </div>
 </div>
 
-<div class="modal fade" id="bill-clearModal" tabindex="-1" aria-labelledby="bill-clearModal" aria-hidden="true">
-    <div class="modal-dialog dialog700 modal-dialog-centered modal-dialog-scrollable">
-        <div class="modal-content">
-            <div class="modal-header d-flex align-items-center flex-space-between">
-                <h1>Clear Bill</h1>
-                <img src="../../../../assets/img/icons/cross.svg" (click)="closeModal('bill-clearModal')" class="cross-btn" height="15px" width="15px" alt="">
-            </div>
-            <div class="modal-body">
-                <h5>Are you sure you want to clear bill?</h5>
-            </div>
-            <div class="modal-footer d-flex flex-end">
-                <button class="btn btn-primary primary-button" (click)="clearBill()">
-                    Confirm
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
-
 <div class="modal fade" id="bill-saveModal" tabindex="-1" aria-labelledby="bill-saveModal" aria-hidden="true">
     <div class="modal-dialog dialog700 modal-dialog-centered modal-dialog-scrollable">
         <div class="modal-content">
@@ -539,33 +513,6 @@
     </div>
 </div>
 
-<div class="modal fade" id="selectInventoryBill" tabindex="-1" aria-labelledby="selectInventoryBill" aria-hidden="true">
-    <div class="modal-dialog dialog700 modal-dialog-centered modal-dialog-scrollable">
-        <div class="modal-content">
-            <div class="modal-header d-flex align-items-center flex-space-between">
-                <h1>Select the Inventory</h1>
-            </div>
-            <div class="modal-body">
-                <div class="form-row flex-center flex-space-between gap1-5 margin-top p-2">
-                    <div class="form-wrap w-100">
-                        <label for="inventory" class="block text-sm font-medium text-neutral-600">Inventory
-                        </label>
-                        <div class="mt-1">
-                            <select id="inventory" [formControl]="inventorySelected" placeholder="Inventory" class="block w-full text-sm px-4 py-2 text-base placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg text-neutral-600 bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300 ">
-                                <option *ngFor="let inventory of inventoryName" class="form-check-label block px-4 py-3 text-sm text-gray-700" [ngValue]="inventory?.inventoryID">{{inventory?.inventoryName}}</option>
-                            </select>
-                        </div>
-                    </div>
-                </div> 
-            </div>
-            <div class="modal-footer d-flex flex-end">
-                <button class="btn btn-success primary-button" [disabled]="this.inventorySelected.value==''" (click)="confirmInventory()">
-                    Confirm
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
 
 
 <div style="display: none;" id="bill-content">

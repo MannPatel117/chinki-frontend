@@ -1,7 +1,7 @@
 import { ChangeDetectorRef, Component, ElementRef, HostListener, ViewChild } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ApiService } from '../../../services/api/api.service';
-import { Router, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { NgClass, NgFor, NgIf } from '@angular/common';
 import { ToastrService } from 'ngx-toastr';
 import { SuccessToast } from '../../../toast/success-toast/toast';
@@ -11,21 +11,22 @@ import { SharedService } from '../../../services/shared/shared.service';
 import { StoreBillService } from '../../../services/store-bill/store-bill.service';
 declare const $:any;
 
+
 @Component({
-  selector: 'app-billing-system',
+  selector: 'app-view-bill',
   standalone: true,
   imports: [NgIf, ReactiveFormsModule, RouterModule, NgFor, NgClass, 
     FormsModule, DatePipe
   ],  
   providers: [DatePipe],
-  templateUrl: './billing-system.component.html',
-  styleUrl: './billing-system.component.scss'
+  templateUrl: './view-bill.component.html',
+  styleUrl: './view-bill.component.scss'
 })
-export class BillingSystemComponent {
+export class ViewBillComponent {
   loading = false;
   @ViewChild('barcode')barcode!: ElementRef;
   @ViewChild('tablebody')tableBody!: ElementRef;
-  currentActiveInvoice : string = 'A';
+  currentActiveInvoice : string = 'D';
   currentActiveInvoiceData = {
     "totalAmount": 0,
     "totalAmountF": 0,
@@ -139,7 +140,7 @@ export class BillingSystemComponent {
   userForm!: FormGroup;
   addUserForm!: FormGroup;
   billDataForm!: FormGroup;
-
+  location:any;
   
   barcodeScan: FormControl = new FormControl ('');
   couponSearch: FormControl = new FormControl ('');
@@ -152,33 +153,9 @@ export class BillingSystemComponent {
      private toastr: ToastrService,
      private datepipe: DatePipe,
      private shared: SharedService,
+     private router: ActivatedRoute,
     private cdr: ChangeDetectorRef) {
       this.role = localStorage.getItem('role');
-      this.inventory = JSON.parse(localStorage.getItem('location') || '[]');
-      const storedValue = localStorage.getItem('selectedLocation');
-      this.selectedInventoryValue = storedValue ? JSON.parse(storedValue) : "";
-      if(this.selectedInventoryValue!= ''){
-        this.inventorySelected.setValue(this.selectedInventoryValue);
-        console.log(this.inventorySelected.value)
-        this.init();
-      } else{
-        this.shared.multiInventory()
-        .then((multi) => {
-          if(multi == true){
-            this.fetchFilterInfo();
-            $('#selectInventoryBill').modal({
-              backdrop: 'static', // Prevent closing when clicking outside
-              keyboard: false     // (Optional) Prevent closing with ESC key
-            });
-            $('#selectInventoryBill').modal('show');
-          } else {
-            this.inventorySelected.setValue(this.inventory[0]);
-            localStorage.setItem('selectedLocation', this.inventorySelected.value)
-            this.init();
-          }
-        } ) // Will log true or false
-        .catch(error => console.error("Error checking multiInventory:", error));
-      }
      
   }
 
@@ -187,18 +164,37 @@ export class BillingSystemComponent {
     localStorage.setItem('selectedLocation', this.inventorySelected.value)
     this.init();
   }
-  
+  billID= '';
+  actionType='';
   ngOnInit(){
     this.loading = true;
     this.checkUserLoggedIn();
     this.setFormBuilder();
-    this.invoiceSwitcher('A');
+    this.invoiceSwitcher('D');
+    this.router.paramMap.subscribe((params) => {
+      this.billID = params.get('billID') || '';
+      if (this.billID == '') {
+        this.toastr.show('error', 'Something went wrong', {
+          toastComponent: ErrorToast,
+          toastClass: 'ngx-toastr',
+        });
+        this.route.navigateByUrl('/pos/bill-history');
+      }
+      this.actionType = params.get('type') || '';
+      if (this.actionType == '') {
+        this.toastr.show('error', 'Something went wrong', {
+          toastComponent: ErrorToast,
+          toastClass: 'ngx-toastr',
+        });
+        this.route.navigateByUrl('/pos/bill-history');
+      }
+    });
+    this.init();
   }
   
   init(){
+    this.getBillDetails();
     this.getAllOffers();
-    this.getAllProducts();
-    this.fetchData(this.inventorySelected.value)
   }
 
   fetchFilterInfo() {
@@ -250,72 +246,139 @@ export class BillingSystemComponent {
     }
   }
 
-  fetchData(location:any){
 
+  async getBillDetails(){
     this.loading = true;
-    try{
-      this.api.getAPI('/inventorys/inventory/'+location, [["details", true]]).subscribe((res:any) => {
-        if(res.data.length == 0){
+    try {
+      this.api.getAPI('/bills/bill/'+this.billID, []).subscribe(async (res: any) => {
+        if (res.success == true) {
+          const data = res.data;
+          let current_location = data.inventoryID;
+          this.location = data.inventoryID;
+          this.getAllProducts(current_location).then(()=>{
+            if(data.offerID != null){
+              this.currentActiveInvoiceData.currentOffer.offerName = data.Offer.offerName;
+              this.currentActiveInvoiceData.currentOffer.offerID = data.Offer.offerID;
+              this.currentActiveInvoiceData.currentOffer.offerID = data.Offer.offerID;
+              this.currentActiveInvoiceData.currentOffer.minOrderValue = data.Offer.minOrderValue;
+              this.currentActiveInvoiceData.currentOffer.offerType = data.Offer.offerType;
+              if(data.Offer.offerType == 'free_product'){
+                this.currentActiveInvoiceData.currentOffer.FreeProduct.mrp = this.getMRP(data.Offer.freeProductID)
+                console.log(this.getMRP(data.Offer.freeProductID))
+              } 
+              else if(data.Offer.offerType == 'flat_discount'){
+                this.currentActiveInvoiceData.currentOffer.discountPerc = data.Offer.discountPerc;
+                let amount = this.currentActiveInvoiceData.totalAmount * ((data.Offer.discountPerc)/100);
+                let finalAmount = parseFloat(amount.toFixed(2));
+                if(amount >= data.Offer.discountAmount){
+                  this.currentActiveInvoiceData.currentOffer.actualDiscountAmount = data.Offer.discountAmount;
+                  data.Offer.actualDiscountAmount = data.Offer.discountAmount;
+                } else{
+                  data.Offer.actualDiscountAmount = finalAmount;
+                  this.currentActiveInvoiceData.currentOffer.actualDiscountAmount = data.Offer.actualDiscountAmount;
+                }}
+            }
+          });
+          this.api.getAPI('/inventorys/inventory/'+current_location, [["details", true]]).subscribe((res:any) => {
+            this.inventoryData = res.data;
+              let inventoryName = res.data.inventoryName;
+              this.userForm.get('inventoryName')?.setValue(inventoryName);
+              this.loading = false;
+          }
+        )
+        this.userForm.get('invoiceNumber')?.setValue(data.billNumber);
+        if(data.phoneNumber != null){
+          this.currentActiveInvoiceData.UserPhnNumber = data.phoneNumber;
+          this.currentActiveInvoiceData.UserName = data.User.name;
+          this.currentActiveInvoiceData.UserAddress = data.User.addressLine1;
+          this.currentActiveInvoiceData.RewardPoints = data.User.rewardPoint;
+          this.currentActiveInvoiceData.CustomerType = data.customerType;
+          this.currentActiveInvoiceData.PaymentType = data.paymentType;
+        }
+        this.currentActiveInvoiceData.totalAmount = data.finalAmount;
+        this.currentActiveInvoiceData.RedeemPoints = data.rewardPointsUsed;
         
-        }else{
-          this.inventoryData = res.data;
-          console.log(res.data)
-          let invoiceNumber = res.data.invoiceNumber+1;
-          let inventoryName = res.data.inventoryName;
-          this.userForm.get('invoiceNumber')?.setValue(invoiceNumber);
-          this.userForm.get('inventoryName')?.setValue(inventoryName);
+        this.currentActiveInvoiceData.BillDetails = data.billDetails.map((detail: any) => ({
+          productName: detail.productName || "",
+          quantity: detail.quantity || 0,
+          mrp: detail.mrp || 0,
+          discount: detail.discountPerc || 0,
+          rate: detail.rate || 0,
+          amount: detail.amount || 0,
+          gst: detail.gstPerc || 0,
+          gstAmount: (detail.cgstAmount || 0) + (detail.sgstAmount || 0),
+          finalAmount: detail.netAmount || 0,
+          productID: detail.productID || "",
+          productType: detail.productType || "",
+        }));
+        this.currentActiveInvoiceData.currentRow = this.currentActiveInvoiceData.BillDetails.length
+        console.log(this.currentActiveInvoiceData.BillDetails)
+        await this.calculateRows().then(
+          ()=>{
+            this.setData();
+          }
+        );
+          // this.transactionData = res.data;
+          // this.transactionDetailData = this.transactionData.transactionDetail;
+          // this.setFormValues(this.transactionData, this.transactionForm)
+          // this.setFormArrayValues(this.transactionDetailData, this.transactionDetailForm)
           this.loading = false;
+        } else {
+          this.loading = false;
+          this.toastr.show('error', 'Something went wrong', {
+            toastComponent: ErrorToast,
+            toastClass: 'ngx-toastr',
+          });
         }
-      }
-    ),(error:any)=>{
+      });
+    } catch (error) {
       this.loading = false;
-      this.toastr.show('error','Something went wrong',{ 
+      this.toastr.show('error', 'Something went wrong', {
         toastComponent: ErrorToast,
-        toastClass: "ngx-toastr"
-      })
-    };
+        toastClass: 'ngx-toastr',
+      });
     }
-    catch(err){
-      this.loading = false;
-      this.toastr.show('error','Something went wrong',{ 
-        toastComponent: ErrorToast,
-        toastClass: "ngx-toastr"
-      })
-    }
-    this.loading= false;
   }
 
-  getAllProducts(){
+  getAllProducts(location:any){
     this.loading = true;
-    try{
-      this.api.getAPI('/inventoryDetails/billing', [["status",  "active"], ["inventory",  JSON.stringify([this.inventorySelected.value])]]).subscribe((res:any) => {
-        this.loading = true;
-        if(res.data.length == 0){
-          this.allProductsList = res.data;
-          console.log(this.allProductsList)
-          this.loading = false;
-        }else{
-          this.allProductsList = res.data;
-          this.loading = false;
+    return new Promise((resolve) => {
+      try{
+        this.api.getAPI('/inventoryDetails/billing', [["status",  "active"], ["inventory", JSON.stringify([location])]]).subscribe((res:any) => {
+          this.loading = true;
+          if(res.data.length == 0){
+            this.allProductsList = res.data;
+            console.log(this.allProductsList)
+            this.loading = false;
+          }else{
+            this.allProductsList = res.data;
+            console.log(this.allProductsList)
+            resolve(true)
+            this.loading = false;
+          }
         }
+      ),(error:any)=>{
+        this.loading = false;
+        this.toastr.show('error','Something went wrong',{ 
+          toastComponent: ErrorToast,
+          toastClass: "ngx-toastr"
+        })
+      };
       }
-    ),(error:any)=>{
-      this.loading = false;
-      this.toastr.show('error','Something went wrong',{ 
-        toastComponent: ErrorToast,
-        toastClass: "ngx-toastr"
-      })
-    };
-    }
-    catch(err){
-      this.loading = false;
-      this.toastr.show('error','Something went wrong',{ 
-        toastComponent: ErrorToast,
-        toastClass: "ngx-toastr"
-      })
-    }
-    this.loading= false;
+      catch(err){
+        this.loading = false;
+        this.toastr.show('error','Something went wrong',{ 
+          toastComponent: ErrorToast,
+          toastClass: "ngx-toastr"
+        })
+      }
+      this.loading= false;
+      
+    })
+   
   }
+
+ 
 
   setData(){
     this.userForm.get('phnNumber')?.setValue(this.currentActiveInvoiceData.UserPhnNumber)
@@ -333,14 +396,14 @@ export class BillingSystemComponent {
     }
     this.userForm.get('paymentType')?.setValue(this.currentActiveInvoiceData.PaymentType);
     setTimeout(() => {
-      this.focusBarcode();
       this.loading = false; 
     }, 50);
-    console.log(this.rows.value)
+    if(this.actionType == 'view'){
+      this.billDataForm.disable();
+    }
   }
 
   scanBarcode() {
-    console.log(this.rows.value)
     const index = this.allProductsList.findIndex((product: { MasterProduct: any; }) => product.MasterProduct.barcode === this.barcodeScan.value);
     let currentRowString = String(this.currentRow);
     let prdid:any=-1;
@@ -468,6 +531,7 @@ export class BillingSystemComponent {
   }
 
   getMRP(id:string){
+    console.log(this.allProductsList)
     let product = this.allProductsList.find((product: { productID: string; }) => product.productID === id);
     return product.MasterProduct.mrp
   }
@@ -745,10 +809,10 @@ export class BillingSystemComponent {
     delete (body as any).UserAddress;
     delete (body as any).UserName;
     delete (body as any).currentRow;
-    (body as any).location = this.inventorySelected.value
+    (body as any).location = this.location;
     try {
       this.api
-        .postAPI('/bills/bill', [], body)
+        .putAPI('/bills/bill/'+this.billID, [], body)
         .subscribe(
           (res: any) => {
             this.loading = false;
@@ -762,7 +826,7 @@ export class BillingSystemComponent {
                 toastComponent: SuccessToast,
                 toastClass: 'ngx-toastr',
               });
-              this.clearBill();
+              this.route.navigateByUrl('/pos/bill-history');
             }
           },
           (err: any) => {
@@ -853,7 +917,76 @@ export class BillingSystemComponent {
     
   }
 
-  
+  printBill(){
+    const printContents = document.getElementById('bill-content');
+      if (printContents) {
+        // Create a new iframe
+        const iframe = document.createElement('iframe');
+        iframe.style.position = 'absolute';
+        iframe.style.width = '0';
+        iframe.style.height = '0';
+        iframe.style.border = 'none';
+        iframe.style.visibility = 'hidden';
+
+        document.body.appendChild(iframe);
+
+        const iframeDoc = iframe.contentDocument || iframe.contentWindow?.document;
+        if (iframeDoc) {
+          iframeDoc.open();
+          iframeDoc.write(`
+            <html>
+              <head>
+                <title>Print</title>
+                <style>
+                  /* Add any styles you want for printing here */
+                  body {
+                    font-family: Arial, sans-serif;
+                    width:300px;
+                    display: flex;
+                    gap: 5px;
+                    flex-direction:column;
+                    justify-content:center;
+                    align-items:center;
+                  }
+                  table {
+                    width: 100%;
+                    border-collapse: collapse;
+                  }
+                  table, th, td {
+                    border: 1px solid black;
+                  }
+                  h2, p{
+                    text-align: center;
+                    margin: 0px
+                  }
+                </style>
+              </head>
+              <body>${printContents.innerHTML}</body>
+            </html>
+          `);
+          iframeDoc.close();
+
+          const iframeWin = iframe.contentWindow;
+          if (iframeWin) {
+            iframeWin.focus();
+            iframeWin.print();
+
+            // Delay the removal to ensure the print dialog is not disrupted
+            setTimeout(() => {
+              if (document.body.contains(iframe)) {
+                document.body.removeChild(iframe);
+              }
+            }, 1000);
+          } else {
+            console.error('Iframe window is null');
+          }
+        } else {
+          console.error('Iframe document is null');
+        }
+      } else {
+        console.error('Bill content element not found');
+      }
+  }
 
   async invoiceSwitcher(invoiceNumer:string){
     this.addUserForm.reset();
@@ -870,15 +1003,13 @@ export class BillingSystemComponent {
         this.currentActiveInvoice='C';
         this.currentActiveInvoiceData = this.billData.getData('C');
       break;
+      case 'D':
+        this.currentActiveInvoice='D';
+        this.currentActiveInvoiceData = this.billData.getData('D');
+      break;
     }
-    // this.fetchData(this.current_location);
-    this.barcodeScan.reset();
-    await this.calculateRows().then(
-      ()=>{
-        this.setData();
-      }
-    );
-    
+
+    this.barcodeScan.reset();    
   }
 
   setFormBuilder(){
@@ -977,10 +1108,6 @@ export class BillingSystemComponent {
     
   }
 
-  focusBarcode(){
-    this.barcode.nativeElement.focus();
-  }
-
   openModal(id:any){
     if(id == 'rewardsModal'){
       const phn = this.userForm.get('phnNumber')?.value;
@@ -1017,7 +1144,6 @@ export class BillingSystemComponent {
 
   closeModal(id:any){
     $("#"+id).modal('hide');
-    this.focusBarcode();
   }
 
   formatDate(dateString: string): string {
@@ -1193,24 +1319,6 @@ export class BillingSystemComponent {
           this.billData.storeData(this.currentActiveInvoice, this.currentActiveInvoiceData)
         }
 
-        clearBill(){
-          this.loading = true;
-          this.userForm.reset();
-          this.redeemPoints.reset();
-          this.confirmRedeemFlag = false;
-          this.billDataForm.reset();
-          this.currentRow = 0;
-          this.currentActiveInvoiceData = this.billData.deleteData(this.currentActiveInvoice);
-          console.log(this.currentActiveInvoiceData);
-          this.fetchData(this.inventorySelected.value);
-          setTimeout(() => {
-            console.log(this.currentActiveInvoiceData);
-            this.billData.storeData(this.currentActiveInvoice, this.currentActiveInvoiceData);
-            this.setData();
-            this.closeModal('bill-clearModal');
-            console.log(this.currentActiveInvoiceData);
-          }, 500);
-        }
 
         rewardsData:any = [];
         rewardsEarned:Number = 0;
@@ -1232,5 +1340,8 @@ export class BillingSystemComponent {
               }
             });
         }
+
+
+       
   
 }

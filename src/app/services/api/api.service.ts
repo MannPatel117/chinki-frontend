@@ -14,6 +14,7 @@ export class ApiService {
     public http: HttpClient
   ) { 
     this.setToken();
+    console.log('Header after constructor:', this.header);
   }
 
   setToken(){
@@ -24,6 +25,7 @@ export class ApiService {
         headers: new HttpHeaders().set('Authorization', `Bearer ${token}`)
       }
     }
+    console.log(token)
   }
 
   loginAPI(route:any, body:any){
@@ -31,6 +33,7 @@ export class ApiService {
   }
 
   getAPI(route:any, params:any){
+    console.log(this.header.headers)
     const param = this.setParamms(params);
     return this.http.get(`${environment.apiUrl}`+`${route}`, { params:param, headers:this.header.headers })
   }

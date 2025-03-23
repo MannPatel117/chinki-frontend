@@ -20,8 +20,8 @@ export class HomeComponent {
     if (firstName) {
       this.firstLetter = firstName.charAt(0).toUpperCase(); // Extract and capitalize first letter
     }
+    this.role = localStorage.getItem('role')
     this.currentRoute = this.router.url;
-    console.log('Initial Route:', this.currentRoute);
     this.router.events
     .pipe(filter(event => event instanceof NavigationEnd))
     .subscribe((event: any) => {
@@ -30,7 +30,6 @@ export class HomeComponent {
     });
 
     this.switchHeader(this.currentRoute);
-
   }
   logout(){
     this.router.navigateByUrl('/login');
@@ -51,7 +50,7 @@ export class HomeComponent {
   switchHeader(route:string){
     switch(route){
       case '/pos/':
-      case '/pos/main': this.pageHeading = "Home"; console.log("Hello")
+      case '/pos/main': this.pageHeading = "Home";
       break;
       case '/pos/billing-system': this.pageHeading = "Billing System";
       break;
