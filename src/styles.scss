@@ -180,31 +180,19 @@ a:hover{
     height: 95vh;
     width: 98.25%;
     border-radius: 20px;
-    padding: 20px 40px;
+    padding: 40px 40px;
 }
 
 .body-menu{
     height: 20%;
     width: 100%;
-    padding: 5px 40px 5px 40px;
     min-height: 160px;
-}
-
-.body-table-bill{
-    height: 62.5%;
-    width: 100%;
-    padding: 5px 40px 10px 40px;
-}
-
-.body-menu > form{
-    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
 }
 
 .body-menu-container{
     height: 100%;
     width: 100%;
     padding: 10px;
-    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
 }
 
 .col-wrap{
@@ -301,6 +289,12 @@ a:hover{
 .modal-header > h1{
     font-size: 18px;
     font-weight: 500;
+}
+
+.chinki-header{
+    font-size: 16px;
+    font-weight: 700;
+    color: #187EF5;
 }
 
 .modal-body > label{
@@ -510,8 +504,8 @@ input[type="number"] {
         width: 100vw;
         border-radius: 20px 20px 00px 0px;
         height: 100%;
-        background-color: #EEF6FF;
-        padding: 20px 40px 100px 40px !important;
+        background-color: #eef9ff;
+        padding: 20px 10px 80px 10px !important;
     }
 
     .body-stats{
@@ -534,4 +528,18 @@ input[type="number"] {
         gap: 20px;
     }
 
+}
+
+.location-selector{
+    background-color: transparent;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #187EF5;
+    padding-right: 10px;
+    // border-radius: 5px;
+    // border-bottom: 2px solid #187EF5;
+}
+
+.location-selector:focus-visible{
+    outline: 0px;
 }

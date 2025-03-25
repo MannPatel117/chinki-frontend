@@ -3,20 +3,27 @@
 }
 
 .bill-head{
-    height: 10%;
-    min-height: 75px;
+    height: 7.5%;
+    min-height: 50px;
 }
 
 .bill-search{
     height: 7.5%;
     min-height: 50px;
     width: 100%;
-    padding: 5px 100px 5px 40px;
+}
+
+.body-table-bill{
+    height: 65%;
+    width: 100%;
+}
+
+.body-menu{
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
 }
 
 .invoice-switcher{
     height: 100%;
-    padding: 20px 10px 20px 40px;
 }
 
 .invoice-btn{
@@ -40,7 +47,6 @@
 .invoice-total{
     height: 100%;
     width: 30%;
-    padding: 20px 40px 20px 10px;
 }
 
 .save-btn{
@@ -201,6 +207,12 @@
     width: 40px !important;
     padding-left: 5px !important;
     padding-right: 5px !important;
+    text-align: center;
+    vertical-align: middle;
+}
+
+.deleteRow img{
+    margin: auto;
 }
 
 
@@ -212,31 +224,153 @@
     width: 100px !important;
 }
 
-@media only screen and (max-width: 1250px) {
-    .invoice-btn{
-        height: 20px;
-        width: 100px;
-    }    
-    .invoice-btn p{
-        font-weight: 600;
-        font-size: 12px;
-    }   
+@media (max-width: 1279px) {
+
+    .bill-head{
+        height: 5%;
+        min-height: 40px;
+    }
+
     .invoice-total{
-        height: 100%;
-        width: 30%;
-        padding: 20px 40px 20px 10px;
-    }  
-    .save-btn p{
-        font-size: 12px;
+        width: 100%;
     }
-    .check-users, .add-users, .check-offers, .delete-bill{
-        font-size: 10px;
+
+    .total-amount{
+        width: 100px;
+        border-radius: 10px;
     }
-    .form-check-label{
-        font-size: 10px !important;
+
+    .total-amount h1{
+        font-size: 1rem;
     }
-    .form-check-input{
-        height: 10px !important;
-        width: 10px !important;
+
+    .body-table-bill{
+        height: 75%;
+        -ms-overflow-style: none; /* Hide scrollbar in IE/Edge */
+        scrollbar-width: none; /* Hide scrollbar in Firefox */
     }
+
 }
+
+.w-90{
+    width: 95%;
+}
+
+.products {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, 150px);
+    gap: 30px;
+    justify-content: center;
+    padding: 8px;
+    box-sizing: border-box;
+   overflow: visible !important;
+   -ms-overflow-style: none; /* Hide scrollbar in IE/Edge */
+   scrollbar-width: none; /* Hide scrollbar in Firefox */
+    
+  }
+  
+  .product-card {
+    height: 250px;
+    width: 150px;
+    border-radius: 8px;
+    padding: 12px;
+    background-color: white;
+    box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    overflow: visible;
+    position: relative;
+  }
+
+  .product-card img{
+    height: 125px;
+    width: 125px ;
+    border-radius: 8px;
+    position: relative;
+  }
+  
+  .product-card h2{
+    font-size: 0.8rem;
+    font-weight: 600;
+  }
+  .product-card h3{
+    font-size: 0.7rem;
+    font-weight: 500;
+    color: oklch(0.279 0.041 260.031);
+  }
+  .product-details{
+    height: 80px;
+    width: 125px;
+  }
+  /* Product Info */
+  .product-info h3 {
+    font-size: 14px;
+    margin: 0;
+    font-weight: bold;
+  }
+  
+  .product-info p {
+    font-size: 12px;
+    margin: 4px 0;
+    color: #333;
+  }
+  
+  /* Action Button Container */
+  .action-btn {
+    position: absolute;
+    bottom: 100px; /* Moves button outside */
+    right: -15px; /* Moves button to the right */
+  }
+  
+  /* Add Button */
+  .add-btn {
+    width: 50px;
+    padding: 6px 0;
+    background-color: oklch(0.596 0.145 163.225);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 12px;
+    transition: background-color 0.2s;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .add-btn:hover {
+    background-color: #0056b3;
+  }
+  
+  /* Quantity Changer */
+  .quantity-changer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    padding: 4px 6px;
+    width: 72px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .qty-btn {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 4px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+  }
+  
+  .qty-btn:hover {
+    background-color: #0056b3;
+  }
+  
+  .qty {
+    font-size: 14px;
+    font-weight: bold;
+  }
+  

@@ -14,7 +14,7 @@ export class HomeComponent {
   constructor(private router: Router){
 
   }
-
+  firstName: any = localStorage.getItem('firstName') || 'Guest';
   ngOnInit(){
     const firstName = localStorage.getItem('firstName'); // Fetch from local storage
     if (firstName) {
@@ -33,7 +33,15 @@ export class HomeComponent {
   }
   logout(){
     this.router.navigateByUrl('/login');
-    localStorage.clear();
+    localStorage.removeItem('token');
+    localStorage.removeItem('selectedLocation');
+    localStorage.removeItem('role');
+    localStorage.removeItem('location');
+    localStorage.removeItem('firstName');
+    localStorage.removeItem('lastName');
+    localStorage.removeItem('invoiceData1');
+    localStorage.removeItem('invoiceData2');
+    localStorage.removeItem('invoiceData3');
   }
 
   isSidebarOpen = false;
@@ -50,19 +58,23 @@ export class HomeComponent {
   switchHeader(route:string){
     switch(route){
       case '/pos/':
-      case '/pos/main': this.pageHeading = "Home";
+      case '/pos/main': this.pageHeading = "Hello "+this.firstName;
       break;
       case '/pos/billing-system': this.pageHeading = "Billing System";
       break;
-      case '/pos/products-master': this.pageHeading = "Products Master";
+      case '/pos/products-master': this.pageHeading = "Products";
       break;
-      case '/pos/inventory-system': this.pageHeading = "Inventory System";
+      case '/pos/inventory-system': this.pageHeading = "Inventory";
       break;
       case '/pos/dashboard': this.pageHeading = "Dashboard";
       break;
-      case '/pos/user-history': this.pageHeading = "User History";
+      case '/pos/user-history': this.pageHeading = "Users";
       break;
-      case '/pos/accounts-master': this.pageHeading = "Accounts Master";
+      case '/pos/accounts-master': this.pageHeading = "Accounts";
+      break;
+      case '/pos/accounts/transactions': this.pageHeading = "Transactions";
+      break;
+      case '/pos/offers-master': this.pageHeading = "Offers";
       break;
     }
   }

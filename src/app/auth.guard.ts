@@ -28,6 +28,15 @@ export class AuthGuard implements CanActivate {
     // ✅ Prevent infinite loop when redirecting to /login
     if (!isLoggedIn && state.url !== '/login') {
       this.router.navigate(['/login']);
+      localStorage.removeItem('token');
+      localStorage.removeItem('selectedLocation');
+      localStorage.removeItem('role');
+      localStorage.removeItem('location');
+      localStorage.removeItem('firstName');
+      localStorage.removeItem('lastName');
+      localStorage.removeItem('invoiceData1');
+      localStorage.removeItem('invoiceData2');
+      localStorage.removeItem('invoiceData3');
       return false;
     }
   
@@ -37,21 +46,17 @@ export class AuthGuard implements CanActivate {
 
   async checkUserLoggedIn(role: any): Promise<boolean> {
     const token = localStorage.getItem('token');
-    console.log("AUTH "+token)
-    console.log("AUTH "+role)
     if (token) {
       try {
         const res: any = await this.api
           .getAPI('/adminUser/session', [['role', role]])
           .toPromise();
-        console.log("AUTH "+res)
         if (res.statusCode === 200) {
           return true;
         } else {
           return false;
         }
       } catch (error) {
-        console.error('API Error:', error);
         return false;
       }
     } else {

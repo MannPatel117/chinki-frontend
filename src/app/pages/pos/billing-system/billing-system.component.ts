@@ -143,7 +143,7 @@ export class BillingSystemComponent {
   
   barcodeScan: FormControl = new FormControl ('');
   couponSearch: FormControl = new FormControl ('');
-  redeemPoints:FormControl = new FormControl(0, [Validators.min(0)]);
+  redeemPoints:FormControl = new FormControl(null, [Validators.min(0)]);
 
   constructor(private fb: FormBuilder,
      private route: Router,
@@ -190,7 +190,6 @@ export class BillingSystemComponent {
   
   ngOnInit(){
     this.loading = true;
-    this.checkUserLoggedIn();
     this.setFormBuilder();
     this.invoiceSwitcher('A');
   }
@@ -199,6 +198,7 @@ export class BillingSystemComponent {
     this.getAllOffers();
     this.getAllProducts();
     this.fetchData(this.inventorySelected.value)
+    this.fetchFilterInfo();
   }
 
   fetchFilterInfo() {
@@ -235,18 +235,6 @@ export class BillingSystemComponent {
         toastComponent: ErrorToast,
         toastClass: 'ngx-toastr',
       });
-    }
-  }
-
-  async checkUserLoggedIn(){
-    let role = localStorage.getItem('role');
-    const session = await this.shared.checkUserLoggedIn(role);
-    if(session){
-      
-    } else{
-      this.route.navigateByUrl('/login');
-      this.loading = false;
-      localStorage.clear();
     }
   }
 
@@ -419,8 +407,10 @@ export class BillingSystemComponent {
     if(this.currentRow <this.totalRows){
       this.rows.push(this.newRow())
     }
+    this.currentActiveInvoiceData.BillDetails.splice(index, 1)
     this.calcTotalAmount();
     this.deleteIndex = -1;
+    this.billData.storeData(this.currentActiveInvoice, this.currentActiveInvoiceData)
     this.closeModal('deleteItemModal')
   }
 
@@ -454,6 +444,18 @@ export class BillingSystemComponent {
     for(let i = 0; i < this.currentRow; i++){
       let row = String(i)
       this.currentActiveInvoiceData.totalAmount = this.currentActiveInvoiceData.totalAmount + this.rows.get(row)?.get('finalAmount')?.value;
+    }
+    if(this.currentActiveInvoiceData.currentOffer.offerID !=''){
+      if(this.currentActiveInvoiceData.currentOffer.offerType == 'free_product'){
+        if(this.currentActiveInvoiceData.totalAmount < this.currentActiveInvoiceData.currentOffer.minOrderValue){
+          this.offerUnApply();
+        }
+      }
+      if(this.currentActiveInvoiceData.currentOffer.offerType == 'flat_discount'){
+        if(this.currentActiveInvoiceData.totalAmount < (this.currentActiveInvoiceData.currentOffer.minOrderValue - this.currentActiveInvoiceData.currentOffer.discountAmount)){
+          this.offerUnApply();
+        }
+      }
     }
     this.billData.storeData(this.currentActiveInvoice, this.currentActiveInvoiceData)
   }
@@ -633,7 +635,7 @@ export class BillingSystemComponent {
       this.currentActiveInvoiceData.currentOffer.FreeProduct.mrp = 0
       this.currentActiveInvoiceData.currentOffer.FreeProduct.mrp = 0;
     } else if(this.currentActiveInvoiceData.currentOffer.offerType == 'flat_discount'){
-      this.currentActiveInvoiceData.totalAmount = this.currentActiveInvoiceData.totalAmount + this.currentActiveInvoiceData.currentOffer.actualDiscountAmount;
+      this.calcTotalAmount()
       this.currentActiveInvoiceData.currentOffer.discountPerc = 0;
       this.currentActiveInvoiceData.currentOffer.actualDiscountAmount = 0;
       this.currentActiveInvoiceData.currentOffer.discountAmount = 0;
@@ -983,7 +985,8 @@ export class BillingSystemComponent {
 
   openModal(id:any){
     if(id == 'rewardsModal'){
-      const phn = this.userForm.get('phnNumber')?.value;
+      const phn = this.currentActiveInvoiceData.UserPhnNumber;
+
       if(phn == ''){
         this.toastr.show('error','No User Selected',{ 
           toastComponent: ErrorToast,
@@ -995,6 +998,7 @@ export class BillingSystemComponent {
       }
     } else{
       $("#"+id).modal('show');
+      console.log(this.inventoryName)
     }
   }
 
@@ -1116,10 +1120,9 @@ export class BillingSystemComponent {
           } else {
             this.closeModal('bill-searchAddUserModal');
             this.loading = true;
-            
             this.api.getAPI('/users/user/'+phnNumber, []).subscribe((res:any) => {
               if(res.success == true){
-                this.setUserForm(res.data)
+                this.setUserForm(res.data, true)
                 this.loading = false;
                 this.toastr.show('success','User found',{ 
                   toastComponent: SuccessToast,
@@ -1152,7 +1155,7 @@ export class BillingSystemComponent {
                     toastComponent: SuccessToast,
                     toastClass: "ngx-toastr",
                   })
-                  this.setUserForm(res.data);
+                  this.setUserForm(res.data, false);
                 }else{
                   this.toastr.show('error',res.data,{ 
                     toastComponent: ErrorToast,
@@ -1177,7 +1180,16 @@ export class BillingSystemComponent {
           }
         }
 
-        setUserForm(data:any){
+        editUser(phoneNumber:any, customerType:any){
+          const data = {
+            customerType: customerType
+          }
+          this.api.putAPI(`/users/user/`+phoneNumber, [], data).subscribe((res:any) => {
+            
+          });
+        }
+        
+        setUserForm(data:any, type:boolean){
           this.userForm.get('phnNumber')?.setValue(data.phoneNumber)
           this.currentActiveInvoiceData.UserPhnNumber = data.phoneNumber;
           this.userForm.get('name')?.setValue(data.name)
@@ -1188,6 +1200,22 @@ export class BillingSystemComponent {
           this.currentActiveInvoiceData.RewardPoints = data.rewardPoint;
           // this.currentRewardsHistory = data.rewardPointsHistory;
           // this.currentActiveInvoiceData.RewardsHistory = data.rewardPointsHistory;
+          if(type == true){
+            this.api.getAPI('/bills/', [["pagination", false],["search",  data.phoneNumber], ["inventory", JSON.stringify([])],["paymentType", JSON.stringify([])]]).subscribe((res:any) => {
+              if(res.data.length > 0){
+                if(data.customerType == 'new'){
+                  data.customerType = 'existing';
+                  this.editUser(data.phoneNumber, data.customerType)
+                } else if(data.customerType == 'new-facebook'){
+                  data.customerType = 'facebook';
+                  this.editUser(data.phoneNumber, data.customerType)
+                }
+              }
+            }) 
+            
+            
+            console.log(data.customerType)
+          }
           this.userForm.get('customerType')?.setValue(data.customerType);
           this.currentActiveInvoiceData.CustomerType = data.customerType;
           this.billData.storeData(this.currentActiveInvoice, this.currentActiveInvoiceData)
@@ -1231,6 +1259,22 @@ export class BillingSystemComponent {
                 })
               }
             });
+        }
+
+        addProduct(index: number) {
+          this.filteredProduct[index].quantity = 1; // Set quantity to 1 when "Add" is clicked
+        }
+        
+        increaseQuantity(index: number) {
+          this.filteredProduct[index].quantity++;
+        }
+        
+        decreaseQuantity(index: number) {
+          if (this.filteredProduct[index].quantity > 1) {
+            this.filteredProduct[index].quantity--;
+          } else {
+            this.filteredProduct[index].quantity = 0; // Remove if quantity is 0
+          }
         }
   
 }
