@@ -138,7 +138,7 @@
             </div>
         </div>
         <div class="body-footer w-full">
-            <ngb-pagination class="flex flex-center paginator" *ngIf="displayData?.length != 0" [(page)]="page" [pageSize]="limit"
+            <ngb-pagination class="flex flex-center paginator" *ngIf="displayData?.length != 0" [(page)]="page" [pageSize]="limit" [maxSize]="3" [rotate]="false"
                 [collectionSize]="collectionSize" (pageChange)="getAccounts(false, false)"/>
         </div>
     </div>
@@ -263,7 +263,7 @@
             </div>
         </div>
         <div class="body-footer w-full">
-            <ngb-pagination class="flex flex-center paginator" *ngIf="displayData?.length != 0" [(page)]="page" [pageSize]="limit"
+            <ngb-pagination class="flex flex-center paginator" *ngIf="displayData?.length != 0" [(page)]="page" [pageSize]="limit" [maxSize]="3" [rotate]="false"
                 [collectionSize]="collectionSize" (pageChange)="getAccounts(false, false)"/>
         </div>
     </div>
