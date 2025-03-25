@@ -171,7 +171,7 @@
                     </div>
                 </form>
                 <div class="w-20 flex flex-end">
-                    <div *ngIf="actionType == 'edit'" class="btn btn-success primary-button" [class.disabled]="transactionForm.get('supplier')?.value=='' || rows.at(0)?.get('productName')?.value == '' || rows.at(0)?.get('productName')?.value == null || rows.at(0)?.get('productName')?.value == undefined" (click)="editTransaction()">
+                    <div *ngIf="actionType == 'edit'" class="btn btn-success primary-button" [class.disabled]="transactionForm.get('supplier')?.value=='' || rows.at(0).get('productName')?.value == '' || rows.at(0).get('productName')?.value == null || rows.at(0).get('productName')?.value == undefined" (click)="editTransaction()">
                         Edit Goods
                     </div>
                 </div>    
