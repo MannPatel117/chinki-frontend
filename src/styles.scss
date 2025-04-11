@@ -9,6 +9,27 @@ $primary-color: #187EF5;
 $lightPrimary-color: #80BAFC;
 $label-color:#B6D7FF;
 $input-color:#fdff7d;
+::-webkit-scrollbar {
+    width: 4px; /* Makes it thin */
+    height: 4px; /* For horizontal scroll */
+  }
+  
+  ::-webkit-scrollbar-track {
+    background: transparent; /* You can also use a color if needed */
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background-color: white;
+    border-radius: 2px; /* Optional for rounded corners */
+    border: none; /* Solid, no border */
+  }
+  
+  /* For Firefox */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: white transparent; /* thumb color, track color */
+  }
+
 
 *{
     margin: 0;

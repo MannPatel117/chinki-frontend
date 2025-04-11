@@ -269,6 +269,10 @@
    scrollbar-width: none; /* Hide scrollbar in Firefox */
     
   }
+
+  .products-checkout {
+    grid-template-columns: repeat(auto-fit, 300px);
+  }
   
   .product-card {
     height: 250px;
@@ -284,6 +288,12 @@
     position: relative;
   }
 
+  .product-card-checkout {
+    height: 100px;
+    width: 300px;
+    flex-direction: row;
+  }
+
   .product-card img{
     height: 125px;
     width: 125px ;
@@ -296,13 +306,26 @@
     font-weight: 600;
   }
   .product-card h3{
-    font-size: 0.7rem;
+    font-size: 1rem;
     font-weight: 500;
-    color: oklch(0.279 0.041 260.031);
+    color: oklch(0.596 0.145 163.225);
+    text-align: right;
   }
   .product-details{
     height: 80px;
     width: 125px;
+  }
+
+  .product-details-checkout{
+    height: 80px;
+    width: 250px;
+  }
+
+  .edit-details{
+    width: 50px;
+    height: 100px;
+    justify-content: flex-end;
+    align-items: flex-start;
   }
   /* Product Info */
   .product-info h3 {
@@ -323,23 +346,31 @@
     bottom: 100px; /* Moves button outside */
     right: -15px; /* Moves button to the right */
   }
+
+  .action-btn-checkout {
+    position: absolute;
+    bottom: 10px; /* Moves button outside */
+    right: -15px; /* Moves button to the right */
+  }
   
   /* Add Button */
   .add-btn {
-    width: 50px;
-    padding: 6px 0;
-    background-color: oklch(0.596 0.145 163.225);
-    color: white;
-    border: none;
+    padding: 4px 6px;
+    width: 72px;
+    height: 36px;
+    background-color: white;
+    color:  oklch(0.627 0.194 149.214);
+    border: 2px solid oklch(0.627 0.194 149.214);
     border-radius: 10px;
     cursor: pointer;
-    font-size: 12px;
+    font-size: 13px;
+    font-weight: 500;
     transition: background-color 0.2s;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   }
   
   .add-btn:hover {
-    background-color: #0056b3;
+    background-color: oklch(0.508 0.118 165.612);
   }
   
   /* Quantity Changer */
@@ -347,22 +378,25 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background-color: #fff;
+    background-color: oklch(0.627 0.194 149.214);
     border: 1px solid #ddd;
-    border-radius: 12px;
+    border-radius: 10px;
+    color: white;
+    height: 36px;
     padding: 4px 6px;
     width: 72px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   }
   
   .qty-btn {
-    background-color: #007bff;
+    background-color: oklch(0.627 0.194 149.214);
     color: white;
     border: none;
-    padding: 4px 8px;
     border-radius: 4px;
+    padding: 1px;
     cursor: pointer;
-    font-size: 12px;
+    font-weight: 700;
+    font-size: 14px;
   }
   
   .qty-btn:hover {

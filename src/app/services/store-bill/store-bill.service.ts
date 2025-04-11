@@ -43,6 +43,7 @@ export class StoreBillService {
         "rate": 0,
         "amount": 0,
         "gst": 0,
+        "barcode":"",
         "gstAmount": 0,
         "finalAmount":0,
         "productID":"",
